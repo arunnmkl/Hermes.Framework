@@ -1,7 +1,8 @@
-﻿using Microsoft.Owin.Security.OAuth;
-using System;
+﻿using System;
 using System.Security.Claims;
 using System.Threading.Tasks;
+using Hermes.WebApi.Security;
+using Microsoft.Owin.Security.OAuth;
 
 namespace Hermes.WebApi.Extensions.Authentication
 {
@@ -20,12 +21,29 @@ namespace Hermes.WebApi.Extensions.Authentication
 		/// <returns></returns>
 		public static ClaimsPrincipal AuthenticateUsernamePassword(string userName, string password)
 		{
-			var identity = new ClaimsIdentity("ClaimsIdentityAuth");
-			identity.AddClaim(new Claim(ClaimTypes.Name, userName));
-			identity.AddClaim(new Claim(ClaimTypes.Role, "User"));
+            using (UserManager um = new UserManager())
+            {
+                var userIdentity = um.AuthenticateUsernamePassword(userName, password);
 
-			return new ClaimsPrincipal(identity);
-		}
+                if (userIdentity != null)
+                {
+                    var identity = new ClaimsIdentity("ClaimsIdentityAuth");
+                    identity.AddClaim(new Claim(ClaimTypes.Name, userIdentity.Username));
+                    identity.AddClaim(new Claim(ClaimTypes.Sid, userIdentity.SecurityId.ToString()));
+                    if (userIdentity.Roles != null)
+                    {
+                        foreach (var role in userIdentity.Roles)
+                        {
+                            identity.AddClaim(new Claim(ClaimTypes.Role, role.Name));
+                        }
+                    }
+
+                    return new ClaimsPrincipal(identity);
+                }
+            }
+
+            return null;
+        }
 
 		#endregion Public Methods
 
@@ -33,13 +51,30 @@ namespace Hermes.WebApi.Extensions.Authentication
 
 		internal static Task<ClaimsIdentity> AuthenticateUsernamePassword(OAuthGrantResourceOwnerCredentialsContext context)
 		{
-			var identity = new ClaimsIdentity(context.Options.AuthenticationType);
-			identity.AddClaim(new Claim(ClaimTypes.Name, context.UserName));
-			identity.AddClaim(new Claim(ClaimTypes.Role, "user"));
-			identity.AddClaim(new Claim("sub", context.UserName));
+            using (UserManager um = new UserManager())
+            {
+                var userIdentity = um.AuthenticateUsernamePassword(context.UserName, context.Password);
 
-			return Task.FromResult(identity);
-		}
+                if (userIdentity != null)
+                {
+                    var identity = new ClaimsIdentity(context.Options.AuthenticationType);
+                    identity.AddClaim(new Claim(ClaimTypes.Name, userIdentity.Username));
+                    identity.AddClaim(new Claim(ClaimTypes.Sid, userIdentity.SecurityId.ToString()));
+                    if (userIdentity.Roles != null)
+                    {
+                        foreach (var role in userIdentity.Roles)
+                        {
+                            identity.AddClaim(new Claim(ClaimTypes.Role, role.Name));
+                        }
+                    }
+
+                    return Task.FromResult(identity);
+                }
+            }
+
+            context.SetError("invalid_grant", "The user name or password is incorrect.");
+            return Task.FromResult<ClaimsIdentity>(null);
+        }
 
 		internal static ClaimsIdentity AuthenticateTicket(string ticket)
 		{
