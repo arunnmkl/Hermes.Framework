@@ -60,12 +60,55 @@
     <Reference Include="System.EnterpriseServices" />
   </ItemGroup>
   <ItemGroup>
-    <Content Include="Content\loading-bar.css" />
-    <Content Include="Content\loading-bar.min.css" />
+    <Content Include="app\app.js" />
+    <Content Include="app\controllers\associateController.js" />
+    <Content Include="app\controllers\homeController.js" />
+    <Content Include="app\controllers\indexController.js" />
+    <Content Include="app\controllers\loginController.js" />
+    <Content Include="app\controllers\ordersController.js" />
+    <Content Include="app\controllers\refreshController.js" />
+    <Content Include="app\controllers\signupController.js" />
+    <Content Include="app\controllers\tokensManagerController.js" />
+    <Content Include="app\services\authInterceptorService.js" />
+    <Content Include="app\services\authService.js" />
+    <Content Include="app\services\ordersService.js" />
+    <Content Include="app\services\tokensManagerService.js" />
+    <Content Include="app\views\associate.html" />
+    <Content Include="app\views\home.html" />
+    <Content Include="app\views\login.html" />
+    <Content Include="app\views\orders.html" />
+    <Content Include="app\views\refresh.html" />
+    <Content Include="app\views\signup.html" />
+    <Content Include="app\views\tokens.html" />
+    <Content Include="authComplete.html" />
+    <Content Include="Content\css\bootstrap-theme.css" />
+    <Content Include="Content\css\bootstrap-theme.min.css" />
+    <Content Include="Content\css\bootstrap.css" />
+    <Content Include="Content\css\bootstrap.min.css" />
+    <Content Include="Content\css\font-awesome.css" />
+    <Content Include="Content\css\font-awesome.min.css" />
+    <Content Include="Content\css\site.css" />
+    <Content Include="Content\css\social-buttons.css" />
+    <Content Include="Content\fonts\fontawesome-webfont.svg" />
+    <Content Include="Content\css\loading-bar.css" />
+    <Content Include="Content\css\loading-bar.min.css" />
+    <Content Include="Content\fonts\glyphicons-halflings-regular.svg" />
+    <Content Include="index.html" />
     <Content Include="packages.config" />
     <Content Include="Scripts\angular-local-storage.js" />
-    <Content Include="Scripts\angular-local-storage.min.js" />
-    <Content Include="Scripts\angular-local-storage.min.js.map" />
+    <Content Include="Content\fonts\glyphicons-halflings-regular.woff" />
+    <Content Include="Content\fonts\glyphicons-halflings-regular.ttf" />
+    <Content Include="Content\fonts\glyphicons-halflings-regular.eot" />
+    <Content Include="Content\css\bootstrap.css.map" />
+    <Content Include="Content\css\bootstrap-theme.css.map" />
+    <Content Include="Scripts\angular-route.js" />
+    <Content Include="Scripts\angular.js" />
+    <Content Include="Scripts\authComplete.js" />
+    <Content Include="Scripts\bootstrap.js" />
+    <Content Include="Content\fonts\FontAwesome.otf" />
+    <Content Include="Content\fonts\fontawesome-webfont.woff" />
+    <Content Include="Content\fonts\fontawesome-webfont.ttf" />
+    <Content Include="Content\fonts\fontawesome-webfont.eot" />
     <None Include="Web.Debug.config">
       <DependentUpon>Web.config</DependentUpon>
     </None>
@@ -75,7 +118,6 @@
   </ItemGroup>
   <ItemGroup>
     <Content Include="Scripts\loading-bar.js" />
-    <Content Include="Scripts\loading-bar.min.js" />
     <Content Include="Web.config" />
   </ItemGroup>
   <ItemGroup>
