@@ -86,8 +86,24 @@ namespace GlobalTranz.WebApi.Extensions.Owin
 				return AuthenticationCommands.AuthenticateUsernamePassword(context);
 			});
 
-			var ticket = new AuthenticationTicket(identity, new AuthenticationProperties());
-			context.Validated(ticket);
+            if (identity == null)
+            {
+                context.SetError("invalid_grant", "The user name or password is incorrect.");
+                return;
+            }
+
+            var authDictonary = new Dictionary<string, string>
+            {
+                {
+                    "hs:client_id", (context.ClientId == null) ? string.Empty : context.ClientId
+                },
+                {
+                    "userName", context.UserName
+                }
+            };
+
+            var ticket = new AuthenticationTicket(identity, new AuthenticationProperties(authDictonary));
+            context.Validated(ticket);
 		}
 
 		/// <summary>
