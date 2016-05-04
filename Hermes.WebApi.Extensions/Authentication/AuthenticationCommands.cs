@@ -2,25 +2,26 @@
 using System.Security.Claims;
 using System.Threading.Tasks;
 using Hermes.WebApi.Security;
+using Hermes.WebApi.Security.Models;
 using Microsoft.Owin.Security.OAuth;
 
 namespace Hermes.WebApi.Extensions.Authentication
 {
-	/// <summary>
-	/// The authentication commands which basically deals with the all the authentication  
-	/// </summary>
-	public static class AuthenticationCommands
-	{
-		#region Public Methods
+    /// <summary>
+    /// The authentication commands which basically deals with the all the authentication  
+    /// </summary>
+    public static class AuthenticationCommands
+    {
+        #region Public Methods
 
-		/// <summary>
-		/// Authenticates the username password.
-		/// </summary>
-		/// <param name="userName">Name of the user.</param>
-		/// <param name="password">The password.</param>
-		/// <returns></returns>
-		public static ClaimsPrincipal AuthenticateUsernamePassword(string userName, string password)
-		{
+        /// <summary>
+        /// Authenticates the username password.
+        /// </summary>
+        /// <param name="userName">Name of the user.</param>
+        /// <param name="password">The password.</param>
+        /// <returns></returns>
+        public static ClaimsPrincipal AuthenticateUsernamePassword(string userName, string password)
+        {
             using (UserManager um = new UserManager())
             {
                 var userIdentity = um.AuthenticateUsernamePassword(userName, password);
@@ -45,12 +46,100 @@ namespace Hermes.WebApi.Extensions.Authentication
             return null;
         }
 
-		#endregion Public Methods
+        /// <summary>
+        /// Finds the authentication client.
+        /// </summary>
+        /// <param name="clientId">The client identifier.</param>
+        /// <returns>authentication client information</returns>
+        public static AuthClient FindAuthClient(string clientId)
+        {
+            using (UserManager um = new UserManager())
+            {
+                return um.FindAuthClient(clientId);
+            }
+        }
 
-		#region Internal Methods
+        /// <summary>
+        /// Finds the login provider.
+        /// </summary>
+        /// <param name="authProvider">The authentication provider.</param>
+        /// <returns>user identity details</returns>
+        public static UserIdentity FindLoginProvider(AuthProvider authProvider)
+        {
+            using (UserManager um = new UserManager())
+            {
+                return um.FindLoginProvider(authProvider);
+            }
+        }
 
-		internal static Task<ClaimsIdentity> AuthenticateUsernamePassword(OAuthGrantResourceOwnerCredentialsContext context)
-		{
+        /// <summary>
+        /// Finds the login provider.
+        /// </summary>
+        /// <param name="loginProvider">The login provider.</param>
+        /// <param name="providerKey">The provider key.</param>
+        /// <returns>
+        /// user identity details
+        /// </returns>
+        public static UserIdentity FindLoginProvider(string loginProvider, string providerKey)
+        {
+            using (UserManager um = new UserManager())
+            {
+                return um.FindLoginProvider(new AuthProvider(loginProvider, providerKey));
+            }
+        }
+
+        /// <summary>
+        /// Adds the user.
+        /// </summary>
+        /// <param name="username">The username.</param>
+        /// <param name="password">The password.</param>
+        /// <returns>
+        /// user id
+        /// </returns>
+        public static long AddUser(string username, string password)
+        {
+            using (UserManager um = new UserManager())
+            {
+                return um.AddUser(username, password);
+            }
+        }
+
+        /// <summary>
+        /// Adds the user.
+        /// </summary>
+        /// <param name="authProvider">The authentication provider.</param>
+        /// <returns>
+        /// inserted state.
+        /// </returns>
+        public static bool AddNewUserLoginProvider(AuthProvider authProvider)
+        {
+            using (UserManager um = new UserManager())
+            {
+                return um.AddNewUserLoginProvider(authProvider);
+            }
+        }
+
+        /// <summary>
+        /// Gets the authenticated user by user identifier.
+        /// </summary>
+        /// <param name="userId">The user identifier.</param>
+        /// <returns>
+        /// user identity details
+        /// </returns>
+        public static UserIdentity GetAuthenticatedUserByUserId(long userId)
+        {
+            using (UserManager um = new UserManager())
+            {
+                return um.GetAuthenticatedUserByUserId(userId);
+            }
+        }
+
+        #endregion Public Methods
+
+        #region Internal Methods
+
+        internal static Task<ClaimsIdentity> AuthenticateUsernamePassword(OAuthGrantResourceOwnerCredentialsContext context)
+        {
             using (UserManager um = new UserManager())
             {
                 var userIdentity = um.AuthenticateUsernamePassword(context.UserName, context.Password);
@@ -76,15 +165,15 @@ namespace Hermes.WebApi.Extensions.Authentication
             return Task.FromResult<ClaimsIdentity>(null);
         }
 
-		internal static ClaimsIdentity AuthenticateTicket(string ticket)
-		{
-			var identity = new ClaimsIdentity("Type");
-			identity.AddClaim(new Claim(ClaimTypes.Name, "UserName"));
-			identity.AddClaim(new Claim(ClaimTypes.Role, "user"));
+        internal static ClaimsIdentity AuthenticateTicket(string ticket)
+        {
+            var identity = new ClaimsIdentity("Type");
+            identity.AddClaim(new Claim(ClaimTypes.Name, "UserName"));
+            identity.AddClaim(new Claim(ClaimTypes.Role, "user"));
 
-			return identity;
-		}
+            return identity;
+        }
 
-		#endregion Internal Methods
-	}
+        #endregion Internal Methods
+    }
 }

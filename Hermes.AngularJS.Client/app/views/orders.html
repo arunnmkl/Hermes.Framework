@@ -16,22 +16,21 @@
             <tbody>
                 <tr data-ng-repeat="order in orders">
                     <td>
-                        {{ order.orderID }}
+                        {{ order.OrderID }}
                     </td>
                     <td>
-                        {{ order.customerName }}
+                        {{ order.CustomerName }}
                     </td>
                     <td>
-                        {{ order.shipperCity }}
+                        {{ order.ShipperCity }}
                     </td>
                     <td>
-                       <input type="checkbox" data-ng-model="order.isShipped" disabled="disabled">
+                        <input type="checkbox" data-ng-model="order.IsShipped" disabled="disabled">
                     </td>
                 </tr>
             </tbody>
         </table>
     </div>
-
     <div class="col-md-2">
         &nbsp;
     </div>

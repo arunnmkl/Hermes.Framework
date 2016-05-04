@@ -4,7 +4,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace Hermes.WebApi.Security
+namespace Hermes.WebApi.Security.Models
 {
     /// <summary>
     /// I User
@@ -67,6 +67,55 @@ namespace Hermes.WebApi.Security
     }
 
     /// <summary>
+    /// User authentication provider.
+    /// </summary>
+    public class AuthProvider
+    {
+        /// <summary>
+        /// Initializes a new instance of the <see cref="AuthProvider"/> class.
+        /// </summary>
+        public AuthProvider()
+        {
+
+        }
+
+        /// <summary>
+        /// Initializes a new instance of the <see cref="AuthProvider"/> class.
+        /// </summary>
+        /// <param name="loginProvider">The login provider.</param>
+        /// <param name="providerKey">The provider key.</param>
+        public AuthProvider(string loginProvider, string providerKey)
+        {
+            this.LoginProvider = loginProvider;
+            this.ProviderKey = providerKey;
+        }
+
+        /// <summary>
+        /// Gets or sets the user identifier.
+        /// </summary>
+        /// <value>
+        /// The user identifier.
+        /// </value>
+        public long UserId { get; set; }
+
+        /// <summary>
+        /// Gets or sets the login provider.
+        /// </summary>
+        /// <value>
+        /// The login provider.
+        /// </value>
+        public string LoginProvider { get; set; }
+
+        /// <summary>
+        /// Gets or sets the provider key.
+        /// </summary>
+        /// <value>
+        /// The provider key.
+        /// </value>
+        public string ProviderKey { get; set; }
+    }
+
+    /// <summary>
     /// User Identity
     /// </summary>
     /// <seealso cref="Hermes.WebApi.Extensions.Security.IUser" />
@@ -78,6 +127,7 @@ namespace Hermes.WebApi.Security
         public UserIdentity()
         {
             this.Roles = new List<Role>();
+            this.AuthProviders = new List<AuthProvider>();
         }
 
         /// <summary>
@@ -111,5 +161,13 @@ namespace Hermes.WebApi.Security
         /// The roles.
         /// </value>
         public ICollection<Role> Roles { get; set; }
+
+        /// <summary>
+        /// Gets or sets the authentication providers.
+        /// </summary>
+        /// <value>
+        /// The authentication providers.
+        /// </value>
+        public ICollection<AuthProvider> AuthProviders { get; set; }
     }
 }

@@ -9,6 +9,8 @@ app.controller('loginController', ['$scope', '$location', 'authService', 'ngAuth
 
     $scope.message = "";
 
+    $scope.disableFB = true;
+
     $scope.login = function () {
 
         authService.login($scope.loginData).then(function (response) {
@@ -36,8 +38,7 @@ app.controller('loginController', ['$scope', '$location', 'authService', 'ngAuth
     $scope.authCompletedCB = function (fragment) {
 
         $scope.$apply(function () {
-
-            if (fragment.haslocalaccount == 'False') {
+            if (fragment.registered_user == 'False') {
 
                 authService.logOut();
 
