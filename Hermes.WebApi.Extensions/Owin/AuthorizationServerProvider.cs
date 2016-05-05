@@ -120,7 +120,7 @@ namespace GlobalTranz.WebApi.Extensions.Owin
             var authDictonary = new Dictionary<string, string>
             {
                 {
-                    "hs:client_id", (context.ClientId == null) ? string.Empty : context.ClientId
+                    "as:client_id", (context.ClientId == null) ? string.Empty : context.ClientId
                 },
                 {
                     "userName", context.UserName

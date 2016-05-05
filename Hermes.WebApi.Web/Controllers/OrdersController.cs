@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Net;
 using System.Net.Http;
+using System.Web;
 using System.Web.Http;
 
 namespace Hermes.WebApi.Web.Controllers
@@ -14,6 +15,12 @@ namespace Hermes.WebApi.Web.Controllers
         [Route("")]
         public IHttpActionResult Get()
         {
+            if (HttpContext.Current.User == null)
+            {
+                return null;
+            }
+            string userId = HttpContext.Current.User.Identity.Name;
+
             //ClaimsPrincipal principal = Request.GetRequestContext().Principal as ClaimsPrincipal;
 
             //var Name = ClaimsPrincipal.Current.Identity.Name;
@@ -21,6 +28,13 @@ namespace Hermes.WebApi.Web.Controllers
 
             //var userName = principal.Claims.Where(c => c.Type == "sub").Single().Value;
 
+            return Ok(Order.CreateOrders());
+        }
+
+        [Authorize(Roles = "Admin")]
+        [Route("Auth")]
+        public IHttpActionResult GetAuth()
+        {
             return Ok(Order.CreateOrders());
         }
 
