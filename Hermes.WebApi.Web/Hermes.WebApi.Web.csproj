@@ -171,9 +171,9 @@
   <ItemGroup>
     <Compile Include="App_Start\SwaggerConfig.cs" />
     <Compile Include="App_Start\WebApiConfig.cs" />
-    <Compile Include="Controllers\HomeController.cs" />
     <Compile Include="Controllers\AccountController.cs" />
     <Compile Include="Controllers\OrdersController.cs" />
+    <Compile Include="Controllers\RefreshTokenController.cs" />
     <Compile Include="Controllers\UserController.cs" />
     <Compile Include="Models\Login.cs" />
     <Compile Include="Models\UserModel.cs" />

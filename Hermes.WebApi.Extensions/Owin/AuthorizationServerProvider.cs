@@ -160,6 +160,7 @@ namespace GlobalTranz.WebApi.Extensions.Owin
             // Change auth ticket for refresh token requests
             var newIdentity = new ClaimsIdentity(context.Ticket.Identity);
 
+            // TODO: to add new claims....
             var newClaim = newIdentity.Claims.Where(c => c.Type == "newClaim").FirstOrDefault();
             if (newClaim != null)
             {

@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Security.Claims;
 using System.Threading.Tasks;
 using Hermes.WebApi.Security;
@@ -47,48 +48,6 @@ namespace Hermes.WebApi.Extensions.Authentication
         }
 
         /// <summary>
-        /// Finds the authentication client.
-        /// </summary>
-        /// <param name="clientId">The client identifier.</param>
-        /// <returns>authentication client information</returns>
-        public static AuthClient FindAuthClient(string clientId)
-        {
-            using (UserManager um = new UserManager())
-            {
-                return um.FindAuthClient(clientId);
-            }
-        }
-
-        /// <summary>
-        /// Finds the login provider.
-        /// </summary>
-        /// <param name="authProvider">The authentication provider.</param>
-        /// <returns>user identity details</returns>
-        public static UserIdentity FindLoginProvider(AuthProvider authProvider)
-        {
-            using (UserManager um = new UserManager())
-            {
-                return um.FindLoginProvider(authProvider);
-            }
-        }
-
-        /// <summary>
-        /// Finds the login provider.
-        /// </summary>
-        /// <param name="loginProvider">The login provider.</param>
-        /// <param name="providerKey">The provider key.</param>
-        /// <returns>
-        /// user identity details
-        /// </returns>
-        public static UserIdentity FindLoginProvider(string loginProvider, string providerKey)
-        {
-            using (UserManager um = new UserManager())
-            {
-                return um.FindLoginProvider(new AuthProvider(loginProvider, providerKey));
-            }
-        }
-
-        /// <summary>
         /// Adds the user.
         /// </summary>
         /// <param name="username">The username.</param>
@@ -132,6 +91,47 @@ namespace Hermes.WebApi.Extensions.Authentication
             {
                 return um.GetAuthenticatedUserByUserId(userId);
             }
+        } 
+
+        /// <summary>
+        /// Removes the refresh token.
+        /// </summary>
+        /// <param name="tokenId">The token identifier.</param>
+        /// <returns>success or failure</returns>
+        public static bool RemoveRefreshToken(string tokenId)
+        {
+            using (UserManager um = new UserManager())
+            {
+                return um.RemoveRefreshToken(tokenId);
+            }
+        }
+
+        /// <summary>
+        /// Gets all refresh tokens.
+        /// </summary>
+        /// <returns>all refresh tokens</returns>
+        public static IList<RefreshToken> GetAllRefreshTokens()
+        {
+            using (UserManager um = new UserManager())
+            {
+                return um.GetAllRefreshTokens();
+            }
+        }
+
+        /// <summary>
+        /// Finds the login provider.
+        /// </summary>
+        /// <param name="loginProvider">The login provider.</param>
+        /// <param name="providerKey">The provider key.</param>
+        /// <returns>
+        /// user identity details
+        /// </returns>
+        public static UserIdentity FindLoginProvider(string loginProvider, string providerKey)
+        {
+            using (UserManager um = new UserManager())
+            {
+                return um.FindLoginProvider(new AuthProvider(loginProvider, providerKey));
+            }
         }
 
         #endregion Public Methods
@@ -172,6 +172,32 @@ namespace Hermes.WebApi.Extensions.Authentication
             identity.AddClaim(new Claim(ClaimTypes.Role, "user"));
 
             return identity;
+        }
+
+        /// <summary>
+        /// Finds the authentication client.
+        /// </summary>
+        /// <param name="clientId">The client identifier.</param>
+        /// <returns>authentication client information</returns>
+        internal static AuthClient FindAuthClient(string clientId)
+        {
+            using (UserManager um = new UserManager())
+            {
+                return um.FindAuthClient(clientId);
+            }
+        }
+
+        /// <summary>
+        /// Finds the login provider.
+        /// </summary>
+        /// <param name="authProvider">The authentication provider.</param>
+        /// <returns>user identity details</returns>
+        internal static UserIdentity FindLoginProvider(AuthProvider authProvider)
+        {
+            using (UserManager um = new UserManager())
+            {
+                return um.FindLoginProvider(authProvider);
+            }
         }
 
         #endregion Internal Methods
