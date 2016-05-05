@@ -2,8 +2,6 @@
 using System.Collections.Generic;
 using System.Data.SqlClient;
 using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using Hermes.WebApi.Base.SqlSerializer;
 using Hermes.WebApi.Security.Models;
 
@@ -200,7 +198,19 @@ namespace Hermes.WebApi.Security
                 new Parameter("@Enabled", enabled)
             };
 
-            return this.sqlSerializer.ExecuteScalar<long>(commandText, parameters: parameters, storedProcedure: true);
+            try
+            {
+                return this.sqlSerializer.ExecuteScalar<long>(commandText, parameters: parameters, storedProcedure: true);
+            }
+            catch (SqlException sqlEx)
+            {
+                if (sqlEx.Errors.Count > 0 && sqlEx.Errors[0].Number == 45120)
+                {
+                    throw new BadRequestException(sqlEx.Errors[0].Message);
+                }
+
+                throw;
+            }
         }
 
         /// <summary>

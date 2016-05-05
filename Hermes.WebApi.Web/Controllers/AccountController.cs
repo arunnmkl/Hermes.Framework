@@ -183,6 +183,7 @@ namespace Hermes.WebApi.Web.Controllers
 
         [AllowAnonymous]
         [Route("Register")]
+        [ApiExceptionFilter]
         public IHttpActionResult Register(UserModel userModel)
         {
             if (!ModelState.IsValid)
@@ -226,7 +227,7 @@ namespace Hermes.WebApi.Web.Controllers
                 return BadRequest("External user is already registered");
             }
 
-            var userId = AuthenticationCommands.AddUser(model.UserName, string.Empty);
+            var userId = AuthenticationCommands.AddUser(model.UserName, model.Password);
 
             if (userId < 1)
             {

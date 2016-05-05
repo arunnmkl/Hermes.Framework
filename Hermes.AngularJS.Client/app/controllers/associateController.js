@@ -7,7 +7,9 @@ app.controller('associateController', ['$scope', '$location', '$timeout', 'authS
     $scope.registerData = {
         userName: authService.externalAuthData.userName,
         provider: authService.externalAuthData.provider,
-        externalAccessToken: authService.externalAuthData.externalAccessToken
+        externalAccessToken: authService.externalAuthData.externalAccessToken,
+        password: "",
+        confirmPassword: ""
     };
 
     $scope.registerExternal = function () {
@@ -15,7 +17,7 @@ app.controller('associateController', ['$scope', '$location', '$timeout', 'authS
         authService.registerExternal($scope.registerData).then(function (response) {
 
             $scope.savedSuccessfully = true;
-            $scope.message = "User has been registered successfully, you will be redicted to orders page in 2 seconds.";
+            $scope.message = "User has been registered successfully, you will be redirected to orders page in 2 seconds.";
             startTimer();
 
         },

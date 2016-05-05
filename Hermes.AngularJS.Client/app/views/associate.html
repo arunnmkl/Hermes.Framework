@@ -13,6 +13,8 @@
             <div class="col-md-6">
                 <div class="form-group">
                     <input type="text" class="form-control" placeholder="Username" data-ng-model="registerData.userName" required autofocus>
+                    <input type="password" class="form-control" placeholder="Password" data-ng-model="registerData.password" required>
+                    <input type="password" class="form-control" placeholder="Confirm Password" data-ng-model="registerData.confirmPassword" required>
                     <button class="btn btn-sm btn-info btn-block" type="button" style="margin-top:10px;" data-ng-click="registerExternal()">Register</button>
                 </div>
                 <div data-ng-hide="message == ''" data-ng-class="(savedSuccessfully) ? 'alert alert-success' : 'alert alert-danger'">
