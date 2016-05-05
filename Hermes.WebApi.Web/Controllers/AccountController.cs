@@ -22,6 +22,7 @@ using System.Web.Http;
 using Hermes.WebApi.Core;
 using Hermes.WebApi.Extensions;
 using Hermes.WebApi.Extensions.Authentication;
+using Hermes.WebApi.Extensions.Common;
 using Hermes.WebApi.Extensions.Owin.Externals;
 using Hermes.WebApi.Extensions.Validation;
 using Hermes.WebApi.Security.Models;
@@ -136,7 +137,7 @@ namespace Hermes.WebApi.Web.Controllers
             }
 
             //generate access token response
-            var accessTokenResponse = GenerateLocalAccessTokenResponse(userIdentity);
+            var accessTokenResponse = Helper.GenerateLocalAccessTokenResponse(userIdentity);
 
             return Ok(accessTokenResponse);
 
@@ -244,7 +245,7 @@ namespace Hermes.WebApi.Web.Controllers
             var isInserted = AuthenticationCommands.AddNewUserLoginProvider(authProvider);
 
             //generate access token response
-            var accessTokenResponse = GenerateLocalAccessTokenResponse(AuthenticationCommands.GetAuthenticatedUserByUserId(userId));
+            var accessTokenResponse = Helper.GenerateLocalAccessTokenResponse(AuthenticationCommands.GetAuthenticatedUserByUserId(userId));
 
             return Ok(accessTokenResponse);
         }
@@ -271,48 +272,6 @@ namespace Hermes.WebApi.Web.Controllers
             var accessToken = Startup.OAuthBearerOptions.AccessTokenFormat.Protect(ticket);
 
             return accessToken;
-        }
-
-        /// <summary>
-        /// Generates the local access token response.
-        /// </summary>
-        /// <param name="userIdentity">The user identity.</param>
-        /// <returns></returns>
-        private JObject GenerateLocalAccessTokenResponse(UserIdentity userIdentity)
-        {
-            TimeSpan tokenExpiration = TimeSpan.FromDays(1);
-
-            ClaimsIdentity identity = new ClaimsIdentity(OAuthDefaults.AuthenticationType);
-            identity.AddClaim(new Claim(ClaimTypes.Name, userIdentity.Username));
-            identity.AddClaim(new Claim(ClaimTypes.Sid, userIdentity.SecurityId.ToString()));
-            if (userIdentity.Roles != null)
-            {
-                foreach (var role in userIdentity.Roles)
-                {
-                    identity.AddClaim(new Claim(ClaimTypes.Role, role.Name));
-                }
-            }
-
-            var props = new AuthenticationProperties()
-            {
-                IssuedUtc = DateTime.UtcNow,
-                ExpiresUtc = DateTime.UtcNow.Add(tokenExpiration),
-            };
-
-            var ticket = new AuthenticationTicket(identity, props);
-
-            var accessToken = Startup.OAuthBearerOptions.AccessTokenFormat.Protect(ticket);
-
-            JObject tokenResponse = new JObject(
-                new JProperty("userName", userIdentity.Username)
-                , new JProperty("access_token", accessToken)
-                , new JProperty("token_type", "bearer")
-                , new JProperty("expires_in", tokenExpiration.TotalSeconds.ToString())
-                , new JProperty(".issued", ticket.Properties.IssuedUtc.ToString())
-                , new JProperty(".expires", ticket.Properties.ExpiresUtc.ToString())
-            );
-
-            return tokenResponse;
         }
     }
 }

@@ -15,14 +15,14 @@ namespace Hermes.WebApi.Security
         /// <summary>
         /// The authentication repo
         /// </summary>
-        private readonly AuthRepository authRepo;
+        private readonly AuthSqlRepository authRepo;
 
         /// <summary>
         /// Initializes a new instance of the <see cref="UserManager"/> class.
         /// </summary>
         public UserManager()
         {
-            authRepo = new AuthRepository(AuthContext.AuthDal);
+            authRepo = new AuthSqlRepository(AuthContext.AuthDal);
         }
 
         /// <summary>
@@ -133,6 +133,25 @@ namespace Hermes.WebApi.Security
         public UserIdentity GetAuthenticatedUserByUserId(long userId)
         {
             return authRepo.GetAuthenticatedUserByUserId(userId);
+        }
+
+        /// Gets the user permissions.
+        /// </summary>
+        /// <param name="userId">The user identifier.</param>
+        /// <returns>user permissions</returns>
+        internal IList<ResourceAccessRule> GetUserPermissions(long userId)
+        {
+            return authRepo.GetUserPermissions(userId);
+        }
+
+        /// <summary>
+        /// Gets the user resource permission.
+        /// </summary>
+        /// <param name="securityIds">The security ids.</param>
+        /// <returns>user resource permissions</returns>
+        internal IList<ResourceAccessRule> GetUserResourcePermission(IList<string> securityIds)
+        {
+            return authRepo.GetUserResourcePermission(securityIds);
         }
 
         /// <summary>

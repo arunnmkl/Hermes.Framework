@@ -130,6 +130,8 @@
     <Compile Include="Common\ComponentPaths.cs" />
     <Compile Include="Common\ComponentPathsConfigurationSection.cs" />
     <Compile Include="ApiExceptionFilter.cs" />
+    <Compile Include="Common\Helper.cs" />
+    <Compile Include="Common\IdentityProvider.cs" />
     <Compile Include="GlobalSuppressions.cs" />
     <Compile Include="Logging\Logging.cs" />
     <Compile Include="Owin\AuthorizationServerProvider.cs">

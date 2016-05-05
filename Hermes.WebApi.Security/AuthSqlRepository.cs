@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Data;
 using System.Data.SqlClient;
 using System.Linq;
 using Hermes.WebApi.Base.SqlSerializer;
@@ -10,7 +11,7 @@ namespace Hermes.WebApi.Security
     /// <summary>
     /// Authentication repository.
     /// </summary>
-    public class AuthRepository : IDisposable
+    public class AuthSqlRepository : IDisposable
     {
         /// <summary>
         /// The SQL serializer
@@ -18,10 +19,10 @@ namespace Hermes.WebApi.Security
         private readonly SqlSerializer sqlSerializer;
 
         /// <summary>
-        /// Initializes a new instance of the <see cref="AuthRepository"/> class.
+        /// Initializes a new instance of the <see cref="AuthSqlRepository"/> class.
         /// </summary>
         /// <param name="sqlSerializer">The SQL serializer.</param>
-        internal AuthRepository(SqlSerializer sqlSerializer)
+        internal AuthSqlRepository(SqlSerializer sqlSerializer)
         {
             this.sqlSerializer = sqlSerializer;
         }
@@ -269,6 +270,34 @@ namespace Hermes.WebApi.Security
         }
 
         /// <summary>
+        /// Gets the user permissions.
+        /// </summary>
+        /// <param name="userId">The user identifier.</param>
+        /// <returns>user permissions</returns>
+        internal IList<ResourceAccessRule> GetUserPermissions(long userId)
+        {
+            string commandText = "[dbo].[spGetUserPermissions]";
+
+            var param = new Parameter("@userID", userId);
+
+            return this.sqlSerializer.DeserializeMultiRecords<ResourceAccessRule>(commandText, param, storedProcedure: true);
+        }
+
+        /// <summary>
+        /// Gets the user resource permission.
+        /// </summary>
+        /// <param name="securityIds">The security ids.</param>
+        /// <returns>user resource permissions</returns>
+        internal IList<ResourceAccessRule> GetUserResourcePermission(IList<string> securityIds)
+        {
+            string commandText = "[dbo].[spGetUserResourcePermission]";
+
+            var param = new Parameter("@SIDList", GetSecurityIdsAsDatatable(securityIds), "dbo.SecurityIdList");
+
+            return this.sqlSerializer.DeserializeMultiRecords<ResourceAccessRule>(commandText, param, storedProcedure: true);
+        }
+
+        /// <summary>
         /// Performs application-defined tasks associated with freeing, releasing, or resetting unmanaged resources.
         /// </summary>
         public void Dispose()
@@ -286,6 +315,25 @@ namespace Hermes.WebApi.Security
             if (disposing)
             {
                 //// Dispose any managed objects
+            }
+        }
+
+        /// <summary>
+        /// Gets the security ids as data table.
+        /// </summary>
+        /// <returns>security ids list as data table</returns>
+        private DataTable GetSecurityIdsAsDatatable(IList<string> securityIds)
+        {
+            using (DataTable dtSecurityIds = new DataTable("SIDList"))
+            {
+                dtSecurityIds.Locale = System.Globalization.CultureInfo.InvariantCulture;
+                dtSecurityIds.Columns.Add("SID", type: typeof(string));
+                foreach (var item in securityIds)
+                {
+                    dtSecurityIds.Rows.Add(item.ToString());
+                }
+
+                return dtSecurityIds;
             }
         }
     }

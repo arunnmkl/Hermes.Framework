@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Security.Claims;
 using System.Threading.Tasks;
+using Hermes.WebApi.Extensions.Common;
 using Hermes.WebApi.Security;
 using Hermes.WebApi.Security.Models;
 using Microsoft.Owin.Security.OAuth;
@@ -29,16 +30,7 @@ namespace Hermes.WebApi.Extensions.Authentication
 
                 if (userIdentity != null)
                 {
-                    var identity = new ClaimsIdentity("ClaimsIdentityAuth");
-                    identity.AddClaim(new Claim(ClaimTypes.Name, userIdentity.Username));
-                    identity.AddClaim(new Claim(ClaimTypes.Sid, userIdentity.SecurityId.ToString()));
-                    if (userIdentity.Roles != null)
-                    {
-                        foreach (var role in userIdentity.Roles)
-                        {
-                            identity.AddClaim(new Claim(ClaimTypes.Role, role.Name));
-                        }
-                    }
+                    var identity = IdentityProvider.GetClaimsIdentity(userIdentity, "ClaimsIdentityAuth");
 
                     return new ClaimsPrincipal(identity);
                 }
@@ -91,7 +83,7 @@ namespace Hermes.WebApi.Extensions.Authentication
             {
                 return um.GetAuthenticatedUserByUserId(userId);
             }
-        } 
+        }
 
         /// <summary>
         /// Removes the refresh token.
@@ -146,16 +138,7 @@ namespace Hermes.WebApi.Extensions.Authentication
 
                 if (userIdentity != null)
                 {
-                    var identity = new ClaimsIdentity(context.Options.AuthenticationType);
-                    identity.AddClaim(new Claim(ClaimTypes.Name, userIdentity.Username));
-                    identity.AddClaim(new Claim(ClaimTypes.Sid, userIdentity.SecurityId.ToString()));
-                    if (userIdentity.Roles != null)
-                    {
-                        foreach (var role in userIdentity.Roles)
-                        {
-                            identity.AddClaim(new Claim(ClaimTypes.Role, role.Name));
-                        }
-                    }
+                    var identity = IdentityProvider.GetClaimsIdentity(userIdentity, context.Options.AuthenticationType); 
 
                     return Task.FromResult(identity);
                 }
