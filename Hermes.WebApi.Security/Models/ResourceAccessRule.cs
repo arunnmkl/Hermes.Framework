@@ -21,12 +21,26 @@ namespace Hermes.WebApi.Security.Models
         public string ResourceName { get; set; }
 
         /// <summary>
-        /// Gets or sets the required permission.
+        /// Gets or sets the permission.
         /// </summary>
         /// <value>
-        /// The required permission.
+        /// The permission.
         /// </value>
         [PropertyMapping("PermissionId")]
-        public Int32 RequiredPermission { get; set; }
+        public Int32 Permission { get; set; }
+
+        /// <summary>
+        /// Gets the permission string.
+        /// </summary>
+        /// <value>
+        /// The permission string.
+        /// </value>
+        public string PermissionString
+        {
+            get
+            {
+                return ((Permission)this.Permission).ToString();
+            }
+        }
     }
 }

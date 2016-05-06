@@ -155,6 +155,13 @@ app.factory('authService', ['$http', '$q', 'localStorageService', 'ngAuthSetting
 
     };
 
+    var _getUserGroupPermission = function () {
+
+        return $http.get(serviceBase + 'api/ResourcePermission/UserGroup').then(function (results) {
+            return results;
+        });
+    };
+
     authServiceFactory.saveRegistration = _saveRegistration;
     authServiceFactory.login = _login;
     authServiceFactory.logOut = _logOut;
@@ -165,6 +172,8 @@ app.factory('authService', ['$http', '$q', 'localStorageService', 'ngAuthSetting
     authServiceFactory.obtainAccessToken = _obtainAccessToken;
     authServiceFactory.externalAuthData = _externalAuthData;
     authServiceFactory.registerExternal = _registerExternal;
+
+    authServiceFactory.getUserGroupPermission = _getUserGroupPermission;
 
     return authServiceFactory;
 }]);

@@ -19,6 +19,7 @@ app.controller('associateController', ['$scope', '$location', '$timeout', 'authS
             $scope.savedSuccessfully = true;
             $scope.message = "User has been registered successfully, you will be redirected to orders page in 2 seconds.";
             startTimer();
+            $scope.$emit('userAuthorized', true);
 
         },
           function (response) {
@@ -26,6 +27,7 @@ app.controller('associateController', ['$scope', '$location', '$timeout', 'authS
               for (var key in response.modelState) {
                   errors.push(response.modelState[key]);
               }
+              $scope.$emit('userAuthorized', false);
               $scope.message = "Failed to register user due to:" + errors.join(' ');
           });
     };

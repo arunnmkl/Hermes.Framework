@@ -14,18 +14,19 @@ app.controller('loginController', ['$scope', '$location', 'authService', 'ngAuth
     $scope.login = function () {
 
         authService.login($scope.loginData).then(function (response) {
-
+            $scope.$emit('userAuthorized', true);
             $location.path('/orders');
 
         },
          function (err) {
+             $scope.$emit('userAuthorized', false);
              $scope.message = err.error_description;
          });
     };
 
     $scope.authExternalProvider = function (provider) {
 
-        var redirectUri = location.protocol + '//' + location.host + '/authcomplete.html';
+        var redirectUri = location.protocol + '//' + location.host + '/' + location.pathname + '/authcomplete.html';
 
         var externalProviderUrl = ngAuthSettings.apiServiceBaseUri + "api/Account/ExternalLogin?provider=" + provider
                                                                     + "&response_type=token&client_id=" + ngAuthSettings.clientId
@@ -55,11 +56,12 @@ app.controller('loginController', ['$scope', '$location', 'authService', 'ngAuth
                 //Obtain access token and redirect to orders
                 var externalData = { provider: fragment.provider, externalAccessToken: fragment.external_access_token };
                 authService.obtainAccessToken(externalData).then(function (response) {
-
+                    $scope.$emit('userAuthorized', true);
                     $location.path('/orders');
 
                 },
              function (err) {
+                 $scope.$emit('userAuthorized', false);
                  $scope.message = err.error_description;
              });
             }

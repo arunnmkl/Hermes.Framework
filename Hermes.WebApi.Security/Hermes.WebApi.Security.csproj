@@ -52,6 +52,7 @@
     <Compile Include="AuthSqlRepository.cs" />
     <Compile Include="Helper.cs" />
     <Compile Include="Models\AuthClient.cs" />
+    <Compile Include="Models\Enums.cs" />
     <Compile Include="Models\ExternalLoginModel.cs" />
     <Compile Include="Models\RefreshToken.cs" />
     <Compile Include="Models\ResourceAccessRule.cs" />
