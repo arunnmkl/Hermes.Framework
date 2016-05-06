@@ -126,6 +126,32 @@ namespace Hermes.WebApi.Extensions.Authentication
             }
         }
 
+        /// <summary>
+        /// Gets the user permissions.
+        /// </summary>
+        /// <returns></returns>
+        public static IList<ResourceAccessRule> GetUserPermissions()
+        {
+            using (UserManager um = new UserManager())
+            {
+                return um.GetUserPermissions(AuthContext.UserId);
+            }
+        }
+
+        /// <summary>
+        /// Gets the user resource permission.
+        /// </summary>
+        /// <returns>
+        /// user resource permissions
+        /// </returns>
+        public static IList<ResourceAccessRule> GetUserResourcePermission()
+        {
+            using (UserManager um = new UserManager())
+            {
+                return um.GetUserResourcePermission(AuthContext.SecurityIds);
+            }
+        }
+
         #endregion Public Methods
 
         #region Internal Methods

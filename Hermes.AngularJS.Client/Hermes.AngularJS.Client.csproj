@@ -80,6 +80,7 @@
     <Content Include="app\views\refresh.html" />
     <Content Include="app\views\signup.html" />
     <Content Include="app\views\tokens.html" />
+    <Content Include="app\views\unauthorized.html" />
     <Content Include="authComplete.html" />
     <Content Include="Content\css\bootstrap-theme.css" />
     <Content Include="Content\css\bootstrap-theme.min.css" />

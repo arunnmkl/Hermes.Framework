@@ -175,6 +175,7 @@
     <Compile Include="Controllers\OrdersController.cs" />
     <Compile Include="Controllers\RefreshTokenController.cs" />
     <Compile Include="Controllers\UserController.cs" />
+    <Compile Include="Controllers\UserPermissionController.cs" />
     <Compile Include="Models\Login.cs" />
     <Compile Include="Models\UserModel.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />

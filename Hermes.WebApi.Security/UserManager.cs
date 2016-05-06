@@ -139,7 +139,7 @@ namespace Hermes.WebApi.Security
         /// </summary>
         /// <param name="userId">The user identifier.</param>
         /// <returns>user permissions</returns>
-        internal IList<ResourceAccessRule> GetUserPermissions(long userId)
+        public IList<ResourceAccessRule> GetUserPermissions(long userId)
         {
             return authRepo.GetUserPermissions(userId);
         }
@@ -149,7 +149,7 @@ namespace Hermes.WebApi.Security
         /// </summary>
         /// <param name="securityIds">The security ids.</param>
         /// <returns>user resource permissions</returns>
-        internal IList<ResourceAccessRule> GetUserResourcePermission(IList<string> securityIds)
+        public IList<ResourceAccessRule> GetUserResourcePermission(IList<string> securityIds)
         {
             return authRepo.GetUserResourcePermission(securityIds);
         }
