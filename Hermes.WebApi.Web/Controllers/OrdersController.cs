@@ -38,6 +38,13 @@ namespace Hermes.WebApi.Web.Controllers
             return Ok(Order.CreateOrders());
         }
 
+        [Authorize(Roles = "Manager")]
+        [Route("Manager")]
+        public IHttpActionResult GetManagerAuth()
+        {
+            return Ok(Order.CreateOrders().FirstOrDefault());
+        }
+
     }
 
 

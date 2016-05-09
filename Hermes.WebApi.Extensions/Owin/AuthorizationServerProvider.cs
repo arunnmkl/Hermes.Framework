@@ -51,6 +51,7 @@ namespace GlobalTranz.WebApi.Extensions.Owin
             if (client == null)
             {
                 context.SetError("invalid_clientId", string.Format("Client '{0}' is not registered in the system.", context.ClientId));
+                context.Rejected();
                 return Task.FromResult<object>(null);
             }
 
@@ -59,6 +60,7 @@ namespace GlobalTranz.WebApi.Extensions.Owin
                 if (string.IsNullOrWhiteSpace(clientSecret))
                 {
                     context.SetError("invalid_clientId", "Client secret should be sent.");
+                    context.Rejected();
                     return Task.FromResult<object>(null);
                 }
                 else
@@ -66,6 +68,7 @@ namespace GlobalTranz.WebApi.Extensions.Owin
                     if (client.Secret != Helper.GetHash(clientSecret))
                     {
                         context.SetError("invalid_clientId", "Client secret is invalid.");
+                        context.Rejected();
                         return Task.FromResult<object>(null);
                     }
                 }
@@ -74,6 +77,7 @@ namespace GlobalTranz.WebApi.Extensions.Owin
             if (!client.IsActive)
             {
                 context.SetError("invalid_clientId", "Client is inactive.");
+                context.Rejected();
                 return Task.FromResult<object>(null);
             }
 
@@ -114,6 +118,7 @@ namespace GlobalTranz.WebApi.Extensions.Owin
             if (identity == null)
             {
                 context.SetError("invalid_grant", "The user name or password is incorrect.");
+                context.Rejected();
                 return;
             }
 

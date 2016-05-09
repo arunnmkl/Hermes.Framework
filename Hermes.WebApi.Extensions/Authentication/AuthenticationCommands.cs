@@ -1,5 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.Security.Claims;
 using System.Threading.Tasks;
 using Hermes.WebApi.Extensions.Common;
@@ -30,7 +29,7 @@ namespace Hermes.WebApi.Extensions.Authentication
 
                 if (userIdentity != null)
                 {
-                    var identity = IdentityProvider.GetClaimsIdentity(userIdentity, "ClaimsIdentityAuth");
+                    var identity = ClaimsIdentityProvider.GetClaimsIdentity(userIdentity, "ClaimsIdentityAuth");
 
                     return new ClaimsPrincipal(identity);
                 }
@@ -154,7 +153,7 @@ namespace Hermes.WebApi.Extensions.Authentication
 
         #endregion Public Methods
 
-        #region Internal Methods
+        #region Internal Methods 
 
         internal static Task<ClaimsIdentity> AuthenticateUsernamePassword(OAuthGrantResourceOwnerCredentialsContext context)
         {
@@ -164,7 +163,7 @@ namespace Hermes.WebApi.Extensions.Authentication
 
                 if (userIdentity != null)
                 {
-                    var identity = IdentityProvider.GetClaimsIdentity(userIdentity, context.Options.AuthenticationType); 
+                    var identity = ClaimsIdentityProvider.GetClaimsIdentity(userIdentity, context.Options.AuthenticationType);
 
                     return Task.FromResult(identity);
                 }
@@ -174,13 +173,11 @@ namespace Hermes.WebApi.Extensions.Authentication
             return Task.FromResult<ClaimsIdentity>(null);
         }
 
-        internal static ClaimsIdentity AuthenticateTicket(string ticket)
+        internal static ClaimsIdentity AuthenticateTicket(string accessToken)
         {
-            var identity = new ClaimsIdentity("Type");
-            identity.AddClaim(new Claim(ClaimTypes.Name, "UserName"));
-            identity.AddClaim(new Claim(ClaimTypes.Role, "user"));
+            var ticket = Common.Helper.UnprotectAccessToken(accessToken);
 
-            return identity;
+            return ticket.Identity as ClaimsIdentity;
         }
 
         /// <summary>

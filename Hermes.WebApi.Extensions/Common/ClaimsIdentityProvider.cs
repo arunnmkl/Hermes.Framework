@@ -4,14 +4,15 @@ using System.Linq;
 using System.Security.Claims;
 using System.Text;
 using System.Threading.Tasks;
+using Hermes.WebApi.Security;
 using Hermes.WebApi.Security.Models;
 
 namespace Hermes.WebApi.Extensions.Common
 {
     /// <summary>
-    /// Identity provider.
+    /// Claims identity provider.
     /// </summary>
-    public class IdentityProvider
+    public class ClaimsIdentityProvider
     {
         /// <summary>
         /// Gets the claims identity.

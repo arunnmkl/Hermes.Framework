@@ -23,77 +23,84 @@ using GTZSecurity = Hermes.WebApi.Core.Security;
 
 namespace Hermes.WebApi.Extensions.Authentication
 {
-	/// <summary>
-	/// Class AuthenticationCommand, which contains all the authentication type classes
-	/// </summary>
-	public class AuthenticationCommand : SkipAuthorizationBase, IAuthenticationCommand
-	{
-		/// <summary>
-		/// Gets or sets the authentication commands.
-		/// </summary>
-		/// <value>The authentication commands.</value>
-		public HashSet<IAuthentication> AuthenticationCommands { get; set; }
+    /// <summary>
+    /// Class AuthenticationCommand, which contains all the authentication type classes
+    /// </summary>
+    public class AuthenticationCommand : SkipAuthorizationBase, IAuthenticationCommand
+    {
+        /// <summary>
+        /// Gets or sets the authentication commands.
+        /// </summary>
+        /// <value>The authentication commands.</value>
+        public HashSet<IAuthentication> AuthenticationCommands { get; set; }
 
-		/// <summary>
-		/// Initializes a new instance of the <see cref="AuthenticationCommand" /> class.
-		/// </summary>
-		public AuthenticationCommand()
-		{
-			AuthenticationCommands = new HashSet<IAuthentication>();
+        /// <summary>
+        /// Initializes a new instance of the <see cref="AuthenticationCommand" /> class.
+        /// </summary>
+        public AuthenticationCommand()
+        {
+            AuthenticationCommands = new HashSet<IAuthentication>();
 
-			// Add all the authentication logic in here
-			AuthenticationCommands.Add(new CookieAuthenticationController());
-			AuthenticationCommands.Add(new BasicAuthenticateController());
-		}
+            // Add all the authentication logic in here
+            if (GTZSecurity.Configuration.Current.CookieAuthenticationEnabled)
+            {
+                AuthenticationCommands.Add(new CookieAuthenticationController());
+            }
 
-		/// <summary>
-		/// Adds the new command.
-		/// </summary>
-		/// <param name="authentication">The authentication.</param>
-		public void AddNewCommand(IAuthentication authentication)
-		{
-			AuthenticationCommands.Add(authentication);
-		}
+            if (GTZSecurity.Configuration.Current.BasicAuthenticationEnabled)
+            {
+                AuthenticationCommands.Add(new BasicAuthenticateController());
+            }
+        }
 
-		/// <summary>
-		/// Skips the authorization, for OAuth validation.
-		/// </summary>
-		/// <param name="actionContext">The action context.</param>
-		/// <returns></returns>
-		public override bool SkipAuthorization(HttpActionContext actionContext)
-		{
-			var request = actionContext.ControllerContext.Request;
-			var authenticationHeader = request.Headers.Authorization;
+        /// <summary>
+        /// Adds the new command.
+        /// </summary>
+        /// <param name="authentication">The authentication.</param>
+        public void AddNewCommand(IAuthentication authentication)
+        {
+            AuthenticationCommands.Add(authentication);
+        }
 
-			if (authenticationHeader != null
-				&& authenticationHeader.Scheme == "Bearer"
-				&& !String.IsNullOrEmpty(authenticationHeader.Parameter))
-			{
-				return true;
-			}
+        /// <summary>
+        /// Skips the authorization, for OAuth validation.
+        /// </summary>
+        /// <param name="actionContext">The action context.</param>
+        /// <returns></returns>
+        public override bool SkipAuthorization(HttpActionContext actionContext)
+        {
+            var request = actionContext.ControllerContext.Request;
+            var authenticationHeader = request.Headers.Authorization;
 
-			return base.SkipAuthorization(actionContext);
-		}
+            if (authenticationHeader != null
+                && authenticationHeader.Scheme == "Bearer"
+                && !String.IsNullOrEmpty(authenticationHeader.Parameter))
+            {
+                return true;
+            }
 
-		/// <summary>
-		/// Validates the CSRF attack.
-		/// </summary>
-		/// <param name="context">The context.</param>
-		/// <returns><c>true</c> if valid token, <c>false</c> otherwise.</returns>
-		public bool ValidateCSRFAttack(HttpAuthenticationContext context)
-		{
-			bool isCsrf = true;
-			ICSRFValidation validator = DependencyResolverContainer.Resolve<ICSRFValidation>();
-			if (validator != null)
-			{
-				var request = context.Request;
-				string csrfCookie = request.GetCookie(GTZSecurity.Configuration.Current.CSRFCookieName);
-				string csrfHeaderValue = request.GetHeader(GTZSecurity.Configuration.Current.CSRFHeaderName);
+            return base.SkipAuthorization(actionContext);
+        }
 
-				isCsrf = string.IsNullOrEmpty(csrfCookie) || string.IsNullOrEmpty(csrfHeaderValue) ? true : validator.Validate(csrfCookie, csrfHeaderValue);
-			}
+        /// <summary>
+        /// Validates the CSRF attack.
+        /// </summary>
+        /// <param name="context">The context.</param>
+        /// <returns><c>true</c> if valid token, <c>false</c> otherwise.</returns>
+        public bool ValidateCSRFAttack(HttpAuthenticationContext context)
+        {
+            bool isCsrf = true;
+            ICSRFValidation validator = DependencyResolverContainer.Resolve<ICSRFValidation>();
+            if (validator != null)
+            {
+                var request = context.Request;
+                string csrfCookie = request.GetCookie(GTZSecurity.Configuration.Current.CSRFCookieName);
+                string csrfHeaderValue = request.GetHeader(GTZSecurity.Configuration.Current.CSRFHeaderName);
 
-			return isCsrf;
-		}
-	}
+                isCsrf = string.IsNullOrEmpty(csrfCookie) || string.IsNullOrEmpty(csrfHeaderValue) ? true : validator.Validate(csrfCookie, csrfHeaderValue);
+            }
+
+            return isCsrf;
+        }
+    }
 }

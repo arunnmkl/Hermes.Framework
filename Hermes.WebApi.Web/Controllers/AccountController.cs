@@ -168,7 +168,7 @@ namespace Hermes.WebApi.Web.Controllers
                     };
 
                     var ticket = new AuthenticationTicket(principal.Identity as ClaimsIdentity, properties);
-                    var accessToken = Startup.OAuthBearerOptions.AccessTokenFormat.Protect(ticket);
+                    var accessToken = Helper.ProtectAccessToken(ticket);
                     response.SetAuthentication(accessToken, login.RememberMe);
 
                     return response;
@@ -269,7 +269,7 @@ namespace Hermes.WebApi.Web.Controllers
 
             var ticket = new AuthenticationTicket(identity, props);
 
-            var accessToken = Startup.OAuthBearerOptions.AccessTokenFormat.Protect(ticket);
+            var accessToken = Helper.ProtectAccessToken(ticket);
 
             return accessToken;
         }

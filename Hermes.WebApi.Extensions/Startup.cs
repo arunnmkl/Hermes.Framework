@@ -1,18 +1,16 @@
-﻿using AngularJSAuthentication.API.Providers;
+﻿using System;
+using System.Configuration;
+using System.Web.Http;
+using AngularJSAuthentication.API.Providers;
 using GlobalTranz.WebApi.Extensions.Owin;
 using Hermes.WebApi.Extensions.Owin.Externals;
 using Microsoft.AspNet.Identity;
 using Microsoft.Owin;
 using Microsoft.Owin.Cors;
-using Microsoft.Owin.Security;
-using Microsoft.Owin.Security.Cookies;
 using Microsoft.Owin.Security.Facebook;
 using Microsoft.Owin.Security.Google;
 using Microsoft.Owin.Security.OAuth;
 using Owin;
-using System;
-using System.Web.Http;
-using System.Configuration;
 
 [assembly: OwinStartup(typeof(Hermes.WebApi.Extensions.Startup))]
 
@@ -78,9 +76,10 @@ namespace Hermes.WebApi.Extensions
             {
                 AllowInsecureHttp = true,
                 TokenEndpointPath = new PathString("/token"),
-                AccessTokenExpireTimeSpan = TimeSpan.FromMinutes(30),
+                AccessTokenExpireTimeSpan = TimeSpan.FromMinutes(5),
                 Provider = new AuthorizationServerProvider(),
-                RefreshTokenProvider = new RefreshTokenProvider()
+                RefreshTokenProvider = new RefreshTokenProvider(),
+                ApplicationCanDisplayErrors = true
             };
 
             app.UseOAuthAuthorizationServer(OAuthServerOptions);

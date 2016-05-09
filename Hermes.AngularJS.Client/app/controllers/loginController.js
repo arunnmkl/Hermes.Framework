@@ -34,6 +34,7 @@ app.controller('loginController', ['$scope', '$location', 'authService', 'ngAuth
         window.$windowScope = $scope;
 
         var oauthWindow = window.open(externalProviderUrl, "Authenticate Account", "location=0,status=0,width=600,height=750");
+        oauthWindow.document.title = "Request for Permission";
     };
 
     $scope.authCompletedCB = function (fragment) {

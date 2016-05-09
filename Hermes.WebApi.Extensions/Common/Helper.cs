@@ -22,7 +22,7 @@ namespace Hermes.WebApi.Extensions.Common
         {
             TimeSpan tokenExpiration = TimeSpan.FromDays(1);
 
-            ClaimsIdentity identity = IdentityProvider.GetClaimsIdentity(userIdentity, OAuthDefaults.AuthenticationType);
+            ClaimsIdentity identity = ClaimsIdentityProvider.GetClaimsIdentity(userIdentity, OAuthDefaults.AuthenticationType);
 
             var props = new AuthenticationProperties()
             {
@@ -32,7 +32,7 @@ namespace Hermes.WebApi.Extensions.Common
 
             var ticket = new AuthenticationTicket(identity, props);
 
-            var accessToken = Startup.OAuthBearerOptions.AccessTokenFormat.Protect(ticket);
+            var accessToken = ProtectAccessToken(ticket);
 
             JObject tokenResponse = new JObject(
                 new JProperty("userName", userIdentity.Username)
@@ -44,6 +44,26 @@ namespace Hermes.WebApi.Extensions.Common
             );
 
             return tokenResponse;
+        }
+
+        /// <summary>
+        /// Protects the access token.
+        /// </summary>
+        /// <param name="ticket">The ticket.</param>
+        /// <returns>protected access token</returns>
+        public static string ProtectAccessToken(AuthenticationTicket ticket)
+        {
+            return Startup.OAuthBearerOptions.AccessTokenFormat.Protect(ticket);
+        }
+
+        /// <summary>
+        /// Unprotects the access token.
+        /// </summary>
+        /// <param name="protectedText">The protected text.</param>
+        /// <returns>authentication ticket</returns>
+        public static AuthenticationTicket UnprotectAccessToken(string protectedText)
+        {
+            return Startup.OAuthBearerOptions.AccessTokenFormat.Unprotect(protectedText);
         }
     }
 }
