@@ -162,6 +162,13 @@ app.factory('authService', ['$http', '$q', 'localStorageService', 'ngAuthSetting
         });
     };
 
+    var _isAuthorized = function () {
+
+        return $http.get(serviceBase + 'api/Account/IsAuthorized').then(function (results) {
+            return results;
+        });
+    };
+
     authServiceFactory.saveRegistration = _saveRegistration;
     authServiceFactory.login = _login;
     authServiceFactory.logOut = _logOut;
@@ -174,6 +181,7 @@ app.factory('authService', ['$http', '$q', 'localStorageService', 'ngAuthSetting
     authServiceFactory.registerExternal = _registerExternal;
 
     authServiceFactory.getUserGroupPermission = _getUserGroupPermission;
+    authServiceFactory.isAuthorized = _isAuthorized;
 
     return authServiceFactory;
 }]);

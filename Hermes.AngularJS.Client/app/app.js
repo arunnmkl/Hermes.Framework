@@ -57,8 +57,8 @@ app.config(function ($routeProvider) {
 
 });
 
-var serviceBase = 'http://localhost/OAuth.Api/';
-//var serviceBase = 'http://localhost:53937/';
+//var serviceBase = 'http://localhost/OAuth.Api/';
+var serviceBase = 'http://localhost:53937/';
 app.constant('ngAuthSettings', {
     apiServiceBaseUri: serviceBase,
     clientId: 'ngAuthApp'
@@ -68,8 +68,11 @@ app.config(function ($httpProvider) {
     $httpProvider.interceptors.push('authInterceptorService');
 });
 
-app.run(['authService', function (authService) {
+app.run(['$rootScope', 'authService', function ($rootScope, authService) {
     authService.fillAuthData();
+    authService.isAuthorized().then(function (response) {
+        $rootScope.$emit('userAuthorized', response.data);
+    });
 }]);
 
 app.config(['AclServiceProvider', function (AclServiceProvider) {
@@ -78,6 +81,7 @@ app.config(['AclServiceProvider', function (AclServiceProvider) {
         storageKey: 'AppAcl'
     };
     AclServiceProvider.config(myConfig);
+    AclServiceProvider.resume();
 }]);
 
 app.run(['$rootScope', 'AclService', 'authService', function ($rootScope, AclService, authService) {
@@ -95,6 +99,10 @@ app.run(['$rootScope', 'AclService', 'authService', function ($rootScope, AclSer
                 //AclService.setAbilities(permission.PermissionString);
                 }
             });
+        }
+        else {
+            AclService.flushRoles();
+            AclService.setAbilities({});
         }
     });
 }]);

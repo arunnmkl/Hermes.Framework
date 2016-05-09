@@ -251,6 +251,18 @@ namespace Hermes.WebApi.Web.Controllers
         }
 
         /// <summary>
+        /// Determines whether this instance is authorized.
+        /// </summary>
+        /// <returns>send whether the user is authorized or not</returns>
+        [AllowAnonymous]
+        [Route("IsAuthorized")]
+        [HttpGet]
+        public HttpResponseMessage IsAuthorized()
+        {
+            return Request.CreateResponse(User.Identity.IsAuthenticated);
+        }
+
+        /// <summary>
         /// Generates the local access token response.
         /// </summary>
         /// <param name="identity">The identity.</param>
