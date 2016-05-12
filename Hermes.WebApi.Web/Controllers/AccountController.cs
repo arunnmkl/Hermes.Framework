@@ -12,12 +12,15 @@
 // <summary>This file has a controller which is used for the authentication.</summary>
 // ***********************************************************************
 using System;
+using System.Collections.Generic;
 using System.Linq;
 using System.Net;
 using System.Net.Http;
 using System.Security.Claims;
 using System.Security.Principal;
+using System.Text;
 using System.Threading.Tasks;
+using System.Web;
 using System.Web.Http;
 using Hermes.WebApi.Core;
 using Hermes.WebApi.Extensions;
@@ -75,7 +78,10 @@ namespace Hermes.WebApi.Web.Controllers
             string redirectUri;
             redirectUri = CommonValidations.TryParseRedirectUri(Request);
 
-            if (string.IsNullOrEmpty(redirectUri)) return BadRequest("Invalid redirect URI(redirect_uri).");
+            if (string.IsNullOrEmpty(redirectUri))
+            {
+                return BadRequest("Invalid redirect URI(redirect_uri).");
+            }
 
             try
             {
@@ -260,6 +266,68 @@ namespace Hermes.WebApi.Web.Controllers
         public HttpResponseMessage IsAuthorized()
         {
             return Request.CreateResponse(User.Identity.IsAuthenticated);
+        }
+
+        /// <summary>
+        /// Posts the specified login.
+        /// </summary>
+        /// <param name="login">The login.</param>
+        /// <returns></returns>
+        [HttpPost]
+        [AllowAnonymous]
+        [Route("Login")]
+        public async Task<HttpResponseMessage> Login(Login model)
+        {
+            if (model == null)
+            {
+                return Request.CreateErrorResponse(HttpStatusCode.BadRequest, "Invalid user data");
+            }
+
+            HttpResponseMessage response = Request.CreateResponse();
+
+            // Ugly hack: I use a server-side HTTP POST because I cannot directly invoke the service (it is deeply hidden in the OAuthAuthorizationServerHandler class)
+            HttpRequest request = HttpContext.Current.Request;
+            string tokenServiceUrl = request.Url.GetLeftPart(UriPartial.Authority) + request.ApplicationPath + "/Token";
+            using (var client = new HttpClient())
+            {
+                var requestParams = new List<KeyValuePair<string, string>>
+                {
+                    new KeyValuePair<string, string>("grant_type", "password"),
+                    new KeyValuePair<string, string>("username", model.Username),
+                    new KeyValuePair<string, string>("password", model.Password)
+                };
+
+                if (string.IsNullOrEmpty(model.ClientId) == false)
+                {
+                    requestParams.Add(new KeyValuePair<string, string>("client_id", model.ClientId));
+                }
+
+                var requestParamsFormUrlEncoded = new FormUrlEncodedContent(requestParams);
+                var tokenServiceResponse = await client.PostAsync(tokenServiceUrl, requestParamsFormUrlEncoded);
+                var responseString = await tokenServiceResponse.Content.ReadAsStringAsync();
+
+                response.StatusCode = tokenServiceResponse.StatusCode;
+                response.Content = new StringContent(responseString, Encoding.UTF8, "application/json");
+                return response;
+            }
+        }
+
+        // POST api/User/Logout
+        /// <summary>
+        /// Logouts this instance.
+        /// </summary>
+        /// <returns></returns>
+        [HttpPost]
+        [Route("Logout")]
+        public IHttpActionResult Logout()
+        {
+            ExternalProvider.SignOut(Request, HttpContext.Current.User.Identity.AuthenticationType);
+            // TODO:: Clean the auth token from DB
+            // TODO: validate the login for new user
+            return this.Ok(new
+            {
+                message = "Logout successful."
+            });
         }
 
         /// <summary>

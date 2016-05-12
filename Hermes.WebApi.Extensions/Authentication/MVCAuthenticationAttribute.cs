@@ -11,22 +11,23 @@
 // </copyright>
 // <summary></summary>
 // ***********************************************************************
-using Hermes.WebApi.Core;
-using Hermes.WebApi.Core.Interfaces;
-using Hermes.WebApi.Core.Security;
 using System;
 using System.Net;
 using System.Security.Principal;
 using System.Threading;
 using System.Web.Mvc;
+using Hermes.WebApi.Core;
+using Hermes.WebApi.Core.Interfaces;
+using Hermes.WebApi.Core.Security;
+
 
 namespace Hermes.WebApi.Extensions.Authentication
 {
-	/// <summary>
-	/// Class MVCAuthenticationAttribute.
-	/// </summary>
-	public class MVCAuthenticationAttribute : AuthorizeAttribute
-	{
+    /// <summary>
+    /// Class MVCAuthenticationAttribute.
+    /// </summary>
+    public class MVCAuthenticationAttribute : AuthorizeAttribute
+    {
 		/// <summary>
 		/// Gets or sets the realm.
 		/// </summary>

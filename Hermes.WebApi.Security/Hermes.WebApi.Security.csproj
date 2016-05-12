@@ -56,6 +56,7 @@
     <Compile Include="Models\ExternalLoginModel.cs" />
     <Compile Include="Models\RefreshToken.cs" />
     <Compile Include="Models\ResourceAccessRule.cs" />
+    <Compile Include="Models\UserAuthToken.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="SecureString.cs" />
     <Compile Include="Models\UserIdentity.cs" />

@@ -155,6 +155,28 @@ namespace Hermes.WebApi.Security
         }
 
         /// <summary>
+        /// Saves the user authentication token.
+        /// </summary>
+        /// <param name="userAuthToken">The user authentication token.</param>
+        /// <returns>saved state</returns>
+        public bool SaveUserAuthToken(UserAuthToken userAuthToken)
+        {
+            return authRepo.SaveUserAuthToken(userAuthToken);
+        }
+
+        /// <summary>
+        /// Determines whether [is user authentication token exists] [the specified user authentication token].
+        /// </summary>
+        /// <param name="userAuthToken">The user authentication token.</param>
+        /// <returns>
+        /// true/false, whether is user authentication token exists or not
+        /// </returns>
+        public bool IsUserAuthTokenExists(UserAuthToken userAuthToken)
+        {
+            return authRepo.IsUserAuthTokenExists(userAuthToken);
+        }
+
+        /// <summary>
         /// Performs application-defined tasks associated with freeing, releasing, or resetting unmanaged resources.
         /// </summary>
         public void Dispose()

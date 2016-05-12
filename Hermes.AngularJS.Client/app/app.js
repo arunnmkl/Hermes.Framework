@@ -28,7 +28,7 @@ app.config(function ($routeProvider) {
         templateUrl: "app/views/refresh.html",
         resolve: {
             'acl': ['$q', 'AclService', function ($q, AclService) {
-                if (AclService.can('Update_Report')) {
+                if (AclService.can('Read_RefreshToken')) {
                     // Has proper permissions
                     return true;
                 } else {

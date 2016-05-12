@@ -4,6 +4,7 @@ using System.Threading.Tasks;
 using Hermes.WebApi.Extensions.Common;
 using Hermes.WebApi.Security;
 using Hermes.WebApi.Security.Models;
+using Microsoft.Owin.Security;
 using Microsoft.Owin.Security.OAuth;
 
 namespace Hermes.WebApi.Extensions.Authentication
@@ -142,12 +143,30 @@ namespace Hermes.WebApi.Extensions.Authentication
         /// </summary>
         /// <returns>
         /// user resource permissions
-        /// </returns>
+        /// </returns>     
         public static IList<ResourceAccessRule> GetUserResourcePermission()
         {
             using (UserManager um = new UserManager())
             {
                 return um.GetUserResourcePermission(AuthContext.SecurityIds);
+            }
+        }
+
+        /// <summary>
+        /// Saves the user authentication token.
+        /// </summary>
+        /// <param name="userAuthToken">The user authentication token.</param>
+        /// <returns>saved state.</returns>
+        public static bool SaveUserAuthToken(UserAuthToken userAuthToken)
+        {
+            using (UserManager um = new UserManager())
+            {
+                if (userAuthToken.UserId == 0)
+                {
+                    userAuthToken.UserId = AuthContext.UserId;
+                }
+
+                return um.SaveUserAuthToken(userAuthToken);
             }
         }
 
@@ -173,11 +192,51 @@ namespace Hermes.WebApi.Extensions.Authentication
             return Task.FromResult<ClaimsIdentity>(null);
         }
 
-        internal static ClaimsIdentity AuthenticateTicket(string accessToken)
+        /// <summary>
+        /// Determines whether [is user authentication token exists] [the specified user authentication token].
+        /// </summary>
+        /// <param name="userAuthToken">The user authentication token.</param>
+        /// <returns>
+        /// true/false, whether is user authentication token exists or not
+        /// </returns>
+        internal static bool IsUserAuthTokenExists(UserAuthToken userAuthToken)
+        {
+            using (UserManager um = new UserManager())
+            {
+                if (userAuthToken.UserId == 0)
+                {
+                    userAuthToken.UserId = AuthContext.UserId;
+                }
+
+                return um.IsUserAuthTokenExists(userAuthToken);
+            }
+        }
+
+        /// <summary>
+        /// Converts the token as claims identity.
+        /// </summary>
+        /// <param name="accessToken">The access token.</param>
+        /// <returns>claims identity</returns>
+        internal static ClaimsIdentity ConvertTokenAsClaimsIdentity(string accessToken)
         {
             var ticket = Common.Helper.UnprotectAccessToken(accessToken);
+            if (ticket is AuthenticationTicket)
+            {
+                return ticket.Identity as ClaimsIdentity;
+            }
 
-            return ticket.Identity as ClaimsIdentity;
+            return null;
+        }
+
+        /// <summary>
+        /// Converts the token as authentication ticket.
+        /// </summary>
+        /// <param name="accessToken">The access token.</param>
+        /// <returns>authentication ticket</returns>
+        internal static AuthenticationTicket ConvertTokenAsAuthTicket(string accessToken)
+        {
+            var ticket = Common.Helper.UnprotectAccessToken(accessToken);
+            return ticket as AuthenticationTicket;
         }
 
         /// <summary>

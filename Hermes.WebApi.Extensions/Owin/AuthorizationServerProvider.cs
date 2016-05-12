@@ -1,12 +1,16 @@
-﻿using Hermes.WebApi.Extensions.Authentication;
-using Microsoft.Owin.Security;
-using Microsoft.Owin.Security.OAuth;
+﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Net;
 using System.Security.Claims;
 using System.Threading.Tasks;
+using Hermes.WebApi.Extensions.Authentication;
+using Hermes.WebApi.Extensions.Common;
 using Hermes.WebApi.Security.Models;
-using Hermes.WebApi.Security;
+using Microsoft.Owin;
+using Microsoft.Owin.Security;
+using Microsoft.Owin.Security.OAuth;
+using Security = Hermes.WebApi.Security;
 
 namespace GlobalTranz.WebApi.Extensions.Owin
 {
@@ -50,8 +54,8 @@ namespace GlobalTranz.WebApi.Extensions.Owin
 
             if (client == null)
             {
-                context.SetError("invalid_clientId", string.Format("Client '{0}' is not registered in the system.", context.ClientId));
                 context.Rejected();
+                context.SetError("invalid_clientId", string.Format("Client '{0}' is not registered in the system.", context.ClientId));
                 return Task.FromResult<object>(null);
             }
 
@@ -59,16 +63,16 @@ namespace GlobalTranz.WebApi.Extensions.Owin
             {
                 if (string.IsNullOrWhiteSpace(clientSecret))
                 {
-                    context.SetError("invalid_clientId", "Client secret should be sent.");
                     context.Rejected();
+                    context.SetError("invalid_clientId", "Client secret should be sent.");
                     return Task.FromResult<object>(null);
                 }
                 else
                 {
-                    if (client.Secret != Helper.GetHash(clientSecret))
+                    if (client.Secret != Security.Helper.GetHash(clientSecret))
                     {
-                        context.SetError("invalid_clientId", "Client secret is invalid.");
                         context.Rejected();
+                        context.SetError("invalid_clientId", "Client secret is invalid.");
                         return Task.FromResult<object>(null);
                     }
                 }
@@ -76,8 +80,8 @@ namespace GlobalTranz.WebApi.Extensions.Owin
 
             if (!client.IsActive)
             {
-                context.SetError("invalid_clientId", "Client is inactive.");
                 context.Rejected();
+                context.SetError("invalid_clientId", "Client is inactive.");
                 return Task.FromResult<object>(null);
             }
 
@@ -117,8 +121,8 @@ namespace GlobalTranz.WebApi.Extensions.Owin
 
             if (identity == null)
             {
-                context.SetError("invalid_grant", "The user name or password is incorrect.");
                 context.Rejected();
+                context.SetError("invalid_grant", "The user name or password is incorrect.");
                 return;
             }
 
@@ -197,6 +201,30 @@ namespace GlobalTranz.WebApi.Extensions.Owin
             }
 
             return Task.FromResult<object>(null);
+        }
+
+        /// <summary>
+        /// Called before the TokenEndpoint redirects its response to the caller.
+        /// </summary>
+        /// <param name="context"></param>
+        /// <returns></returns>
+        public override Task TokenEndpointResponse(OAuthTokenEndpointResponseContext context)
+        {
+            var userAuthToken = new UserAuthToken(context.AccessToken)
+            {
+                AuthClientId = Convert.ToString(context.AdditionalResponseParameters.GetValueByKey("as:client_id")),
+                ExpiresUtc = Convert.ToDateTime(context.AdditionalResponseParameters.GetValueByKey(".issued")),
+                IssuedUtc = Convert.ToDateTime(context.AdditionalResponseParameters.GetValueByKey(".expires")),
+                UserId = Convert.ToInt64(context.Identity.FindFirst("Identity").Value)
+            };
+
+            bool isSaved = AuthenticationCommands.SaveUserAuthToken(userAuthToken);
+            return base.TokenEndpointResponse(context);
+        }
+
+        public override Task ValidateTokenRequest(OAuthValidateTokenRequestContext context)
+        {
+            return base.ValidateTokenRequest(context);
         }
     }
 }

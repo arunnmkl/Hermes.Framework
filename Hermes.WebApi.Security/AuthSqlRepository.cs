@@ -298,6 +298,59 @@ namespace Hermes.WebApi.Security
         }
 
         /// <summary>
+        /// Saves the user authentication token.
+        /// </summary>
+        /// <param name="userAuthToken">The user authentication token.</param>
+        /// <returns>saved state</returns>     
+        internal bool SaveUserAuthToken(UserAuthToken userAuthToken)
+        {
+            string commandText = "[dbo].[SaveUserAuthToken]";
+
+            var parameters = new[]
+            {
+                new Parameter("@UserId", userAuthToken.UserId),
+                new Parameter("@AuthClientId", userAuthToken.AuthClientId),
+                new Parameter("@IssuedUtc", userAuthToken.IssuedUtc),
+                new Parameter("@ExpiresUtc", userAuthToken.ExpiresUtc),
+                new Parameter("@AccessToken", userAuthToken.AccessToken)
+            };
+
+            try
+            {
+                this.sqlSerializer.Execute(commandText, parameters: parameters, storedProcedure: true);
+                return true;
+            }
+            catch (SqlException sqlEx)
+            {
+                if (sqlEx.Errors.Count > 0 && sqlEx.Errors[0].Message.Equals(string.Format("The specified value {0} already exists.", userAuthToken.UserId)))
+                {
+                    //throw new BadRequestException(sqlEx.Errors[0].Message);
+                    return false;
+                }
+
+                throw;
+            }
+        }
+
+        /// <summary>
+        /// Determines whether [is user authentication token exists] [the specified user authentication token].
+        /// </summary>
+        /// <param name="userAuthToken">The user authentication token.</param>
+        /// <returns>true/false, whether is user authentication token exists or not</returns>
+        internal bool IsUserAuthTokenExists(UserAuthToken userAuthToken)
+        {
+            string commandText = "[dbo].[IsUserAuthTokenExists]";
+
+            var parameters = new[]
+            {
+                new Parameter("@UserId", userAuthToken.UserId),
+                new Parameter("@AccessToken", userAuthToken.AccessToken)
+            };
+
+            return this.sqlSerializer.ExecuteScalar<bool>(commandText, parameters: parameters, storedProcedure: true);
+        }
+
+        /// <summary>
         /// Performs application-defined tasks associated with freeing, releasing, or resetting unmanaged resources.
         /// </summary>
         public void Dispose()

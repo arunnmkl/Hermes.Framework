@@ -23,6 +23,7 @@ using System.Web.Http;
 using System.Web.Http.ExceptionHandling;
 using System.Web.Mvc;
 using HermesSecurity = Hermes.WebApi.Core.Security;
+using Hermes.WebApi.Extensions.Authentication.Filter;
 
 namespace Hermes.WebApi.Extensions
 {
@@ -57,8 +58,11 @@ namespace Hermes.WebApi.Extensions
             if (HermesSecurity.Configuration.Current.CSRFAttackPrevented)
                 config.MessageHandlers.Add(new CSRFHandler());
 
-            config.Filters.Add(new HostAuthenticationAttribute("bearer"));
-            config.Filters.Add(new AuthenticationAttribute());
+            if (HermesSecurity.Configuration.Current.OAuthAuthenticationEnabled)
+            {
+                config.Filters.Add(new HostAuthenticationAttribute("bearer"));
+                config.Filters.Add(new BearerAuthenticationFilter());
+            }
 
             config.Services.Replace(typeof(IExceptionHandler), new GeneralExceptionHandler());
         }

@@ -36,5 +36,13 @@ namespace Hermes.WebApi.Web.Models
 		/// </summary>
 		/// <value><c>true</c> if [remember me]; otherwise, <c>false</c>.</value>
 		public bool RememberMe { get; set; }
-	}
+
+        /// <summary>
+        /// Gets or sets the client identifier.
+        /// </summary>
+        /// <value>
+        /// The client identifier.
+        /// </value>
+        public string ClientId { get; set; }
+    }
 }
