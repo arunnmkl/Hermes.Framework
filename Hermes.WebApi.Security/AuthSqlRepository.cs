@@ -43,6 +43,7 @@ namespace Hermes.WebApi.Security
             sets.AddSet<UserIdentity>("UserIdentiry");
             sets.AddSet<Role>("Role");
             sets.AddSet<AuthProvider>("AuthProvider");
+            sets.AddSet<string>("UserAuthTokenId");
 
             var parameters = new[]
             {
@@ -59,7 +60,9 @@ namespace Hermes.WebApi.Security
 
             sets.GetSet<Role>("Role").ForEach(r => { userIdentity.Roles.Add(r); });
 
-            sets.GetSet<AuthProvider>("AuthProvider").ForEach(r => { userIdentity.AuthProviders.Add(r); });
+            sets.GetSet<AuthProvider>("AuthProvider").ForEach(ap => { userIdentity.AuthProviders.Add(ap); });
+
+            userIdentity.UserAuthTokenId = sets.GetSet<string>("UserAuthTokenId").FirstOrDefault();
 
             return userIdentity;
         }
@@ -158,6 +161,7 @@ namespace Hermes.WebApi.Security
             sets.AddSet<UserIdentity>("UserIdentiry");
             sets.AddSet<Role>("Role");
             sets.AddSet<AuthProvider>("AuthProvider");
+            sets.AddSet<string>("UserAuthTokenId");
 
             var parameters = new[]
             {
@@ -174,7 +178,9 @@ namespace Hermes.WebApi.Security
 
             sets.GetSet<Role>("Role").ForEach(r => { userIdentity.Roles.Add(r); });
 
-            sets.GetSet<AuthProvider>("AuthProvider").ForEach(r => { userIdentity.AuthProviders.Add(r); });
+            sets.GetSet<AuthProvider>("AuthProvider").ForEach(ap => { userIdentity.AuthProviders.Add(ap); });
+
+            userIdentity.UserAuthTokenId = sets.GetSet<string>("UserAuthTokenId").FirstOrDefault();
 
             return userIdentity;
         }
@@ -252,6 +258,7 @@ namespace Hermes.WebApi.Security
             sets.AddSet<UserIdentity>("UserIdentiry");
             sets.AddSet<Role>("Role");
             sets.AddSet<AuthProvider>("AuthProvider");
+            sets.AddSet<string>("UserAuthTokenId");
 
             var param = new Parameter("@UserId", userId);
 
@@ -264,7 +271,9 @@ namespace Hermes.WebApi.Security
 
             sets.GetSet<Role>("Role").ForEach(r => { userIdentity.Roles.Add(r); });
 
-            sets.GetSet<AuthProvider>("AuthProvider").ForEach(r => { userIdentity.AuthProviders.Add(r); });
+            sets.GetSet<AuthProvider>("AuthProvider").ForEach(ap => { userIdentity.AuthProviders.Add(ap); });
+
+            userIdentity.UserAuthTokenId = sets.GetSet<string>("UserAuthTokenId").FirstOrDefault();
 
             return userIdentity;
         }
@@ -308,6 +317,7 @@ namespace Hermes.WebApi.Security
 
             var parameters = new[]
             {
+                new Parameter("@UserAuthTokenId", userAuthToken.UserAuthTokenId),
                 new Parameter("@UserId", userAuthToken.UserId),
                 new Parameter("@AuthClientId", userAuthToken.AuthClientId),
                 new Parameter("@IssuedUtc", userAuthToken.IssuedUtc),
@@ -333,13 +343,15 @@ namespace Hermes.WebApi.Security
         }
 
         /// <summary>
-        /// Determines whether [is user authentication token exists] [the specified user authentication token].
+        /// Gets the user authentication token.
         /// </summary>
         /// <param name="userAuthToken">The user authentication token.</param>
-        /// <returns>true/false, whether is user authentication token exists or not</returns>
-        internal bool IsUserAuthTokenExists(UserAuthToken userAuthToken)
+        /// <returns>
+        /// the user authentication token details
+        /// </returns>
+        internal UserAuthToken GetUserAuthToken(UserAuthToken userAuthToken)
         {
-            string commandText = "[dbo].[IsUserAuthTokenExists]";
+            string commandText = "[dbo].[GetUserAuthToken]";
 
             var parameters = new[]
             {
@@ -347,8 +359,24 @@ namespace Hermes.WebApi.Security
                 new Parameter("@AccessToken", userAuthToken.AccessToken)
             };
 
-            return this.sqlSerializer.ExecuteScalar<bool>(commandText, parameters: parameters, storedProcedure: true);
+            return this.sqlSerializer.DeserializeSingleRecord<UserAuthToken>(commandText, parameters: parameters, storedProcedure: true);
         }
+
+        /// <summary>
+        /// Sets the token expires.
+        /// </summary>
+        /// <param name="userId">The user identifier.</param>
+        /// <returns>row count</returns>
+        internal int SetTokenExpires(long userId)
+        {
+            string commandText = "[dbo].[SetTokenExpires]";
+
+            var parameter = new Parameter("@UserId", userId);
+
+            return this.sqlSerializer.ExecuteScalar<int>(commandText, parameter: parameter, storedProcedure: true);
+        }
+
+
 
         /// <summary>
         /// Performs application-defined tasks associated with freeing, releasing, or resetting unmanaged resources.

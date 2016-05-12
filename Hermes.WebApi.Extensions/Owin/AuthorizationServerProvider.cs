@@ -215,7 +215,9 @@ namespace GlobalTranz.WebApi.Extensions.Owin
                 AuthClientId = Convert.ToString(context.AdditionalResponseParameters.GetValueByKey("as:client_id")),
                 ExpiresUtc = Convert.ToDateTime(context.AdditionalResponseParameters.GetValueByKey(".issued")),
                 IssuedUtc = Convert.ToDateTime(context.AdditionalResponseParameters.GetValueByKey(".expires")),
-                UserId = Convert.ToInt64(context.Identity.FindFirst("Identity").Value)
+                UserId = Convert.ToInt64(context.Identity.FindFirst("Identity").Value),
+                UserAuthTokenId = Convert.ToString(context.Identity.FindFirst("UserAuthToken").Value),
+                IsLoggedIn = true
             };
 
             bool isSaved = AuthenticationCommands.SaveUserAuthToken(userAuthToken);

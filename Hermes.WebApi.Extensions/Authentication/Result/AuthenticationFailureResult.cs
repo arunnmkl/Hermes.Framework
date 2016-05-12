@@ -2,6 +2,7 @@
 using System.Linq;
 using System.Net;
 using System.Net.Http;
+using System.Net.Http.Formatting;
 using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
@@ -17,14 +18,30 @@ namespace Hermes.WebApi.Extensions.Authentication.Result
     public class AuthenticationFailureResult : IHttpActionResult
     {
         /// <summary>
-        /// Initializes a new instance of the <see cref="AuthenticationFailureResult"/> class.
+        /// The response message
+        /// </summary>
+        private object responseMessage;
+
+        /// <summary>
+        /// Initializes a new instance of the <see cref="AuthenticationFailureResult" /> class.
         /// </summary>
         /// <param name="reasonPhrase">The reason phrase.</param>
         /// <param name="request">The request.</param>
-        public AuthenticationFailureResult(string reasonPhrase, HttpRequestMessage request)
+        /// <param name="responseMessage">The response message.</param>
+        public AuthenticationFailureResult(string reasonPhrase, HttpRequestMessage request, object responseMessage)
         {
             ReasonPhrase = reasonPhrase;
             Request = request;
+            this.responseMessage = responseMessage ?? new { Error = new { Code = 401, Message = "Authorization has been denied for this request." } };
+        }
+
+        /// <summary>
+        /// Initializes a new instance of the <see cref="AuthenticationFailureResult" /> class.
+        /// </summary>
+        /// <param name="request">The request.</param>
+        /// <param name="responseMessage">The response message.</param>
+        public AuthenticationFailureResult(HttpRequestMessage request, object responseMessage) : this("Unauthorized", request, responseMessage)
+        {
         }
 
         /// <summary>
@@ -34,20 +51,6 @@ namespace Hermes.WebApi.Extensions.Authentication.Result
         /// The reason phrase.
         /// </value>
         public string ReasonPhrase { get; private set; }
-
-        /// <summary>
-        /// Gets the message.
-        /// </summary>
-        /// <value>
-        /// The message.
-        /// </value>
-        public JObject Message
-        {
-            get
-            {
-                return new JObject(new JProperty("Message", ReasonPhrase ?? "Authorization has been denied for this request."));
-            }
-        }
 
         /// <summary>
         /// Gets the request.
@@ -76,8 +79,10 @@ namespace Hermes.WebApi.Extensions.Authentication.Result
         private HttpResponseMessage Execute()
         {
             HttpResponseMessage response = new HttpResponseMessage(HttpStatusCode.Unauthorized);
+            MediaTypeFormatter jsonFormatter = new JsonMediaTypeFormatter();
+            response.Content = new ObjectContent<object>(this.responseMessage, jsonFormatter);
             response.RequestMessage = Request;
-            response.Content = new StringContent(Message.ToString(), Encoding.UTF8, "application/json"); ;
+            response.ReasonPhrase = ReasonPhrase;
             return response;
         }
     }

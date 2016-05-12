@@ -322,8 +322,7 @@ namespace Hermes.WebApi.Web.Controllers
         public IHttpActionResult Logout()
         {
             ExternalProvider.SignOut(Request, HttpContext.Current.User.Identity.AuthenticationType);
-            // TODO:: Clean the auth token from DB
-            // TODO: validate the login for new user
+            AuthenticationCommands.SetTokenExpires();
             return this.Ok(new
             {
                 message = "Logout successful."

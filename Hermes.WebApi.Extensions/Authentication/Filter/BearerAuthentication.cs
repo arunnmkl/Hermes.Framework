@@ -5,6 +5,7 @@ using System.Security.Claims;
 using System.Threading;
 using System.Threading.Tasks;
 using System.Web.Http.Filters;
+using Hermes.WebApi.Core.Security;
 using Hermes.WebApi.Security.Models;
 using Microsoft.Owin.Security;
 using Microsoft.Owin.Security.OAuth;
@@ -42,6 +43,7 @@ namespace Hermes.WebApi.Extensions.Authentication.Filter
             //    authentication scheme, do nothing.
             if (authorization.Scheme != "Bearer")
             {
+                context.ErrorResult = context.ErrorResult = new Result.AuthenticationFailureResult(context.Request, new { Error = new { Code = 401, Message = "Request require authorization" } });
                 return;
             }
 
@@ -49,7 +51,7 @@ namespace Hermes.WebApi.Extensions.Authentication.Filter
             // 5. If the authorization token are empty/bad, set the error result.
             if (String.IsNullOrEmpty(authorization.Parameter))
             {
-                context.ErrorResult = new Result.AuthenticationFailureResult("Missing access token", request);
+                context.ErrorResult = new Result.AuthenticationFailureResult(request, new { Error = new { Code = 401, Message = "Missing access token" } });
                 return;
             }
 
@@ -57,7 +59,7 @@ namespace Hermes.WebApi.Extensions.Authentication.Filter
             AuthenticationTicket authTicket = await AuthenticateAsync(authorization.Parameter, cancellationToken);
             if (authTicket == null)
             {
-                context.ErrorResult = new Result.AuthenticationFailureResult("Invalid bearer token received", request);
+                context.ErrorResult = new Result.AuthenticationFailureResult(request, new { Error = new { Code = 401, Message = "Invalid bearer token received" } });
                 return;
             }
 
@@ -66,7 +68,7 @@ namespace Hermes.WebApi.Extensions.Authentication.Filter
 
             if (authTicket.Properties.ExpiresUtc.HasValue && authTicket.Properties.ExpiresUtc.Value < currentUtc)
             {
-                context.ErrorResult = new Result.AuthenticationFailureResult("Expired bearer token received", request);
+                context.ErrorResult = new Result.AuthenticationFailureResult(request, new { Error = new { Code = 401, Message = "The Token has expired" } });
                 return;
             }
 
@@ -85,19 +87,25 @@ namespace Hermes.WebApi.Extensions.Authentication.Filter
 
             if (!authContext.IsValidated)
             {
-                context.ErrorResult = new Result.AuthenticationFailureResult("Invalid bearer token received", request);
+                context.ErrorResult = new Result.AuthenticationFailureResult(request, new { Error = new { Code = 401, Message = "Invalid bearer token received" } });
                 return;
             }
 
-            var userAuthToken = new UserAuthToken(authorization.Parameter)
+            var userAuthTokenReq = new UserAuthToken(authorization.Parameter)
             {
                 UserId = Convert.ToInt64(authTicket.Identity.FindFirst("Identity").Value)
             };
 
-            if (AuthenticationCommands.IsUserAuthTokenExists(userAuthToken))
+            if (Configuration.Current.DBTokenValidationEnabled)
             {
-                context.ErrorResult = new Result.AuthenticationFailureResult("User session has expired.", request);
-                return;
+                var userAuthTokenRes = AuthenticationCommands.GetUserAuthToken(userAuthTokenReq);
+
+                if (userAuthTokenRes == null
+                    || userAuthTokenRes.IsLoggedIn == false)
+                {
+                    context.ErrorResult = new Result.AuthenticationFailureResult(request, new { Error = new { Code = 401, Message = "User session has already expired" } });
+                    return;
+                }
             }
 
             // 6. If the token is valid, set principal.

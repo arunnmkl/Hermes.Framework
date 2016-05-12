@@ -170,6 +170,18 @@ namespace Hermes.WebApi.Extensions.Authentication
             }
         }
 
+        /// <summary>
+        /// Sets the token expires.
+        /// </summary>
+        /// <returns>row count</returns>
+        public static int SetTokenExpires()
+        {
+            using (UserManager um = new UserManager())
+            {
+                return um.SetTokenExpires(AuthContext.UserId);
+            }
+        }
+
         #endregion Public Methods
 
         #region Internal Methods 
@@ -193,13 +205,13 @@ namespace Hermes.WebApi.Extensions.Authentication
         }
 
         /// <summary>
-        /// Determines whether [is user authentication token exists] [the specified user authentication token].
+        /// Gets the user authentication token.
         /// </summary>
         /// <param name="userAuthToken">The user authentication token.</param>
         /// <returns>
-        /// true/false, whether is user authentication token exists or not
+        /// the user authentication token details
         /// </returns>
-        internal static bool IsUserAuthTokenExists(UserAuthToken userAuthToken)
+        internal static UserAuthToken GetUserAuthToken(UserAuthToken userAuthToken)
         {
             using (UserManager um = new UserManager())
             {
@@ -208,7 +220,7 @@ namespace Hermes.WebApi.Extensions.Authentication
                     userAuthToken.UserId = AuthContext.UserId;
                 }
 
-                return um.IsUserAuthTokenExists(userAuthToken);
+                return um.GetUserAuthToken(userAuthToken);
             }
         }
 

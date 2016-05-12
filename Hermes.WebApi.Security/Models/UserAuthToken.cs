@@ -1,4 +1,5 @@
 ﻿using System;
+using Hermes.WebApi.Base.SqlSerializer;
 
 namespace Hermes.WebApi.Security.Models
 {
@@ -22,12 +23,19 @@ namespace Hermes.WebApi.Security.Models
         }
 
         /// <summary>
+        /// Initializes a new instance of the <see cref="UserAuthToken"/> class.
+        /// </summary>
+        public UserAuthToken()
+        {
+        }
+
+        /// <summary>
         /// Gets or sets the user authentication token identifier.
         /// </summary>
         /// <value>
         /// The user authentication token identifier.
         /// </value>
-        public long UserAuthTokenId { get; set; }
+        public string UserAuthTokenId { get; set; }
 
         /// <summary>
         /// Gets or sets the user identifier.
@@ -92,7 +100,20 @@ namespace Hermes.WebApi.Security.Models
             {
                 return SecureString.Decrypt(this.AccessToken);
             }
+
+            set
+            {
+                this.accessToken = SecureString.Decrypt(value);
+            }
         }
+
+        /// <summary>
+        /// Gets or sets a value indicating whether this instance is logged in.
+        /// </summary>
+        /// <value>
+        /// <c>true</c> if this instance is logged in; otherwise, <c>false</c>.
+        /// </value>
+        public bool IsLoggedIn { get; set; }
 
         /// <summary>
         /// Gets or sets the created date.

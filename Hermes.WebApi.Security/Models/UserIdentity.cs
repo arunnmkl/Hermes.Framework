@@ -127,7 +127,7 @@ namespace Hermes.WebApi.Security.Models
         public UserIdentity()
         {
             this.Roles = new List<Role>();
-            this.AuthProviders = new List<AuthProvider>();
+            this.AuthProviders = new List<AuthProvider>(); 
         }
 
         /// <summary>
@@ -169,5 +169,13 @@ namespace Hermes.WebApi.Security.Models
         /// The authentication providers.
         /// </value>
         public ICollection<AuthProvider> AuthProviders { get; set; }
+
+        /// <summary>
+        /// Gets or sets the user authentication token identifier.
+        /// </summary>
+        /// <value>
+        /// The user authentication token identifier.
+        /// </value>
+        public string UserAuthTokenId { get; set; }
     }
 }

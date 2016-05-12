@@ -165,15 +165,25 @@ namespace Hermes.WebApi.Security
         }
 
         /// <summary>
-        /// Determines whether [is user authentication token exists] [the specified user authentication token].
+        /// Gets the user authentication token.
         /// </summary>
         /// <param name="userAuthToken">The user authentication token.</param>
         /// <returns>
-        /// true/false, whether is user authentication token exists or not
+        /// the user authentication token details
         /// </returns>
-        public bool IsUserAuthTokenExists(UserAuthToken userAuthToken)
+        public UserAuthToken GetUserAuthToken(UserAuthToken userAuthToken)
         {
-            return authRepo.IsUserAuthTokenExists(userAuthToken);
+            return authRepo.GetUserAuthToken(userAuthToken);
+        }
+
+        /// <summary>
+        /// Sets the token expires.
+        /// </summary>
+        /// <param name="userId">The user identifier.</param>
+        /// <returns>row count</returns>
+        public int SetTokenExpires(long userId)
+        {
+            return authRepo.SetTokenExpires(userId);
         }
 
         /// <summary>
