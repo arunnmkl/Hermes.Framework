@@ -4,7 +4,7 @@ DECLARE @AuthClientId VARCHAR(128) = N'ngAuthApp'
 	,@ApplicationType INT = 0 -- 0 Javascript, 1 - NativeConfidential
 	,@IsActive BIT = 1
 	,@RefreshTokenLifeTime INT = 60 -- Minutes
-	,@AllowedOrigin VARCHAR(100) = N'http://localhost'
+	,@AllowedOrigin VARCHAR(100) = N'http://localhost:56379'
 
 IF NOT EXISTS (
 		SELECT TOP 1 1

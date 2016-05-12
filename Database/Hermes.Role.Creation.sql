@@ -51,11 +51,11 @@ BEGIN
 	    IsOwner
 	)
     OUTPUT INSERTED.AccessControlListId INTO @aclOutput (AccessControlListId)
-    SELECT rp.ResourceId, @securityId, 0 FROM @resourcePermissionId  rpid
+    SELECT Distinct rp.ResourceId, @securityId, 0 FROM @resourcePermissionId  rpid
     INNER JOIN dbo.ResourcePermission rp ON rp.ResourcePermissionId = rpid.ResourcePermissionId
     LEFT JOIN dbo.AccessControlList acl ON  acl.ResourceId = rp.ResourceId	 AND acl.SecurityId	 = @securityId
     WHERE acl.AccessControlListId IS NULL
-    ORDER BY rpid.ResourcePermissionId ASC;
+    --ORDER BY rpid.ResourcePermissionId ASC;
     
     IF @@ROWCOUNT = 0
     BEGIN
