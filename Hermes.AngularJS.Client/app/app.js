@@ -49,6 +49,11 @@ app.config(function ($routeProvider) {
         templateUrl: "app/views/associate.html"
     });
 
+    $routeProvider.when("/welcome", {
+        controller: "userController",
+        templateUrl: "app/views/user.html"
+    });
+
     $routeProvider.when("/unauthorized", {
         templateUrl: "app/views/unauthorized.html"
     });

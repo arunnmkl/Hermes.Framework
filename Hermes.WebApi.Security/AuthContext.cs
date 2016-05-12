@@ -113,5 +113,25 @@ namespace Hermes.WebApi.Security
                 return default(long);
             }
         }
+
+        /// <summary>
+        /// Gets the username.
+        /// </summary>
+        /// <value>
+        /// The username.
+        /// </value>
+        public static string Username
+        {
+            get
+            {
+                var securityClaims = Principal.Claims.Where(a => (a.Type == ClaimTypes.Name));
+                if (securityClaims.Any())
+                {
+                    return Convert.ToString(securityClaims.FirstOrDefault().Value);
+                }
+
+                return string.Empty;
+            }
+        }
     }
 }

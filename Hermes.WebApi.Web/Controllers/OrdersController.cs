@@ -15,19 +15,6 @@ namespace Hermes.WebApi.Web.Controllers
         [Route("")]
         public IHttpActionResult Get()
         {
-            if (HttpContext.Current.User == null)
-            {
-                return null;
-            }
-            string userId = HttpContext.Current.User.Identity.Name;
-
-            //ClaimsPrincipal principal = Request.GetRequestContext().Principal as ClaimsPrincipal;
-
-            //var Name = ClaimsPrincipal.Current.Identity.Name;
-            //var Name1 = User.Identity.Name;
-
-            //var userName = principal.Claims.Where(c => c.Type == "sub").Single().Value;
-
             return Ok(Order.CreateOrders());
         }
 
@@ -46,7 +33,6 @@ namespace Hermes.WebApi.Web.Controllers
         }
 
     }
-
 
     #region Helpers
 
