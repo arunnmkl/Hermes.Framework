@@ -4,6 +4,7 @@ using System.Security.Claims;
 using System.Web.Http;
 using System.Net.Http.Formatting;
 using System.Collections.Generic;
+using System.Net;
 
 namespace Hermes.WebApi.Web.Controllers
 {
@@ -32,39 +33,46 @@ namespace Hermes.WebApi.Web.Controllers
             return Request.CreateResponse(result);
         }
 
+        [Authorize]
         [Route("details")]
         public HttpResponseMessage GetDetails()
         {
             ClaimsPrincipal principal = Request.GetRequestContext().Principal as ClaimsPrincipal;
 
-            string name = ClaimsPrincipal.Current.Identity.Name;
-            string authenticationType = User.Identity.AuthenticationType;
-            string username = string.Empty;
-            string securityId = string.Empty;
-            string userAuthTokenId = string.Empty;
-            IEnumerable<string> roles = null;
-            var cIdentity = principal.Identities.FirstOrDefault();
-            if (cIdentity != null)
+            if (principal != null && principal.Identity.IsAuthenticated)
             {
-                username = cIdentity.FindFirst(ClaimTypes.Name).Value;
-                securityId = cIdentity.FindFirst(ClaimTypes.Sid).Value;
-                roles = cIdentity.FindAll(ClaimTypes.Role).Select(r => r.Value);
-                userAuthTokenId = cIdentity.FindFirst("UserAuthToken").Value;
+                string name = ClaimsPrincipal.Current.Identity.Name;
+                string authenticationType = User.Identity.AuthenticationType;
+                string username = string.Empty;
+                string securityId = string.Empty;
+                string userAuthTokenId = string.Empty;
+                IEnumerable<string> roles = null;
+                var cIdentity = principal.Identities.FirstOrDefault();
+                if (cIdentity != null)
+                {
+                    username = cIdentity.FindFirst(ClaimTypes.Name).Value;
+                    securityId = cIdentity.FindFirst(ClaimTypes.Sid).Value;
+                    roles = cIdentity.FindAll(ClaimTypes.Role).Select(r => r.Value);
+                    userAuthTokenId = cIdentity.FindFirst("UserAuthToken").Value;
+                }
+
+                object responseMessage = new
+                {
+                    Name = name,
+                    AuthenticationType = authenticationType,
+                    Username = username,
+                    SecurityId = securityId,
+                    Roles = roles,
+                    UserAuthToken = userAuthTokenId
+
+                };
+
+                MediaTypeFormatter jsonFormatter = new JsonMediaTypeFormatter();
+                return Request.CreateResponse(new ObjectContent<object>(responseMessage, jsonFormatter));
             }
 
-            object responseMessage = new
-            {
-                Name = name,
-                AuthenticationType = authenticationType,
-                Username = username,
-                SecurityId = securityId,
-                Roles = roles,
-                UserAuthToken = userAuthTokenId
 
-            };
-
-            MediaTypeFormatter jsonFormatter = new JsonMediaTypeFormatter();
-            return Request.CreateResponse(new ObjectContent<object>(responseMessage, jsonFormatter));
+            return Request.CreateErrorResponse(HttpStatusCode.Unauthorized, "Token Expires");
         }
     }
 }

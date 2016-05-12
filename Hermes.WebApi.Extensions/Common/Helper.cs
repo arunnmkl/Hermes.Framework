@@ -4,6 +4,7 @@ using System.Linq;
 using System.Security.Claims;
 using System.Text;
 using System.Threading.Tasks;
+using Hermes.WebApi.Extensions.Authentication;
 using Hermes.WebApi.Security.Models;
 using Microsoft.Owin.Security;
 using Microsoft.Owin.Security.OAuth;
@@ -43,6 +44,8 @@ namespace Hermes.WebApi.Extensions.Common
                 , new JProperty(".expires", ticket.Properties.ExpiresUtc.ToString())
             );
 
+            SaveAuthToken(identity, ticket, accessToken);
+
             return tokenResponse;
         }
 
@@ -64,6 +67,27 @@ namespace Hermes.WebApi.Extensions.Common
         public static AuthenticationTicket UnprotectAccessToken(string protectedText)
         {
             return Startup.OAuthBearerOptions.AccessTokenFormat.Unprotect(protectedText);
+        }
+
+        /// <summary>
+        /// Saves the authentication token.
+        /// </summary>
+        /// <param name="identity">The identity.</param>
+        /// <param name="ticket">The ticket.</param>
+        /// <param name="accessToken">The access token.</param>
+        private static void SaveAuthToken(ClaimsIdentity identity, AuthenticationTicket ticket, string accessToken)
+        {
+            var userAuthToken = new UserAuthToken(accessToken)
+            {
+                AuthClientId = Convert.ToString(string.Empty),
+                ExpiresUtc = Convert.ToDateTime(ticket.Properties.ExpiresUtc.ToString()),
+                IssuedUtc = Convert.ToDateTime(ticket.Properties.IssuedUtc.ToString()),
+                UserId = Convert.ToInt64(identity.FindFirst("Identity").Value),
+                UserAuthTokenId = Convert.ToString(identity.FindFirst("UserAuthToken").Value),
+                IsLoggedIn = true
+            };
+
+            bool isSaved = AuthenticationCommands.SaveUserAuthToken(userAuthToken);
         }
     }
 }

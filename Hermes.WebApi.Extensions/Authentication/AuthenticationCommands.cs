@@ -190,6 +190,12 @@ namespace Hermes.WebApi.Extensions.Authentication
         {
             using (UserManager um = new UserManager())
             {
+                if (string.IsNullOrEmpty(context.UserName) || string.IsNullOrEmpty(context.UserName))
+                {
+                    context.SetError("invalid_grant", "The user name or password is incorrect.");
+                    return Task.FromResult<ClaimsIdentity>(null);
+                }
+
                 var userIdentity = um.AuthenticateUsernamePassword(context.UserName, context.Password);
 
                 if (userIdentity != null)
