@@ -152,8 +152,11 @@ namespace Hermes.WebApi.Security
         /// Finds the login provider.
         /// </summary>
         /// <param name="authProvider">The authentication provider.</param>
-        /// <returns>user identity details</returns>
-        internal UserIdentity FindLoginProvider(AuthProvider authProvider)
+        /// <param name="skipToken">if set to <c>true</c> [skip token].</param>
+        /// <returns>
+        /// user identity details
+        /// </returns>
+        internal UserIdentity FindLoginProvider(AuthProvider authProvider, bool skipToken = false)
         {
             string commandText = "[dbo].[FindLoginProvider]";
 
@@ -161,12 +164,16 @@ namespace Hermes.WebApi.Security
             sets.AddSet<UserIdentity>("UserIdentiry");
             sets.AddSet<Role>("Role");
             sets.AddSet<AuthProvider>("AuthProvider");
-            sets.AddSet<string>("UserAuthTokenId");
+            if (skipToken == false)
+            {
+                sets.AddSet<string>("UserAuthTokenId"); 
+            }
 
             var parameters = new[]
             {
                 new Parameter("@loginProvider", authProvider.LoginProvider),
-                new Parameter("@providerKey", authProvider.ProviderKey)
+                new Parameter("@providerKey", authProvider.ProviderKey),
+                new Parameter("@skipToken", skipToken)
             };
 
             this.sqlSerializer.DeserializeMultiSets(sets, commandText, parameters: parameters, storedProcedure: true);
@@ -180,7 +187,10 @@ namespace Hermes.WebApi.Security
 
             sets.GetSet<AuthProvider>("AuthProvider").ForEach(ap => { userIdentity.AuthProviders.Add(ap); });
 
-            userIdentity.UserAuthTokenId = sets.GetSet<string>("UserAuthTokenId").FirstOrDefault();
+            if (skipToken == false)
+            {
+                userIdentity.UserAuthTokenId = sets.GetSet<string>("UserAuthTokenId").FirstOrDefault();
+            }
 
             return userIdentity;
         }

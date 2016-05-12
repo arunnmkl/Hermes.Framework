@@ -115,14 +115,15 @@ namespace Hermes.WebApi.Extensions.Authentication
         /// </summary>
         /// <param name="loginProvider">The login provider.</param>
         /// <param name="providerKey">The provider key.</param>
+        /// <param name="skipToken">if set to <c>true</c> [skip token].</param>
         /// <returns>
         /// user identity details
         /// </returns>
-        public static UserIdentity FindLoginProvider(string loginProvider, string providerKey)
+        public static UserIdentity FindLoginProvider(string loginProvider, string providerKey, bool skipToken = false)
         {
             using (UserManager um = new UserManager())
             {
-                return um.FindLoginProvider(new AuthProvider(loginProvider, providerKey));
+                return um.FindLoginProvider(new AuthProvider(loginProvider, providerKey), skipToken);
             }
         }
 
@@ -268,20 +269,7 @@ namespace Hermes.WebApi.Extensions.Authentication
             {
                 return um.FindAuthClient(clientId);
             }
-        }
-
-        /// <summary>
-        /// Finds the login provider.
-        /// </summary>
-        /// <param name="authProvider">The authentication provider.</param>
-        /// <returns>user identity details</returns>
-        internal static UserIdentity FindLoginProvider(AuthProvider authProvider)
-        {
-            using (UserManager um = new UserManager())
-            {
-                return um.FindLoginProvider(authProvider);
-            }
-        }
+        }  
 
         #endregion Internal Methods
     }

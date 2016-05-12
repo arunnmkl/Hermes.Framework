@@ -52,10 +52,13 @@ namespace Hermes.WebApi.Security
         /// Finds the login provider.
         /// </summary>
         /// <param name="authProvider">The authentication provider.</param>
-        /// <returns>user identity details</returns>
-        public UserIdentity FindLoginProvider(AuthProvider authProvider)
+        /// <param name="skipToken">if set to <c>true</c> [skip token].</param>
+        /// <returns>
+        /// user identity details
+        /// </returns>
+        public UserIdentity FindLoginProvider(AuthProvider authProvider, bool skipToken = false)
         {
-            return authRepo.FindLoginProvider(authProvider);
+            return authRepo.FindLoginProvider(authProvider, skipToken);
         }
 
         /// <summary>
