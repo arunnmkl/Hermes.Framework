@@ -52,13 +52,12 @@ namespace Hermes.WebApi.Security
         /// Finds the login provider.
         /// </summary>
         /// <param name="authProvider">The authentication provider.</param>
-        /// <param name="skipToken">if set to <c>true</c> [skip token].</param>
         /// <returns>
         /// user identity details
         /// </returns>
-        public UserIdentity FindLoginProvider(AuthProvider authProvider, bool skipToken = false)
+        public UserIdentity FindLoginProvider(AuthProvider authProvider)
         {
-            return authRepo.FindLoginProvider(authProvider, skipToken);
+            return authRepo.FindLoginProvider(authProvider);
         }
 
         /// <summary>
@@ -187,6 +186,18 @@ namespace Hermes.WebApi.Security
         public int SetTokenExpires(long userId)
         {
             return authRepo.SetTokenExpires(userId);
+        }
+
+        /// <summary>
+        /// Generates the authentication token.
+        /// </summary>
+        /// <param name="username">The username.</param>
+        /// <param name="checkExistence">if set to <c>true</c> [check existence].</param>
+        /// <param name="killOldSession">if set to <c>true</c> [kill old session].</param>
+        /// <returns>the new authentication token</returns>
+        public string GenerateAuthToken(string username, bool checkExistence = false, bool killOldSession = false)
+        {
+            return authRepo.GenerateAuthToken(username, checkExistence, killOldSession);
         }
 
         /// <summary>

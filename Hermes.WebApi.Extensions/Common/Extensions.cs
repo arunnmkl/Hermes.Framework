@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using Microsoft.Owin.Security.OAuth;
 
 namespace Hermes.WebApi.Extensions.Common
 {
@@ -23,6 +24,17 @@ namespace Hermes.WebApi.Extensions.Common
             }
 
             return value;
+        }
+
+        /// <summary>
+        /// Tries the get parameter values.
+        /// </summary>
+        /// <param name="context">The context.</param>
+        /// <param name="paramName">Name of the parameter.</param>
+        /// <returns></returns>
+        public static IList<string> TryGetParamValues(this OAuthValidateClientAuthenticationContext context, string paramName)
+        {
+           return context.Parameters.GetValues("force");
         }
     }
 }

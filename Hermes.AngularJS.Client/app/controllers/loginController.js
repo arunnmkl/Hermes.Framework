@@ -63,7 +63,15 @@ app.controller('loginController', ['$scope', '$location', 'authService', 'ngAuth
                 },
              function (err) {
                  $scope.$emit('userAuthorized', false);
-                 $scope.message = err.error_description;
+                 if (err) {
+                     if (err.error_description) {
+                         $scope.message = err.error_description;
+                     }
+
+                     if (err.Message) {
+                         $scope.message = err.Message;
+                     }
+                 }
              });
             }
 

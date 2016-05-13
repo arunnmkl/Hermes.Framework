@@ -43,7 +43,6 @@ namespace Hermes.WebApi.Security
             sets.AddSet<UserIdentity>("UserIdentiry");
             sets.AddSet<Role>("Role");
             sets.AddSet<AuthProvider>("AuthProvider");
-            sets.AddSet<string>("UserAuthTokenId");
 
             var parameters = new[]
             {
@@ -61,8 +60,6 @@ namespace Hermes.WebApi.Security
             sets.GetSet<Role>("Role").ForEach(r => { userIdentity.Roles.Add(r); });
 
             sets.GetSet<AuthProvider>("AuthProvider").ForEach(ap => { userIdentity.AuthProviders.Add(ap); });
-
-            userIdentity.UserAuthTokenId = sets.GetSet<string>("UserAuthTokenId").FirstOrDefault();
 
             return userIdentity;
         }
@@ -152,11 +149,10 @@ namespace Hermes.WebApi.Security
         /// Finds the login provider.
         /// </summary>
         /// <param name="authProvider">The authentication provider.</param>
-        /// <param name="skipToken">if set to <c>true</c> [skip token].</param>
         /// <returns>
         /// user identity details
         /// </returns>
-        internal UserIdentity FindLoginProvider(AuthProvider authProvider, bool skipToken = false)
+        internal UserIdentity FindLoginProvider(AuthProvider authProvider)
         {
             string commandText = "[dbo].[FindLoginProvider]";
 
@@ -164,16 +160,11 @@ namespace Hermes.WebApi.Security
             sets.AddSet<UserIdentity>("UserIdentiry");
             sets.AddSet<Role>("Role");
             sets.AddSet<AuthProvider>("AuthProvider");
-            if (skipToken == false)
-            {
-                sets.AddSet<string>("UserAuthTokenId"); 
-            }
 
             var parameters = new[]
             {
                 new Parameter("@loginProvider", authProvider.LoginProvider),
-                new Parameter("@providerKey", authProvider.ProviderKey),
-                new Parameter("@skipToken", skipToken)
+                new Parameter("@providerKey", authProvider.ProviderKey)
             };
 
             this.sqlSerializer.DeserializeMultiSets(sets, commandText, parameters: parameters, storedProcedure: true);
@@ -186,11 +177,6 @@ namespace Hermes.WebApi.Security
             sets.GetSet<Role>("Role").ForEach(r => { userIdentity.Roles.Add(r); });
 
             sets.GetSet<AuthProvider>("AuthProvider").ForEach(ap => { userIdentity.AuthProviders.Add(ap); });
-
-            if (skipToken == false)
-            {
-                userIdentity.UserAuthTokenId = sets.GetSet<string>("UserAuthTokenId").FirstOrDefault();
-            }
 
             return userIdentity;
         }
@@ -386,7 +372,26 @@ namespace Hermes.WebApi.Security
             return this.sqlSerializer.ExecuteScalar<int>(commandText, parameter: parameter, storedProcedure: true);
         }
 
+        /// <summary>
+        /// Generates the authentication token.
+        /// </summary>
+        /// <param name="username">The username.</param>
+        /// <param name="checkExistence">if set to <c>true</c> [check existence].</param>
+        /// <param name="killOldSession">if set to <c>true</c> [kill old session].</param>
+        /// <returns>the new authentication token</returns>
+        internal string GenerateAuthToken(string username, bool checkExistence = false, bool killOldSession = false)
+        {
+            string commandText = "[dbo].[GenerateUserAuthToken]";
 
+            var parameters = new[]
+            {
+                new Parameter("@Username", username),
+                new Parameter("@CheckExistence", checkExistence),
+                new Parameter("@KillOldSession", killOldSession)
+            };
+
+            return this.sqlSerializer.ExecuteScalar<string>(commandText, parameters: parameters, storedProcedure: true);
+        }
 
         /// <summary>
         /// Performs application-defined tasks associated with freeing, releasing, or resetting unmanaged resources.

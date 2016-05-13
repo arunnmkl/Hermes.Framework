@@ -27,7 +27,7 @@ namespace Hermes.WebApi.Extensions.Owin.Externals
         /// <returns>True if the user exits.</returns>
         public static bool IsUserExists(string loginProvider, string providerKey)
         {
-            var user = AuthenticationCommands.FindLoginProvider(loginProvider, providerKey, true);
+            var user = AuthenticationCommands.FindLoginProvider(loginProvider, providerKey);
             return user != null;
         }
 

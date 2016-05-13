@@ -55,7 +55,6 @@ namespace Hermes.WebApi.Extensions.Authentication.Filter
                 return;
             }
 
-            // TODO:
             AuthenticationTicket authTicket = await AuthenticateAsync(authorization.Parameter, cancellationToken);
             if (authTicket == null)
             {

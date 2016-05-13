@@ -1,16 +1,15 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Net;
 using System.Security.Claims;
 using System.Threading.Tasks;
 using Hermes.WebApi.Extensions.Authentication;
 using Hermes.WebApi.Extensions.Common;
 using Hermes.WebApi.Security.Models;
-using Microsoft.Owin;
 using Microsoft.Owin.Security;
 using Microsoft.Owin.Security.OAuth;
 using Security = Hermes.WebApi.Security;
+using HermeSecurity = Hermes.WebApi.Core.Security;
 
 namespace GlobalTranz.WebApi.Extensions.Owin
 {
@@ -43,6 +42,9 @@ namespace GlobalTranz.WebApi.Extensions.Owin
             {
                 context.TryGetFormCredentials(out clientId, out clientSecret);
             }
+
+            var forceLogin = context.TryGetParamValues("forcelogin");
+            context.OwinContext.Set<bool>("as:ForceLogin", Convert.ToBoolean(forceLogin?.FirstOrDefault() ?? "false"));
 
             if (context.ClientId == null)
             {
@@ -88,8 +90,8 @@ namespace GlobalTranz.WebApi.Extensions.Owin
             context.OwinContext.Set<string>("as:clientAllowedOrigin", client.AllowedOrigin);
             context.OwinContext.Set<string>("as:clientRefreshTokenLifeTime", client.RefreshTokenLifeTime.ToString());
 
-            context.Validated();
-            return Task.FromResult<object>(null);
+            context.Validated(context.ClientId);
+            return base.ValidateClientAuthentication(context);  //Task.FromResult<object>(null);
         }
 
         /// <summary>
@@ -109,8 +111,12 @@ namespace GlobalTranz.WebApi.Extensions.Owin
         public override async Task GrantResourceOwnerCredentials(OAuthGrantResourceOwnerCredentialsContext context)
         {
             var allowedOrigin = context.OwinContext.Get<string>("as:clientAllowedOrigin");
+            var forceLogin = context.OwinContext.Get<bool>("as:ForceLogin");
 
-            if (allowedOrigin == null) allowedOrigin = "*";
+            if (allowedOrigin == null)
+            {
+                allowedOrigin = "*";
+            }
 
             context.OwinContext.Response.Headers.Add("Access-Control-Allow-Origin", new[] { allowedOrigin });
 
@@ -124,6 +130,25 @@ namespace GlobalTranz.WebApi.Extensions.Owin
                 context.Rejected();
                 context.SetError("invalid_grant", "The user name or password is incorrect.");
                 return;
+            }
+
+            string authToken = AuthenticationCommands.GenerateAuthToken(context.UserName, !HermeSecurity.Configuration.Current.MultipleInstanceEnabled, forceLogin);
+
+            if (string.IsNullOrEmpty(authToken))
+            {
+                context.Rejected();
+                context.SetError("session_rejected", $"The user {context.UserName}, is already logged in with other device/machine.");
+                return;
+            }
+            else
+            {
+                var userAuthToken = identity.Claims.FirstOrDefault(c => c.Type == "UserAuthToken");
+                if (userAuthToken != null)
+                {
+                    identity.RemoveClaim(userAuthToken);
+                }
+
+                identity.AddClaim(new Claim("UserAuthToken", authToken));
             }
 
             var authDictonary = new Dictionary<string, string>

@@ -34,6 +34,8 @@ using Microsoft.AspNet.Identity;
 using Microsoft.Owin.Security;
 using Microsoft.Owin.Security.OAuth;
 using Newtonsoft.Json.Linq;
+using HermesSecurity = Hermes.WebApi.Core.Security;
+
 
 namespace Hermes.WebApi.Web.Controllers
 {
@@ -140,6 +142,17 @@ namespace Hermes.WebApi.Web.Controllers
             if (!hasRegistered)
             {
                 return BadRequest("External user is not registered");
+            }
+
+            string authToken = AuthenticationCommands.GenerateAuthToken(userIdentity.Username, !HermesSecurity.Configuration.Current.MultipleInstanceEnabled);
+
+            if (string.IsNullOrEmpty(authToken))
+            {
+                return BadRequest($"The user {userIdentity.Username}, is already logged in with other device/machine.");
+            }
+            else
+            {
+                userIdentity.UserAuthTokenId = authToken;
             }
 
             //generate access token response

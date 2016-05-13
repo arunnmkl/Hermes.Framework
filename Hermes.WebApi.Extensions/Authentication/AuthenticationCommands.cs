@@ -115,15 +115,14 @@ namespace Hermes.WebApi.Extensions.Authentication
         /// </summary>
         /// <param name="loginProvider">The login provider.</param>
         /// <param name="providerKey">The provider key.</param>
-        /// <param name="skipToken">if set to <c>true</c> [skip token].</param>
         /// <returns>
         /// user identity details
         /// </returns>
-        public static UserIdentity FindLoginProvider(string loginProvider, string providerKey, bool skipToken = false)
+        public static UserIdentity FindLoginProvider(string loginProvider, string providerKey)
         {
             using (UserManager um = new UserManager())
             {
-                return um.FindLoginProvider(new AuthProvider(loginProvider, providerKey), skipToken);
+                return um.FindLoginProvider(new AuthProvider(loginProvider, providerKey));
             }
         }
 
@@ -180,6 +179,21 @@ namespace Hermes.WebApi.Extensions.Authentication
             using (UserManager um = new UserManager())
             {
                 return um.SetTokenExpires(AuthContext.UserId);
+            }
+        }
+
+        /// <summary>
+        /// Generates the authentication token.
+        /// </summary>
+        /// <param name="username">The username.</param>
+        /// <param name="checkExistence">if set to <c>true</c> [check existence].</param>
+        /// <param name="killOldSession">if set to <c>true</c> [kill old session].</param>
+        /// <returns>the new authentication token</returns>
+        public static string GenerateAuthToken(string username, bool checkExistence = false, bool killOldSession = false)
+        {
+            using (UserManager um = new UserManager())
+            {
+                return um.GenerateAuthToken(username, checkExistence, killOldSession);
             }
         }
 
@@ -269,7 +283,7 @@ namespace Hermes.WebApi.Extensions.Authentication
             {
                 return um.FindAuthClient(clientId);
             }
-        }  
+        }
 
         #endregion Internal Methods
     }
