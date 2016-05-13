@@ -56,47 +56,53 @@ namespace Hermes.WebApi.Extensions.Validation
         /// </summary>
         /// <param name="request">The request.</param>
         /// <param name="queryStringName">Name of the query string.</param>
-        /// <returns></returns>
-        public static string TryParseRedirectUri(HttpRequestMessage request, string queryStringName = "redirect_uri")
+        /// <param name="redirectUriString">The redirect URI string.</param>
+        /// <returns>is valid Uri sting</returns>
+        public static bool TryParseRedirectUri(HttpRequestMessage request, out string redirectUriString, string queryStringName = "redirect_uri")
         {
             Uri redirectUri;
 
-            var redirectUriString = request.GetQueryString(queryStringName);
+            redirectUriString = request.GetQueryString(queryStringName);
 
             if (string.IsNullOrWhiteSpace(redirectUriString))
             {
-                return string.Empty;
+                redirectUriString = string.Empty;
+                return false;
             }
 
             bool validUri = Uri.TryCreate(redirectUriString, UriKind.Absolute, out redirectUri);
 
             if (!validUri)
             {
-                return string.Empty;
+                redirectUriString = string.Empty;
+                return false;
             }
 
             var clientId = request.GetQueryString("client_id");
 
             if (string.IsNullOrWhiteSpace(clientId))
             {
-                return "client_Id is required";
+                redirectUriString = "client_Id is required";
+                return false;
             }
 
             var client = AuthenticationCommands.FindAuthClient(clientId);
 
             if (client == null)
             {
-                return string.Format("Client_id '{0}' is not registered in the system.", clientId);
+                redirectUriString = string.Format("Client_id '{0}' is not registered in the system.", clientId);
+                return false;
             }
 
             if (!string.Equals(client.AllowedOrigin, redirectUri.GetLeftPart(UriPartial.Authority), StringComparison.OrdinalIgnoreCase))
             {
-                return string.Format("The given URL is not allowed by Client_id '{0}' configuration.", clientId);
+                redirectUriString = string.Format("The given URL is not allowed by Client_id '{0}' configuration.", clientId);
+                return false;
             }
 
-            redirectUriString = redirectUri.AbsoluteUri; 
+            redirectUriString = redirectUri.AbsoluteUri;
 
-            return redirectUriString;
+            return true;
         }
 
         /// <summary>

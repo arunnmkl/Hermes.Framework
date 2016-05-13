@@ -78,11 +78,16 @@ namespace Hermes.WebApi.Web.Controllers
             }
 
             string redirectUri;
-            redirectUri = CommonValidations.TryParseRedirectUri(Request);
+            bool isValidUri = CommonValidations.TryParseRedirectUri(Request, out redirectUri);
 
-            if (string.IsNullOrEmpty(redirectUri))
+            if (isValidUri == false)
             {
-                return BadRequest("Invalid redirect URI(redirect_uri).");
+                if (string.IsNullOrEmpty(redirectUri))
+                {
+                    return BadRequest("Invalid redirect URI(redirect_uri).");
+                }
+
+                return BadRequest(redirectUri);
             }
 
             try

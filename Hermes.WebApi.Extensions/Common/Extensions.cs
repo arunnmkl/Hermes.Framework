@@ -31,10 +31,10 @@ namespace Hermes.WebApi.Extensions.Common
         /// </summary>
         /// <param name="context">The context.</param>
         /// <param name="paramName">Name of the parameter.</param>
-        /// <returns></returns>
+        /// <returns>parameter value(s)</returns>
         public static IList<string> TryGetParamValues(this OAuthValidateClientAuthenticationContext context, string paramName)
         {
-           return context.Parameters.GetValues("force");
+           return context.Parameters.GetValues(paramName);
         }
     }
 }
