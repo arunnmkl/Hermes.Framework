@@ -289,7 +289,7 @@ namespace Hermes.WebApi.Web.Controllers
         [HttpPost]
         [AllowAnonymous]
         [Route("Login")]
-        public async Task<HttpResponseMessage> Login(Login model)
+        public async Task<HttpResponseMessage> Login(BearerLogin model)
         {
             if (model == null)
             {
@@ -313,6 +313,11 @@ namespace Hermes.WebApi.Web.Controllers
                 if (string.IsNullOrEmpty(model.ClientId) == false)
                 {
                     requestParams.Add(new KeyValuePair<string, string>("client_id", model.ClientId));
+                }
+
+                if (model.ForceLogin)
+                {
+                    requestParams.Add(new KeyValuePair<string, string>("forceLogin", model.ForceLogin.ToString()));
                 }
 
                 var requestParamsFormUrlEncoded = new FormUrlEncodedContent(requestParams);
