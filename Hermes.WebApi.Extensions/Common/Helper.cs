@@ -12,6 +12,9 @@ using Newtonsoft.Json.Linq;
 
 namespace Hermes.WebApi.Extensions.Common
 {
+    /// <summary>
+    /// Common helper object
+    /// </summary>
     public class Helper
     {
         /// <summary>
@@ -53,7 +56,9 @@ namespace Hermes.WebApi.Extensions.Common
         /// Protects the access token.
         /// </summary>
         /// <param name="ticket">The ticket.</param>
-        /// <returns>protected access token</returns>
+        /// <returns>
+        /// protected access token
+        /// </returns>
         public static string ProtectAccessToken(AuthenticationTicket ticket)
         {
             return Startup.OAuthBearerOptions.AccessTokenFormat.Protect(ticket);
@@ -63,7 +68,9 @@ namespace Hermes.WebApi.Extensions.Common
         /// Unprotects the access token.
         /// </summary>
         /// <param name="protectedText">The protected text.</param>
-        /// <returns>authentication ticket</returns>
+        /// <returns>
+        /// authentication ticket
+        /// </returns>
         public static AuthenticationTicket UnprotectAccessToken(string protectedText)
         {
             return Startup.OAuthBearerOptions.AccessTokenFormat.Unprotect(protectedText);

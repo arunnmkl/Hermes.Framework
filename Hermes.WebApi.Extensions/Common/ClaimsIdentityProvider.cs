@@ -30,6 +30,7 @@ namespace Hermes.WebApi.Extensions.Common
             {
                 identity.AddClaim(new Claim("UserAuthToken", userIdentity.UserAuthTokenId));
             }
+
             if (userIdentity.Roles != null)
             {
                 foreach (var role in userIdentity.Roles)

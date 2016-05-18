@@ -249,6 +249,15 @@ namespace GlobalTranz.WebApi.Extensions.Owin
             return base.TokenEndpointResponse(context);
         }
 
+        /// <summary>
+        /// Called for each request to the Token endpoint to determine if the request is valid and should continue.
+        /// The default behavior when using the OAuthAuthorizationServerProvider is to assume well-formed requests, with
+        /// validated client credentials, should continue processing. An application may add any additional constraints.
+        /// </summary>
+        /// <param name="context">The context of the event carries information in and results out.</param>
+        /// <returns>
+        /// Task to enable asynchronous execution
+        /// </returns>
         public override Task ValidateTokenRequest(OAuthValidateTokenRequestContext context)
         {
             return base.ValidateTokenRequest(context);

@@ -52,11 +52,15 @@ namespace Hermes.WebApi.Extensions
                 config.Filters.Add(new AuthenticationAttribute());
 
                 if (HermesSecurity.Configuration.Current.HermesAuthorizationEnabled)
+                {
                     config.Filters.Add(new HermesAuthorizationAttribute());
+                }
             }
 
             if (HermesSecurity.Configuration.Current.CSRFAttackPrevented)
+            {
                 config.MessageHandlers.Add(new CSRFHandler());
+            }
 
             if (HermesSecurity.Configuration.Current.OAuthAuthenticationEnabled)
             {
@@ -90,11 +94,15 @@ namespace Hermes.WebApi.Extensions
                 DependencyResolverContainer.RegisterInstance<IAuthenticationCommand>(new AuthenticationCommand());
 
                 if (HermesSecurity.Configuration.Current.HermesAuthorizationEnabled)
+                {
                     DependencyResolverContainer.RegisterInstance<IAuthorization>(new AuthorizationController());
+                }
             }
 
             if (HermesSecurity.Configuration.Current.CSRFAttackPrevented)
+            {
                 DependencyResolverContainer.RegisterInstance<ICSRFValidation>(new CSRFValidation());
+            }
 
             DependencyResolverContainer.RegisterInstance<ILog>(new Logging.Logging());
         }

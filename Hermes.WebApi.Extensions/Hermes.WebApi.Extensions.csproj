@@ -129,13 +129,13 @@
     <Compile Include="Authentication\MVCAuthenticationAttribute.cs" />
     <Compile Include="Authentication\Result\AddChallengeOnUnauthorizedResult.cs" />
     <Compile Include="Authentication\Result\AuthenticationFailureResult.cs" />
+    <Compile Include="Common\AuthorizeResponseMessage.cs" />
     <Compile Include="Common\ComponentPaths.cs" />
     <Compile Include="Common\ComponentPathsConfigurationSection.cs" />
     <Compile Include="ApiExceptionFilter.cs" />
     <Compile Include="Common\Extensions.cs" />
     <Compile Include="Common\Helper.cs" />
     <Compile Include="Common\ClaimsIdentityProvider.cs" />
-    <Compile Include="Common\OAuthBearerAuthenticationExtensions.cs" />
     <Compile Include="GlobalSuppressions.cs" />
     <Compile Include="Logging\Logging.cs" />
     <Compile Include="Owin\AuthorizationServerProvider.cs">

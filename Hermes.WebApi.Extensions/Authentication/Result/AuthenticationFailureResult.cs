@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.Linq;
 using System.Net;
 using System.Net.Http;
@@ -7,6 +8,7 @@ using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
 using System.Web.Http;
+using Hermes.WebApi.Extensions.Common;
 using Newtonsoft.Json.Linq;
 
 namespace Hermes.WebApi.Extensions.Authentication.Result
@@ -32,7 +34,7 @@ namespace Hermes.WebApi.Extensions.Authentication.Result
         {
             ReasonPhrase = reasonPhrase;
             Request = request;
-            this.responseMessage = responseMessage ?? new { Error = new { Code = 401, Message = "Authorization has been denied for this request." } };
+            this.responseMessage = responseMessage ?? AuthorizeResponseMessage.Default;
         }
 
         /// <summary>
