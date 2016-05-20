@@ -21,7 +21,7 @@ namespace Hermes.WebApi.Extensions.Common
         /// Generates the local access token response.
         /// </summary>
         /// <param name="userIdentity">The user identity.</param>
-        /// <returns></returns>
+        /// <returns>oauth access token as json object response</returns>
         public static JObject GenerateLocalAccessTokenResponse(UserIdentity userIdentity)
         {
             TimeSpan tokenExpiration = TimeSpan.FromDays(1);

@@ -6,8 +6,6 @@ using System.Threading.Tasks;
 
 namespace Hermes.WebApi.Extensions.Common
 {
-
-
     /// <summary>
     /// Authorize response message
     /// </summary>

@@ -29,6 +29,12 @@ namespace Hermes.WebApi.Extensions
         /// </value>
         public static OAuthBearerAuthenticationOptions OAuthBearerOptions { get; private set; }
 
+        /// <summary>
+        /// Gets the o authentication server options.
+        /// </summary>
+        /// <value>
+        /// The o authentication server options.
+        /// </value>
         public static OAuthAuthorizationServerOptions OAuthServerOptions { get; private set; }
 
         /// <summary>
@@ -85,12 +91,12 @@ namespace Hermes.WebApi.Extensions
             app.UseOAuthAuthorizationServer(OAuthServerOptions);
             app.UseOAuthBearerAuthentication(OAuthBearerOptions);
 
-            // Enable this for cookie support Authentication
+            //// Enable this for cookie support Authentication
             //app.SetDefaultSignInAsAuthenticationType(DefaultAuthenticationTypes.ExternalCookie);
             //app.UseCookieAuthentication(new CookieAuthenticationOptions
             //{
-            //	AuthenticationType = DefaultAuthenticationTypes.ExternalCookie,
-            //	Provider = new Hermes.WebApi.Extensions.Owin.OAuthCookieProvider()
+            //    AuthenticationType = DefaultAuthenticationTypes.ExternalCookie,
+            //    Provider = new Hermes.WebApi.Extensions.Owin.OAuthCookieProvider()
             //});
 
             GoogleAuthOptions = new GoogleOAuth2AuthenticationOptions()
@@ -109,5 +115,5 @@ namespace Hermes.WebApi.Extensions
             };
             app.UseFacebookAuthentication(FacebookAuthOptions);
         }
-    }
+    } 
 }

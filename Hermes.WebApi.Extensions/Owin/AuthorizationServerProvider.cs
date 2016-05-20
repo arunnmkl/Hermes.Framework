@@ -38,17 +38,20 @@ namespace GlobalTranz.WebApi.Extensions.Owin
             string clientSecret = string.Empty;
             AuthClient client = null;
 
+            var forceLogin = context.TryGetParamValues("forcelogin");
+            context.OwinContext.Set<bool>("as:ForceLogin", Convert.ToBoolean(forceLogin?.FirstOrDefault() ?? "false"));
+
             if (!context.TryGetBasicCredentials(out clientId, out clientSecret))
             {
                 context.TryGetFormCredentials(out clientId, out clientSecret);
             }
 
-            var forceLogin = context.TryGetParamValues("forcelogin");
-            context.OwinContext.Set<bool>("as:ForceLogin", Convert.ToBoolean(forceLogin?.FirstOrDefault() ?? "false"));
-
             if (context.ClientId == null)
             {
-                context.Validated();
+                //context.Validated();
+
+                SetValidateClientError(context, "invalid_clientId", "Client id should be sent.");
+
                 return Task.FromResult<object>(null);
             }
 
@@ -56,8 +59,7 @@ namespace GlobalTranz.WebApi.Extensions.Owin
 
             if (client == null)
             {
-                context.Rejected();
-                context.SetError("invalid_clientId", string.Format("Client '{0}' is not registered in the system.", context.ClientId));
+                SetValidateClientError(context, "invalid_clientId", string.Format("Client '{0}' is not registered in the system.", context.ClientId));
                 return Task.FromResult<object>(null);
             }
 
@@ -65,16 +67,14 @@ namespace GlobalTranz.WebApi.Extensions.Owin
             {
                 if (string.IsNullOrWhiteSpace(clientSecret))
                 {
-                    context.Rejected();
-                    context.SetError("invalid_clientId", "Client secret should be sent.");
+                    SetValidateClientError(context, "invalid_clientId", "Client secret should be sent.");
                     return Task.FromResult<object>(null);
                 }
                 else
                 {
                     if (client.Secret != Security.Helper.GetHash(clientSecret))
                     {
-                        context.Rejected();
-                        context.SetError("invalid_clientId", "Client secret is invalid.");
+                        SetValidateClientError(context, "invalid_clientId", "Client secret is invalid.");
                         return Task.FromResult<object>(null);
                     }
                 }
@@ -82,8 +82,7 @@ namespace GlobalTranz.WebApi.Extensions.Owin
 
             if (!client.IsActive)
             {
-                context.Rejected();
-                context.SetError("invalid_clientId", "Client is inactive.");
+                SetValidateClientError(context, "invalid_clientId", $"Client {client.AuthClientId} is inactive.");
                 return Task.FromResult<object>(null);
             }
 
@@ -91,6 +90,7 @@ namespace GlobalTranz.WebApi.Extensions.Owin
             context.OwinContext.Set<string>("as:clientRefreshTokenLifeTime", client.RefreshTokenLifeTime.ToString());
 
             context.Validated(context.ClientId);
+            context.OwinContext.Set<AuthClient>("as:client", client);
             return base.ValidateClientAuthentication(context);  //Task.FromResult<object>(null);
         }
 
@@ -191,7 +191,7 @@ namespace GlobalTranz.WebApi.Extensions.Owin
                 return Task.FromResult<object>(null);
             }
 
-            // Change auth ticket for refresh token requests
+            // Change authentication ticket for refresh token requests
             var newIdentity = new ClaimsIdentity(context.Ticket.Identity);
 
             // TODO: to add new claims....
@@ -261,6 +261,25 @@ namespace GlobalTranz.WebApi.Extensions.Owin
         public override Task ValidateTokenRequest(OAuthValidateTokenRequestContext context)
         {
             return base.ValidateTokenRequest(context);
+        }
+
+        /// <summary>
+        /// Sets the validate client error.
+        /// </summary>
+        /// <param name="context">The context.</param>
+        /// <param name="error">The error.</param>
+        /// <param name="errorDescription">The error description.</param>
+        private void SetValidateClientError(OAuthValidateClientAuthenticationContext context, string error, string errorDescription)
+        {
+            context.Rejected();
+            context.SetError(error, errorDescription);
+
+            if (context.OwinContext.Request.Headers.ContainsKey("Origin")
+                && !context.OwinContext.Request.Headers.ContainsKey("Access-Control-Allow-Origin"))
+            {
+                var origin = context.OwinContext.Request.Headers.GetValues("Origin");
+                context.OwinContext.Response.Headers.Add("Access-Control-Allow-Origin", new[] { origin.FirstOrDefault() });
+            }
         }
     }
 }

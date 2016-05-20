@@ -17,7 +17,7 @@ namespace Hermes.WebApi.Extensions.Common
         /// </summary>
         /// <param name="dictionary">The dictionary.</param>
         /// <param name="key">The key.</param>
-        /// <returns></returns>
+        /// <returns>additional values appended to the token response for the given key</returns>
         public static object GetValueByKey(this IDictionary<string, object> dictionary, string key)
         {
             object value = null;
@@ -39,7 +39,7 @@ namespace Hermes.WebApi.Extensions.Common
         /// </returns>
         public static IList<string> TryGetParamValues(this OAuthValidateClientAuthenticationContext context, string paramName)
         {
-           return context.Parameters.GetValues(paramName);
+            return context.Parameters.GetValues(paramName);
         }
     }
 }

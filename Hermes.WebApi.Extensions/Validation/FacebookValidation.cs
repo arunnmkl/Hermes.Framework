@@ -53,7 +53,7 @@ namespace Hermes.WebApi.Extensions.Validation
 			userId = jsonResult["data"]["user_id"];
 			appId = jsonResult["data"]["app_id"];
 
-			if (!string.Equals(Startup.GoogleAuthOptions.ClientId, appId, StringComparison.OrdinalIgnoreCase))
+			if (!string.Equals(Startup.FacebookAuthOptions.AppId, appId, StringComparison.OrdinalIgnoreCase))
 			{
 				return false;
 			}

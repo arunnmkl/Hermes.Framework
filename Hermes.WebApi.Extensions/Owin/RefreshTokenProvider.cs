@@ -47,13 +47,15 @@ namespace AngularJSAuthentication.API.Providers
 
                 token.ProtectedTicket = context.SerializeTicket();
 
-                var result = um.AddRefreshToken(token);
+                var result = await Task.Run(() =>
+                {
+                    return um.AddRefreshToken(token);
+                });
 
                 if (result)
                 {
                     context.SetToken(refreshTokenId);
                 }
-
             }
         }
 
@@ -71,7 +73,10 @@ namespace AngularJSAuthentication.API.Providers
 
             using (UserManager um = new UserManager())
             {
-                var refreshToken = um.FindRefreshToken(hashedTokenId);
+                var refreshToken = await Task.Run(() =>
+                {
+                    return um.FindRefreshToken(hashedTokenId);
+                });
 
                 if (refreshToken != null)
                 {

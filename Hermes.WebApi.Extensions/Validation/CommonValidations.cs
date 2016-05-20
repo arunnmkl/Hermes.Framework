@@ -20,7 +20,7 @@ namespace Hermes.WebApi.Extensions.Validation
         /// </summary>
         /// <param name="provider">The provider.</param>
         /// <param name="accessToken">The access token.</param>
-        /// <returns>true, if valid token false otherwise</returns>
+        /// <returns>parsed external access token details</returns>
         public static async Task<ParsedExternalAccessToken> VerifyExternalAccessToken(string provider, string accessToken)
         {
             string userId = string.Empty;
@@ -28,7 +28,7 @@ namespace Hermes.WebApi.Extensions.Validation
 
             IExternalValidation validator = ExternalValidationFactory.GetExternalValidation(provider);
 
-            var something = await Task.Run(() =>
+            var parsedExternalAccessToken = await Task.Run(() =>
             {
                 try
                 {
@@ -48,16 +48,16 @@ namespace Hermes.WebApi.Extensions.Validation
                 }
             });
 
-            return something;
+            return parsedExternalAccessToken;
         }
 
         /// <summary>
-        /// Validates the redirect URI.
+        /// Tries the parse redirect URI.
         /// </summary>
         /// <param name="request">The request.</param>
-        /// <param name="queryStringName">Name of the query string.</param>
         /// <param name="redirectUriString">The redirect URI string.</param>
-        /// <returns>is valid Uri sting</returns>
+        /// <param name="queryStringName">Name of the query string.</param>
+        /// <returns>true, if the redirect URI is valid, else false</returns>
         public static bool TryParseRedirectUri(HttpRequestMessage request, out string redirectUriString, string queryStringName = "redirect_uri")
         {
             Uri redirectUri;
