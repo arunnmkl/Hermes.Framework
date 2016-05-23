@@ -49,9 +49,7 @@ namespace GlobalTranz.WebApi.Extensions.Owin
             if (context.ClientId == null)
             {
                 //context.Validated();
-
                 SetValidateClientError(context, "invalid_clientId", "Client id should be sent.");
-
                 return Task.FromResult<object>(null);
             }
 
@@ -91,7 +89,7 @@ namespace GlobalTranz.WebApi.Extensions.Owin
 
             context.Validated(context.ClientId);
             context.OwinContext.Set<AuthClient>("as:client", client);
-            return base.ValidateClientAuthentication(context);  //Task.FromResult<object>(null);
+            return base.ValidateClientAuthentication(context);
         }
 
         /// <summary>

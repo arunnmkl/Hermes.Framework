@@ -44,7 +44,7 @@ namespace Hermes.WebApi.Extensions.Authentication.Filter
             //    authentication scheme, do nothing.
             if (authorization.Scheme != "Bearer")
             {
-                context.ErrorResult = context.ErrorResult = new Result.AuthenticationFailureResult(context.Request, AuthorizeResponseMessage.RequireAuthorization);
+                context.ErrorResult = new Result.AuthenticationFailureResult(context.Request, AuthorizeResponseMessage.RequireAuthorization);
                 return;
             }
 
@@ -56,6 +56,7 @@ namespace Hermes.WebApi.Extensions.Authentication.Filter
                 return;
             }
 
+            // convert token into authentication ticket
             AuthenticationTicket authTicket = await AuthenticateAsync(authorization.Parameter, cancellationToken);
             if (authTicket == null)
             {

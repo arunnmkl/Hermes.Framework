@@ -21,7 +21,14 @@ namespace Hermes.WebApi.Extensions.Common
         {
             get
             {
-                return new { Error = new { Code = 401, Message = "Authorization has been denied for this request." } };
+                return new
+                {
+                    Error = new
+                    {
+                        Code = 401,
+                        Message = "Authorization has been denied for this request."
+                    }
+                };
             }
         }
 
@@ -35,7 +42,14 @@ namespace Hermes.WebApi.Extensions.Common
         {
             get
             {
-                return new { Error = new { Code = 401, Message = "Request require authorization" } };
+                return new
+                {
+                    Error = new
+                    {
+                        Code = 401,
+                        Message = "Request require authorization"
+                    }
+                };
             }
         }
 
@@ -49,7 +63,14 @@ namespace Hermes.WebApi.Extensions.Common
         {
             get
             {
-                return new { Error = new { Code = 401, Message = "Missing access token" } };
+                return new
+                {
+                    Error = new
+                    {
+                        Code = 401,
+                        Message = "Missing access token"
+                    }
+                };
             }
         }
 
@@ -63,7 +84,14 @@ namespace Hermes.WebApi.Extensions.Common
         {
             get
             {
-                return new { Error = new { Code = 401, Message = "Invalid bearer token received" } };
+                return new
+                {
+                    Error = new
+                    {
+                        Code = 401,
+                        Message = "Invalid bearer token received"
+                    }
+                };
             }
         }
 
@@ -77,7 +105,14 @@ namespace Hermes.WebApi.Extensions.Common
         {
             get
             {
-                return new { Error = new { Code = 401, Message = "User session has already expired" } };
+                return new
+                {
+                    Error = new
+                    {
+                        Code = 401,
+                        Message = "User session has already expired"
+                    }
+                };
             }
         }
 
@@ -91,7 +126,14 @@ namespace Hermes.WebApi.Extensions.Common
         {
             get
             {
-                return new { Error = new { Code = 401, Message = "The Token has expired" } };
+                return new
+                {
+                    Error = new
+                    {
+                        Code = 401,
+                        Message = "The Token has expired"
+                    }
+                };
             }
         }
     }
