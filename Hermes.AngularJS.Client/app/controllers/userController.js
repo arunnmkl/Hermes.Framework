@@ -6,6 +6,7 @@ app.controller('userController', ['$scope', 'userService', function ($scope, use
     $scope.roles = ' ';
     $scope.userAuthToken = ' ';
     $scope.authenticationType = ' ';
+    $scope.timeInSeconds = ' ';
 
     userService.getUserDetails().then(function (response) {
 
@@ -16,6 +17,7 @@ app.controller('userController', ['$scope', 'userService', function ($scope, use
         $scope.roles = data.Roles && data.Roles.length ? data.Roles.join(', ') : 'Not assigned any';
         $scope.userAuthToken = data.UserAuthToken || $scope.userAuthToken;
         $scope.authenticationType = data.AuthenticationType || $scope.authenticationType;
+        $scope.timeInSeconds = (data.TimeInSeconds || $scope.timeInSeconds) + ' seconds';
 
     }, function (error) {
         //alert(error.data.message);

@@ -201,6 +201,18 @@ namespace Hermes.WebApi.Security
         }
 
         /// <summary>
+        /// Gets the user authentication token by identifier.
+        /// </summary>
+        /// <param name="userAuthTokenId">The user authentication token identifier.</param>
+        /// <returns>
+        /// the user authentication token details
+        /// </returns>
+        public UserAuthToken GetUserAuthTokenById(string userAuthTokenId)
+        {
+            return authRepo.GetUserAuthTokenById(userAuthTokenId);
+        }
+
+        /// <summary>
         /// Performs application-defined tasks associated with freeing, releasing, or resetting unmanaged resources.
         /// </summary>
         public void Dispose()

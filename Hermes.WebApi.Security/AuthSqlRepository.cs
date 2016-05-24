@@ -394,6 +394,22 @@ namespace Hermes.WebApi.Security
         }
 
         /// <summary>
+        /// Gets the user authentication token by identifier.
+        /// </summary>
+        /// <param name="userAuthTokenId">The user authentication token identifier.</param>
+        /// <returns>
+        /// the user authentication token details
+        /// </returns>
+        internal UserAuthToken GetUserAuthTokenById(string userAuthTokenId)
+        {
+            string commandText = "[dbo].[GetUserAuthTokenById]";
+
+            var parameter = new Parameter("@UserAuthTokenId", userAuthTokenId);
+
+            return this.sqlSerializer.DeserializeSingleRecord<UserAuthToken>(commandText, parameter: parameter, storedProcedure: true);
+        }
+
+        /// <summary>
         /// Performs application-defined tasks associated with freeing, releasing, or resetting unmanaged resources.
         /// </summary>
         public void Dispose()

@@ -5,6 +5,9 @@ using System.Web.Http;
 using System.Net.Http.Formatting;
 using System.Collections.Generic;
 using System.Net;
+using System;
+using Hermes.WebApi.Extensions.Authentication;
+using Hermes.WebApi.Extensions;
 
 namespace Hermes.WebApi.Web.Controllers
 {
@@ -12,8 +15,12 @@ namespace Hermes.WebApi.Web.Controllers
     public class UserController : ApiControllerBase
     {
         [AllowAnonymous]
-        public HttpResponseMessage Get(string external_access_token = "", string provider = "", string registered_user = "",
-            string external_user_name = "", string local_Bare_token = "")
+        public HttpResponseMessage Get(
+            string external_access_token = ""
+            , string provider = ""
+            , string registered_user = ""
+            , string external_user_name = ""
+            , string local_Bare_token = "")
         {
             var result = string.Format(@"external_access_token={0}
                                         &provider={1}
@@ -41,19 +48,30 @@ namespace Hermes.WebApi.Web.Controllers
 
             if (principal != null && principal.Identity.IsAuthenticated)
             {
-                string name = ClaimsPrincipal.Current.Identity.Name;
-                string authenticationType = User.Identity.AuthenticationType;
+                string name = principal.Identity.Name;
+                string authenticationType = principal.Identity.AuthenticationType;
                 string username = string.Empty;
                 string securityId = string.Empty;
                 string userAuthTokenId = string.Empty;
+                int timeInSeconds = 0;
                 IEnumerable<string> roles = null;
                 var cIdentity = principal.Identities.FirstOrDefault();
+
                 if (cIdentity != null)
                 {
                     username = cIdentity.FindFirst(ClaimTypes.Name).Value;
                     securityId = cIdentity.FindFirst(ClaimTypes.Sid).Value;
                     roles = cIdentity.FindAll(ClaimTypes.Role).Select(r => r.Value);
                     userAuthTokenId = cIdentity.FindFirst("UserAuthToken").Value;
+
+                    var userAuthToken = AuthenticationCommands.GetUserAuthTokenById(userAuthTokenId);
+
+                    if (userAuthToken != null)
+                    {
+                        // Validate expiration time if present
+                        DateTimeOffset currentUtc = Startup.OAuthBearerOptions.SystemClock.UtcNow;
+                        timeInSeconds = (int)((userAuthToken.IssuedUtc - currentUtc).TotalSeconds);
+                    }
                 }
 
                 object responseMessage = new
@@ -63,7 +81,8 @@ namespace Hermes.WebApi.Web.Controllers
                     Username = username,
                     SecurityId = securityId,
                     Roles = roles,
-                    UserAuthToken = userAuthTokenId
+                    UserAuthToken = userAuthTokenId,
+                    TimeInSeconds = timeInSeconds
 
                 };
 

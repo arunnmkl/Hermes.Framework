@@ -197,6 +197,21 @@ namespace Hermes.WebApi.Extensions.Authentication
             }
         }
 
+        /// <summary>
+        /// Gets the user authentication token by identifier.
+        /// </summary>
+        /// <param name="userAuthTokenId">The user authentication token identifier.</param>
+        /// <returns>
+        /// the user authentication token details
+        /// </returns>
+        public static UserAuthToken GetUserAuthTokenById(string userAuthTokenId)
+        {
+            using (UserManager um = new UserManager())
+            {
+                return um.GetUserAuthTokenById(userAuthTokenId);
+            }
+        }
+
         #endregion Public Methods
 
         #region Internal Methods 
