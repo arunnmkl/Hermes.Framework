@@ -70,7 +70,7 @@ namespace Hermes.WebApi.Web.Controllers
                     {
                         // Validate expiration time if present
                         DateTimeOffset currentUtc = Startup.OAuthBearerOptions.SystemClock.UtcNow;
-                        timeInSeconds = (int)((userAuthToken.IssuedUtc - currentUtc).TotalSeconds);
+                        timeInSeconds = (int)((userAuthToken.ExpiresUtc - currentUtc).TotalSeconds);
                     }
                 }
 

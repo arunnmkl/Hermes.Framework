@@ -82,7 +82,7 @@ namespace AngularJSAuthentication.API.Providers
                 {
                     //Get protectedTicket from refreshToken class
                     context.DeserializeTicket(refreshToken.ProtectedTicket);
-                    var result = um.RemoveRefreshToken(hashedTokenId);
+                    var result = await Task.Run(() => { return um.RemoveRefreshToken(hashedTokenId); });
                 }
             }
         }

@@ -10,7 +10,7 @@ using Microsoft.Owin.Security.OAuth;
 namespace Hermes.WebApi.Extensions.Authentication
 {
     /// <summary>
-    /// The authentication commands which basically deals with the all the authentication  
+    /// The authentication commands which basically deals with the all the authentication
     /// </summary>
     public static class AuthenticationCommands
     {
@@ -89,7 +89,9 @@ namespace Hermes.WebApi.Extensions.Authentication
         /// Removes the refresh token.
         /// </summary>
         /// <param name="tokenId">The token identifier.</param>
-        /// <returns>success or failure</returns>
+        /// <returns>
+        /// success or failure
+        /// </returns>
         public static bool RemoveRefreshToken(string tokenId)
         {
             using (UserManager um = new UserManager())
@@ -101,7 +103,9 @@ namespace Hermes.WebApi.Extensions.Authentication
         /// <summary>
         /// Gets all refresh tokens.
         /// </summary>
-        /// <returns>all refresh tokens</returns>
+        /// <returns>
+        /// all refresh tokens
+        /// </returns>
         public static IList<RefreshToken> GetAllRefreshTokens()
         {
             using (UserManager um = new UserManager())
@@ -143,7 +147,7 @@ namespace Hermes.WebApi.Extensions.Authentication
         /// </summary>
         /// <returns>
         /// user resource permissions
-        /// </returns>     
+        /// </returns>
         public static IList<ResourceAccessRule> GetUserResourcePermission()
         {
             using (UserManager um = new UserManager())
@@ -156,7 +160,9 @@ namespace Hermes.WebApi.Extensions.Authentication
         /// Saves the user authentication token.
         /// </summary>
         /// <param name="userAuthToken">The user authentication token.</param>
-        /// <returns>saved state.</returns>
+        /// <returns>
+        /// saved state.
+        /// </returns>
         public static bool SaveUserAuthToken(UserAuthToken userAuthToken)
         {
             using (UserManager um = new UserManager())
@@ -173,7 +179,9 @@ namespace Hermes.WebApi.Extensions.Authentication
         /// <summary>
         /// Sets the token expires.
         /// </summary>
-        /// <returns>row count</returns>
+        /// <returns>
+        /// row count
+        /// </returns>
         public static int SetTokenExpires()
         {
             using (UserManager um = new UserManager())
@@ -188,7 +196,9 @@ namespace Hermes.WebApi.Extensions.Authentication
         /// <param name="username">The username.</param>
         /// <param name="checkExistence">if set to <c>true</c> [check existence].</param>
         /// <param name="killOldSession">if set to <c>true</c> [kill old session].</param>
-        /// <returns>the new authentication token</returns>
+        /// <returns>
+        /// the new authentication token
+        /// </returns>
         public static string GenerateAuthToken(string username, bool checkExistence = false, bool killOldSession = false)
         {
             using (UserManager um = new UserManager())
@@ -216,6 +226,11 @@ namespace Hermes.WebApi.Extensions.Authentication
 
         #region Internal Methods 
 
+        /// <summary>
+        /// Authenticates the username password.
+        /// </summary>
+        /// <param name="context">The context.</param>
+        /// <returns></returns>
         internal static Task<ClaimsIdentity> AuthenticateUsernamePassword(OAuthGrantResourceOwnerCredentialsContext context)
         {
             using (UserManager um = new UserManager())
@@ -264,7 +279,9 @@ namespace Hermes.WebApi.Extensions.Authentication
         /// Converts the token as claims identity.
         /// </summary>
         /// <param name="accessToken">The access token.</param>
-        /// <returns>claims identity</returns>
+        /// <returns>
+        /// claims identity
+        /// </returns>
         internal static ClaimsIdentity ConvertTokenAsClaimsIdentity(string accessToken)
         {
             var ticket = Common.Helper.UnprotectAccessToken(accessToken);
@@ -280,7 +297,9 @@ namespace Hermes.WebApi.Extensions.Authentication
         /// Converts the token as authentication ticket.
         /// </summary>
         /// <param name="accessToken">The access token.</param>
-        /// <returns>authentication ticket</returns>
+        /// <returns>
+        /// authentication ticket
+        /// </returns>
         internal static AuthenticationTicket ConvertTokenAsAuthTicket(string accessToken)
         {
             var ticket = Common.Helper.UnprotectAccessToken(accessToken);
@@ -291,7 +310,9 @@ namespace Hermes.WebApi.Extensions.Authentication
         /// Finds the authentication client.
         /// </summary>
         /// <param name="clientId">The client identifier.</param>
-        /// <returns>authentication client information</returns>
+        /// <returns>
+        /// authentication client information
+        /// </returns>
         internal static AuthClient FindAuthClient(string clientId)
         {
             using (UserManager um = new UserManager())

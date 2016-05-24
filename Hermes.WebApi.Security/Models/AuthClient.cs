@@ -72,6 +72,14 @@ namespace Hermes.WebApi.Security.Models
         /// </value>
         [MaxLength(100)]
         public string AllowedOrigin { get; set; }
+
+        /// <summary>
+        /// Gets or sets the access token expire time span.
+        /// </summary>
+        /// <value>
+        /// The access token expire time span.
+        /// </value>
+        public int? AccessTokenExpireTimeSpan { get; set; }
     }
 }
 

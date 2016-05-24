@@ -84,11 +84,15 @@ namespace GlobalTranz.WebApi.Extensions.Owin
                 return Task.FromResult<object>(null);
             }
 
+            if (client.AccessTokenExpireTimeSpan.HasValue)
+            {
+                context.Options.AccessTokenExpireTimeSpan = TimeSpan.FromMinutes(client.AccessTokenExpireTimeSpan.Value);
+            }
             context.OwinContext.Set<string>("as:clientAllowedOrigin", client.AllowedOrigin);
             context.OwinContext.Set<string>("as:clientRefreshTokenLifeTime", client.RefreshTokenLifeTime.ToString());
+            context.OwinContext.Set<AuthClient>("as:client", client);
 
             context.Validated(context.ClientId);
-            context.OwinContext.Set<AuthClient>("as:client", client);
             return base.ValidateClientAuthentication(context);
         }
 
@@ -236,8 +240,8 @@ namespace GlobalTranz.WebApi.Extensions.Owin
             var userAuthToken = new UserAuthToken(context.AccessToken)
             {
                 AuthClientId = Convert.ToString(context.AdditionalResponseParameters.GetValueByKey("as:client_id")),
-                ExpiresUtc = Convert.ToDateTime(context.AdditionalResponseParameters.GetValueByKey(".issued")),
-                IssuedUtc = Convert.ToDateTime(context.AdditionalResponseParameters.GetValueByKey(".expires")),
+                ExpiresUtc = Convert.ToDateTime(context.AdditionalResponseParameters.GetValueByKey(".expires")),
+                IssuedUtc = Convert.ToDateTime(context.AdditionalResponseParameters.GetValueByKey(".issued")),
                 UserId = Convert.ToInt64(context.Identity.FindFirst("Identity").Value),
                 UserAuthTokenId = Convert.ToString(context.Identity.FindFirst("UserAuthToken").Value),
                 IsLoggedIn = true

@@ -49,6 +49,7 @@
   <ItemGroup>
     <Compile Include="ApiException.cs" />
     <Compile Include="AuthContext.cs" />
+    <Compile Include="AuthorizationScope.cs" />
     <Compile Include="AuthSqlRepository.cs" />
     <Compile Include="Helper.cs" />
     <Compile Include="Models\AuthClient.cs" />
