@@ -11,7 +11,6 @@ namespace Hermes.WebApi.Web.Controllers
     [RoutePrefix("api/Orders")]
     public class OrdersController : ApiController
     {
-        [Authorize]
         [Route("")]
         public IHttpActionResult Get()
         {

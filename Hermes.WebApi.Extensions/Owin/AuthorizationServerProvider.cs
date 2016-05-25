@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Net;
 using System.Security.Claims;
 using System.Threading.Tasks;
 using Hermes.WebApi.Extensions.Authentication;
@@ -8,8 +9,8 @@ using Hermes.WebApi.Extensions.Common;
 using Hermes.WebApi.Security.Models;
 using Microsoft.Owin.Security;
 using Microsoft.Owin.Security.OAuth;
-using Security = Hermes.WebApi.Security;
 using HermeSecurity = Hermes.WebApi.Core.Security;
+using Security = Hermes.WebApi.Security;
 
 namespace GlobalTranz.WebApi.Extensions.Owin
 {
@@ -130,7 +131,8 @@ namespace GlobalTranz.WebApi.Extensions.Owin
             if (identity == null)
             {
                 context.Rejected();
-                context.SetError("invalid_grant", "The user name or password is incorrect.");
+                context.SetError("invalid_grant", "Invalid user name or password.");
+                context.Response.Headers.Add(Constants.HermesChallengeFlag, new[] { ((int)HttpStatusCode.Unauthorized).ToString() }); //Little trick to get this to throw 401, refer to AuthenticationMiddleware for more  
                 return;
             }
 
@@ -140,6 +142,7 @@ namespace GlobalTranz.WebApi.Extensions.Owin
             {
                 context.Rejected();
                 context.SetError("session_rejected", $"The user {context.UserName}, is already logged in with other device/machine.");
+                context.Response.Headers.Add(Constants.HermesChallengeFlag, new[] { ((int)HttpStatusCode.Forbidden).ToString() }); //Little trick to get this to throw 401, refer to AuthenticationMiddleware for more
                 return;
             }
             else

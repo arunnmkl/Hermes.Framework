@@ -1,15 +1,11 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Linq;
 using System.Net;
 using System.Net.Http;
 using System.Net.Http.Formatting;
-using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
 using System.Web.Http;
 using Hermes.WebApi.Extensions.Common;
-using Newtonsoft.Json.Linq;
 
 namespace Hermes.WebApi.Extensions.Authentication.Result
 {
@@ -22,7 +18,7 @@ namespace Hermes.WebApi.Extensions.Authentication.Result
         /// <summary>
         /// The response message
         /// </summary>
-        private object responseMessage;
+        private ResponseError responseMessage;
 
         /// <summary>
         /// Initializes a new instance of the <see cref="AuthenticationFailureResult" /> class.
@@ -30,11 +26,18 @@ namespace Hermes.WebApi.Extensions.Authentication.Result
         /// <param name="reasonPhrase">The reason phrase.</param>
         /// <param name="request">The request.</param>
         /// <param name="responseMessage">The response message.</param>
-        public AuthenticationFailureResult(string reasonPhrase, HttpRequestMessage request, object responseMessage)
+        /// <param name="statusCode">The status code.</param>
+        public AuthenticationFailureResult(string reasonPhrase, HttpRequestMessage request, ResponseError responseMessage, HttpStatusCode statusCode)
         {
             ReasonPhrase = reasonPhrase;
             Request = request;
+            StatusCode = statusCode;
             this.responseMessage = responseMessage ?? AuthorizeResponseMessage.Default;
+
+           //if( Enum.IsDefined(typeof(HttpStatusCode), this.responseMessage.Error.Code) && (HttpStatusCode)this.responseMessage.Error.Code != StatusCode)
+           // {
+           //     StatusCode = (HttpStatusCode)this.responseMessage.Error.Code;
+           // }
         }
 
         /// <summary>
@@ -42,7 +45,17 @@ namespace Hermes.WebApi.Extensions.Authentication.Result
         /// </summary>
         /// <param name="request">The request.</param>
         /// <param name="responseMessage">The response message.</param>
-        public AuthenticationFailureResult(HttpRequestMessage request, object responseMessage) : this("Unauthorized", request, responseMessage)
+        public AuthenticationFailureResult(HttpRequestMessage request, ResponseError responseMessage) : this(HttpStatusCode.Unauthorized.ToString(), request, responseMessage, HttpStatusCode.Unauthorized)
+        {
+        }
+
+        /// <summary>
+        /// Initializes a new instance of the <see cref="AuthenticationFailureResult" /> class.
+        /// </summary>
+        /// <param name="request">The request.</param>
+        /// <param name="responseMessage">The response message.</param>
+        /// <param name="statusCode">The status code.</param>
+        public AuthenticationFailureResult(HttpRequestMessage request, ResponseError responseMessage, HttpStatusCode statusCode) : this(statusCode.ToString(), request, responseMessage, statusCode)
         {
         }
 
@@ -63,6 +76,14 @@ namespace Hermes.WebApi.Extensions.Authentication.Result
         public HttpRequestMessage Request { get; private set; }
 
         /// <summary>
+        /// Gets or sets the status code.
+        /// </summary>
+        /// <value>
+        /// The status code.
+        /// </value>
+        public HttpStatusCode StatusCode { get; set; }
+
+        /// <summary>
         /// Creates an <see cref="T:System.Net.Http.HttpResponseMessage" /> asynchronously.
         /// </summary>
         /// <param name="cancellationToken">The token to monitor for cancellation requests.</param>
@@ -80,9 +101,9 @@ namespace Hermes.WebApi.Extensions.Authentication.Result
         /// <returns></returns>
         private HttpResponseMessage Execute()
         {
-            HttpResponseMessage response = new HttpResponseMessage(HttpStatusCode.Unauthorized);
+            HttpResponseMessage response = new HttpResponseMessage(StatusCode);
             MediaTypeFormatter jsonFormatter = new JsonMediaTypeFormatter();
-            response.Content = new ObjectContent<object>(this.responseMessage, jsonFormatter);
+            response.Content = new ObjectContent<ResponseError>(responseMessage, jsonFormatter);
             response.RequestMessage = Request;
             response.ReasonPhrase = ReasonPhrase;
             return response;

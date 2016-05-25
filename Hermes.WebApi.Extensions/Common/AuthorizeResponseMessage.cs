@@ -17,18 +17,11 @@ namespace Hermes.WebApi.Extensions.Common
         /// <value>
         /// Authorization has been denied for this request.
         /// </value>
-        public static object Default
+        public static ResponseError Default
         {
             get
             {
-                return new
-                {
-                    Error = new
-                    {
-                        Code = 401,
-                        Message = "Authorization has been denied for this request."
-                    }
-                };
+                return new ResponseError(401, "Authorization has been denied for this request.");
             }
         }
 
@@ -38,18 +31,11 @@ namespace Hermes.WebApi.Extensions.Common
         /// <value>
         /// The require authorization.
         /// </value>
-        public static object RequireAuthorization
+        public static ResponseError RequireAuthorization
         {
             get
             {
-                return new
-                {
-                    Error = new
-                    {
-                        Code = 401,
-                        Message = "Request require authorization"
-                    }
-                };
+                return new ResponseError(400, "Request require authorization");
             }
         }
 
@@ -59,18 +45,11 @@ namespace Hermes.WebApi.Extensions.Common
         /// <value>
         /// The missing access token.
         /// </value>
-        public static object MissingAccessToken
+        public static ResponseError MissingAccessToken
         {
             get
             {
-                return new
-                {
-                    Error = new
-                    {
-                        Code = 401,
-                        Message = "Missing access token"
-                    }
-                };
+                return new ResponseError(400, "Missing access token");
             }
         }
 
@@ -80,18 +59,11 @@ namespace Hermes.WebApi.Extensions.Common
         /// <value>
         /// The invalid bearer token.
         /// </value>
-        public static object InvalidBearerToken
+        public static ResponseError InvalidBearerToken
         {
             get
             {
-                return new
-                {
-                    Error = new
-                    {
-                        Code = 401,
-                        Message = "Invalid bearer token received"
-                    }
-                };
+                return new ResponseError(401, "Invalid bearer token received");
             }
         }
 
@@ -101,18 +73,11 @@ namespace Hermes.WebApi.Extensions.Common
         /// <value>
         /// The user session expired.
         /// </value>
-        public static object UserSessionExpired
+        public static ResponseError UserSessionExpired
         {
             get
             {
-                return new
-                {
-                    Error = new
-                    {
-                        Code = 401,
-                        Message = "User session has already expired"
-                    }
-                };
+                return new ResponseError(403, "The client's session has already expired");
             }
         }
 
@@ -122,19 +87,80 @@ namespace Hermes.WebApi.Extensions.Common
         /// <value>
         /// The token expired.
         /// </value>
-        public static object TokenExpired
+        public static ResponseError TokenExpired
         {
             get
             {
-                return new
-                {
-                    Error = new
-                    {
-                        Code = 401,
-                        Message = "The Token has expired"
-                    }
-                };
+                return new ResponseError(401, "The Token has expired");
             }
+        }
+    }
+
+    /// <summary>
+    /// Class to encapsulate response error
+    /// </summary>
+    public class ResponseError
+    {
+        /// <summary>
+        /// The error response message
+        /// </summary>
+        private ErrorResponseMessage errorResponseMessage;
+
+        /// <summary>
+        /// Initializes a new instance of the <see cref="Error"/> class.
+        /// </summary>
+        /// <param name="code">The code.</param>
+        /// <param name="message">The message.</param>
+        public ResponseError(int code, string message)
+        {
+            errorResponseMessage = new ErrorResponseMessage(code, message);
+        }
+
+        /// <summary>
+        /// Gets the error.
+        /// </summary>
+        /// <value>
+        /// The error.
+        /// </value>
+        public ErrorResponseMessage Error
+        {
+            get
+            {
+                return errorResponseMessage;
+            }
+        }
+    }
+
+    /// <summary>
+    /// Class to encapsulate error response message.
+    /// </summary>
+    public class ErrorResponseMessage
+    {
+        /// <summary>
+        /// Gets or sets the code.
+        /// </summary>
+        /// <value>
+        /// The code.
+        /// </value>
+        public int Code { get; set; }
+
+        /// <summary>
+        /// Gets or sets the message.
+        /// </summary>
+        /// <value>
+        /// The message.
+        /// </value>
+        public string Message { get; set; }
+
+        /// <summary>
+        /// Initializes a new instance of the <see cref="ErrorResponseMessage"/> class.
+        /// </summary>
+        /// <param name="code">The code.</param>
+        /// <param name="message">The message.</param>
+        public ErrorResponseMessage(int code, string message)
+        {
+            Code = code;
+            Message = message;
         }
     }
 }

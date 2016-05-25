@@ -10,7 +10,7 @@ namespace Hermes.WebApi.Security
     /// Authorization scope class.
     /// </summary>
     /// <seealso cref="System.IDisposable" />
-    class AuthorizationScope : IDisposable
+    public class AuthorizationScope : IDisposable
     {
         /// <summary>
         /// Performs application-defined tasks associated with freeing, releasing, or resetting unmanaged resources.

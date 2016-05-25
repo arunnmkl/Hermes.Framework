@@ -333,25 +333,7 @@ namespace Hermes.WebApi.Web.Controllers
                 response.Content = new StringContent(responseString, Encoding.UTF8, "application/json");
                 return response;
             }
-        }
-
-        // POST api/User/Logout
-        /// <summary>
-        /// Logouts this instance.
-        /// </summary>
-        /// <returns></returns>
-        [HttpPost]
-        [Route("Logout")]
-        [AllowAnonymous]
-        public IHttpActionResult Logout()
-        {
-            ExternalProvider.SignOut(Request, HttpContext.Current.User.Identity.AuthenticationType);
-            AuthenticationCommands.SetTokenExpires();
-            return this.Ok(new
-            {
-                message = "Logout successful."
-            });
-        }
+        }  
 
         /// <summary>
         /// Generates the local access token response.

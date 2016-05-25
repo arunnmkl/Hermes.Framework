@@ -73,7 +73,7 @@ app.factory('authService', ['$http', '$q', 'localStorageService', 'ngAuthSetting
 
         var deferred = $q.defer();
 
-        $http.post(serviceBase + 'api/Account/logout').success(function (response) {
+        $http.post(serviceBase + 'api/logout').success(function (response) {
             _logOut();
 
             deferred.resolve(response);

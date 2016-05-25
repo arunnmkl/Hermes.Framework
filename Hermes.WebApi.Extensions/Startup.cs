@@ -3,6 +3,7 @@ using System.Configuration;
 using System.Web.Http;
 using AngularJSAuthentication.API.Providers;
 using GlobalTranz.WebApi.Extensions.Owin;
+using Hermes.WebApi.Extensions.Authentication;
 using Hermes.WebApi.Extensions.Owin.Externals;
 using Microsoft.AspNet.Identity;
 using Microsoft.Owin;
@@ -74,6 +75,9 @@ namespace Hermes.WebApi.Extensions
         /// <param name="app">The application.</param>
         public void ConfigureOAuth(IAppBuilder app)
         {
+            // to register this custom OwinMiddleware
+            app.Use<AuthenticationMiddleware>();
+
             //use a cookie to temporarily store information about a user logging in with a third party login provider
             app.UseExternalSignInCookie(DefaultAuthenticationTypes.ExternalCookie);
 

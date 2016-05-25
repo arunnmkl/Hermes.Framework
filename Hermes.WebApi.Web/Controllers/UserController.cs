@@ -40,7 +40,6 @@ namespace Hermes.WebApi.Web.Controllers
             return Request.CreateResponse(result);
         }
 
-        [Authorize]
         [Route("details")]
         public HttpResponseMessage GetDetails()
         {

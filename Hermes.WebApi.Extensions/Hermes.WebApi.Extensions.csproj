@@ -122,6 +122,7 @@
     <Compile Include="Authentication\ApiControllerBase.cs" />
     <Compile Include="Authentication\AuthenticationCommand.cs" />
     <Compile Include="Authentication\AuthenticationCommands.cs" />
+    <Compile Include="Authentication\AuthenticationMiddleware.cs" />
     <Compile Include="Authentication\BasicAuthenticateController.cs" />
     <Compile Include="Authentication\AuthorizationController.cs" />
     <Compile Include="Authentication\CookieAuthenticationController.cs" />
@@ -133,6 +134,7 @@
     <Compile Include="Common\ComponentPaths.cs" />
     <Compile Include="Common\ComponentPathsConfigurationSection.cs" />
     <Compile Include="ApiExceptionFilter.cs" />
+    <Compile Include="Common\Constants.cs" />
     <Compile Include="Common\Extensions.cs" />
     <Compile Include="Common\Helper.cs" />
     <Compile Include="Common\ClaimsIdentityProvider.cs" />
