@@ -151,6 +151,7 @@ namespace GlobalTranz.WebApi.Extensions.Owin
                 }
 
                 identity.AddClaim(new Claim("UserAuthToken", authToken));
+                context.OwinContext.Set<string>("as:UserAuthToken", authToken);
             }
 
             var authDictonary = new Dictionary<string, string>

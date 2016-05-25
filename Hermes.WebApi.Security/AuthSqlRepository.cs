@@ -80,7 +80,8 @@ namespace Hermes.WebApi.Security
                 new Parameter("@AuthClientId", token.AuthClientId),
                 new Parameter("@IssuedUtc", token.IssuedUtc),
                 new Parameter("@ExpiresUtc", token.ExpiresUtc),
-                new Parameter("@ProtectedTicket", token.ProtectedTicket)
+                new Parameter("@ProtectedTicket", token.ProtectedTicket),
+                new Parameter("@UserAuthTokenId", token.UserAuthTokenId)
             };
 
             this.sqlSerializer.Execute(commandText, parameters: parameters, storedProcedure: true);
@@ -306,7 +307,7 @@ namespace Hermes.WebApi.Security
         /// Saves the user authentication token.
         /// </summary>
         /// <param name="userAuthToken">The user authentication token.</param>
-        /// <returns>saved state</returns>     
+        /// <returns>saved state</returns>
         internal bool SaveUserAuthToken(UserAuthToken userAuthToken)
         {
             string commandText = "[dbo].[SaveUserAuthToken]";

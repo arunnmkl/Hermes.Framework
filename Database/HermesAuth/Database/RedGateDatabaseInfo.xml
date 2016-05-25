@@ -55,6 +55,8 @@
     <DataWriteAllFilesInOneDirectory>True</DataWriteAllFilesInOneDirectory>
   </WriteToFileOptions>
   <DataFileSet>
-    <Count>0</Count>
+    <Count>2</Count>
+    <DataFile>dbo.AuthClient_Data.sql</DataFile>
+    <DataFile>dbo.Permission_Data.sql</DataFile>
   </DataFileSet>
 </DatabaseInformation>

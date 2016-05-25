@@ -1,3 +1,4 @@
+
 SET QUOTED_IDENTIFIER ON
 GO
 SET ANSI_NULLS ON
@@ -12,6 +13,7 @@ BEGIN
 		,rt.[IssuedUtc]
 		,rt.[ExpiresUtc]
 		,rt.[ProtectedTicket]
+		,rt.[UserAuthTokenId]
 	FROM [dbo].[RefreshToken] rt
 	WHERE rt.RefreshTokenId = @RefreshTokenId
 END;

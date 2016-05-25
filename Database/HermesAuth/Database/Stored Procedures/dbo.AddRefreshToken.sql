@@ -1,3 +1,4 @@
+
 SET QUOTED_IDENTIFIER ON
 GO
 SET ANSI_NULLS ON
@@ -10,6 +11,7 @@ CREATE PROCEDURE [dbo].[AddRefreshToken] (
 	,@IssuedUtc DATETIME
 	,@ExpiresUtc DATETIME
 	,@ProtectedTicket VARCHAR(8000)
+	,@UserAuthTokenId VARCHAR(36)
 	)
 AS
 BEGIN	 
@@ -20,6 +22,7 @@ BEGIN
 		,[IssuedUtc]
 		,[ExpiresUtc]
 		,[ProtectedTicket]
+		,[UserAuthTokenId]
 		)
 	VALUES (
 		@RefreshTokenId
@@ -28,6 +31,7 @@ BEGIN
 		,@IssuedUtc
 		,@ExpiresUtc
 		,@ProtectedTicket
+		,@UserAuthTokenId
 		)
 
 	SELECT @RefreshTokenId AS RefreshTokenId

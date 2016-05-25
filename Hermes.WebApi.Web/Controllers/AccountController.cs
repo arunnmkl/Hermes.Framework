@@ -342,6 +342,7 @@ namespace Hermes.WebApi.Web.Controllers
         /// <returns></returns>
         [HttpPost]
         [Route("Logout")]
+        [AllowAnonymous]
         public IHttpActionResult Logout()
         {
             ExternalProvider.SignOut(Request, HttpContext.Current.User.Identity.AuthenticationType);

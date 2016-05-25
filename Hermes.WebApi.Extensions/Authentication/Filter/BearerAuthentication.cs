@@ -5,6 +5,8 @@ using System.Security.Claims;
 using System.Threading;
 using System.Threading.Tasks;
 using System.Web.Http.Filters;
+using Hermes.WebApi.Core;
+using Hermes.WebApi.Core.Interfaces;
 using Hermes.WebApi.Core.Security;
 using Hermes.WebApi.Extensions.Common;
 using Hermes.WebApi.Security.Models;
@@ -30,6 +32,16 @@ namespace Hermes.WebApi.Extensions.Authentication.Filter
         /// </returns>
         public async Task AuthenticateAsync(HttpAuthenticationContext context, CancellationToken cancellationToken)
         {
+            // skip allow anonymous calls
+            IAuthorization Authentication = DependencyResolverContainer.Resolve<IAuthorization>();
+            if (Authentication != null)
+            {
+                if (Authentication.SkipAuthorization(context.ActionContext))
+                {
+                    return;
+                }
+            }
+
             // 1. Look for token in the request.
             HttpRequestMessage request = context.Request;
             AuthenticationHeaderValue authorization = request.Headers.Authorization;

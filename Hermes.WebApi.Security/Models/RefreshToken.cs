@@ -61,5 +61,13 @@ namespace Hermes.WebApi.Security.Models
         /// </value>
         [Required]
         public string ProtectedTicket { get; set; }
+
+        /// <summary>
+        /// Gets or sets the user authentication token identifier.
+        /// </summary>
+        /// <value>
+        /// The user authentication token identifier.
+        /// </value>
+        public string UserAuthTokenId { get; set; }
     }
 }

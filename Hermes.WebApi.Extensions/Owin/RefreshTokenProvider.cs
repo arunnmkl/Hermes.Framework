@@ -32,6 +32,7 @@ namespace AngularJSAuthentication.API.Providers
             using (UserManager um = new UserManager())
             {
                 var refreshTokenLifeTime = context.OwinContext.Get<string>("as:clientRefreshTokenLifeTime");
+                var userAuthToken = context.OwinContext.Get<string>("as:UserAuthToken");
 
                 var token = new RefreshToken()
                 {
@@ -39,7 +40,8 @@ namespace AngularJSAuthentication.API.Providers
                     AuthClientId = clientid,
                     Username = context.Ticket.Identity.Name,
                     IssuedUtc = DateTime.UtcNow,
-                    ExpiresUtc = DateTime.UtcNow.AddMinutes(Convert.ToDouble(refreshTokenLifeTime))
+                    ExpiresUtc = DateTime.UtcNow.AddMinutes(Convert.ToDouble(refreshTokenLifeTime)),
+                    UserAuthTokenId = userAuthToken
                 };
 
                 context.Ticket.Properties.IssuedUtc = token.IssuedUtc;

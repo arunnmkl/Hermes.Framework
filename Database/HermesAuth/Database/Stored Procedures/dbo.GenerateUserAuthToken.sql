@@ -1,3 +1,4 @@
+
 SET QUOTED_IDENTIFIER ON
 GO
 SET ANSI_NULLS ON
@@ -13,7 +14,7 @@ BEGIN
 	SET NOCOUNT ON;
 
 	DECLARE @userId BIGINT
-	DECLARE @authTokenReturn VARCHAR(36)
+	DECLARE @authTokenReturn VARCHAR(36) = NULL
 
 	SET @userId = (SELECT UserId FROM [dbo].[User] u WHERE u.Username = @Username)
 
@@ -26,6 +27,10 @@ BEGIN
 				,AccessToken = NULL
 				,IsLoggedIn = 0
 				,UpdatedDate = GETDATE()
+			WHERE UserId = @userId
+
+			DELETE rt FROM [dbo].[RefreshToken] rt 
+			Inner Join [dbo].[UserAuthToken] uat on uat.UserAuthTokenId = rt.UserAuthTokenId 
 			WHERE UserId = @userId
 		END
 
