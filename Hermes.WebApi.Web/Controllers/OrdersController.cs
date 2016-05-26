@@ -9,53 +9,257 @@ using Hermes.WebApi.Core.Filters;
 
 namespace Hermes.WebApi.Web.Controllers
 {
+    /// <summary>
+    /// Orders controller
+    /// </summary>
+    /// <seealso cref="System.Web.Http.ApiController" />
     [RoutePrefix("api/Orders")]
     public class OrdersController : ApiController
     {
-        [Route("")]
-        public IHttpActionResult Get()
+        /// <summary>
+        /// Gets this instance.
+        /// </summary>
+        /// <returns></returns>
+        [Route("All")]
+        public IHttpActionResult GetAll()
         {
-            return Ok(Order.CreateOrders());
+            return Ok(Order.GetOrders());
         }
 
-        [Authorize(Roles = "Admin")]
-        [Route("Auth")]
-        public IHttpActionResult GetAuth()
-        {
-            return Ok(Order.CreateOrders());
-        } 
-
+        /// <summary>
+        /// Posts the specified order.
+        /// </summary>
+        /// <param name="order">The order.</param>
+        /// <returns></returns>
         [HermesAuthorization("RefreshToken", "Create")]
-        [Route("Manager")]
-        public IHttpActionResult GetManagerAuth()
+        public IHttpActionResult Post(Order order)
         {
-            return Ok(Order.CreateOrders().FirstOrDefault());
+            var result = Order.Create(order);
+            if (result)
+            {
+                return Ok("Created successfully");
+            }
+
+            return BadRequest("Failed to create");
         }
 
+        /// <summary>
+        /// Posts the specified order.
+        /// </summary>
+        /// <param name="order">The order.</param>
+        /// <returns></returns>
+        [Route("{orderId}")]
+        [HermesAuthorization("RefreshToken", "Read")]
+        public IHttpActionResult Get(int orderId)
+        {
+            return Ok(Order.Read(orderId));
+        }
+
+        /// <summary>
+        /// Posts the specified order.
+        /// </summary>
+        /// <param name="order">The order.</param>
+        /// <returns></returns>
+        [HermesAuthorization("RefreshToken", "Update")]
+        public IHttpActionResult Put(Order order)
+        {
+            var result = Order.Update(order);
+            if (result)
+            {
+                return Ok("Updated successfully");
+            }
+
+            return BadRequest("Failed to update");
+        }
+
+        /// <summary>
+        /// Posts the specified order.
+        /// </summary>
+        /// <param name="order">The order.</param>
+        /// <returns></returns> 
+        [Route("{orderId}")]
+        [HermesAuthorization("RefreshToken", "Delete")]
+        public IHttpActionResult Delete(int orderId)
+        {
+            var result = Order.Delete(orderId);
+            if (result)
+            {
+                return Ok("Deleted successfully");
+            }
+
+            return BadRequest("Failed to delete");
+        }
     }
 
     #region Helpers
 
+    /// <summary>
+    /// 
+    /// </summary>
     public class Order
     {
+        /// <summary>
+        /// Gets or sets the order identifier.
+        /// </summary>
+        /// <value>
+        /// The order identifier.
+        /// </value>
         public int OrderID { get; set; }
+        /// <summary>
+        /// Gets or sets the name of the customer.
+        /// </summary>
+        /// <value>
+        /// The name of the customer.
+        /// </value>
         public string CustomerName { get; set; }
+        /// <summary>
+        /// Gets or sets the shipper city.
+        /// </summary>
+        /// <value>
+        /// The shipper city.
+        /// </value>
         public string ShipperCity { get; set; }
-        public Boolean IsShipped { get; set; }
+        /// <summary>
+        /// Gets or sets a value indicating whether this instance is shipped.
+        /// </summary>
+        /// <value>
+        /// <c>true</c> if this instance is shipped; otherwise, <c>false</c>.
+        /// </value>
+        public bool IsShipped { get; set; }
 
-
-        public static List<Order> CreateOrders()
+        /// <summary>
+        /// Gets the orders.
+        /// </summary>
+        /// <returns></returns>
+        public static IList<Order> GetOrders()
         {
-            List<Order> OrderList = new List<Order>
-            {
-                new Order {OrderID = 10248, CustomerName = "Taiseer Joudeh", ShipperCity = "Amman", IsShipped = true },
-                new Order {OrderID = 10249, CustomerName = "Ahmad Hasan", ShipperCity = "Dubai", IsShipped = false},
-                new Order {OrderID = 10250,CustomerName = "Tamer Yaser", ShipperCity = "Jeddah", IsShipped = false },
-                new Order {OrderID = 10251,CustomerName = "Lina Majed", ShipperCity = "Abu Dhabi", IsShipped = false},
-                new Order {OrderID = 10252,CustomerName = "Yasmeen Rami", ShipperCity = "Kuwait", IsShipped = true}
-            };
+            return Orders;
+        }
 
-            return OrderList;
+        /// <summary>
+        /// Creates the specified order.
+        /// </summary>
+        /// <param name="order">The order.</param>
+        /// <returns></returns>
+        public static bool Create(Order order)
+        {
+            try
+            {
+                Orders.Add(order);
+                return true;
+            }
+            catch (Exception)
+            {
+                return false;
+            }
+        }
+
+        /// <summary>
+        /// Reads the specified order identifier.
+        /// </summary>
+        /// <param name="orderId">The order identifier.</param>
+        /// <returns></returns>
+        public static Order Read(int orderId)
+        {
+            try
+            {
+                return Orders.FirstOrDefault(o => o.OrderID == orderId);
+            }
+            catch (Exception)
+            {
+                return null;
+            }
+        }
+
+        /// <summary>
+        /// Updates the specified order.
+        /// </summary>
+        /// <param name="order">The order.</param>
+        /// <returns></returns>
+        public static bool Update(Order order)
+        {
+            try
+            {
+                var existingOrder = Orders.FirstOrDefault(o => o.OrderID == order.OrderID);
+                existingOrder.CustomerName = order.CustomerName;
+                existingOrder.ShipperCity = order.ShipperCity;
+                existingOrder.IsShipped = order.IsShipped;
+                return true;
+            }
+            catch (Exception)
+            {
+                return false;
+            }
+        }
+
+        /// <summary>
+        /// Deletes the specified order identifier.
+        /// </summary>
+        /// <param name="orderId">The order identifier.</param>
+        /// <returns></returns>
+        public static bool Delete(int orderId)
+        {
+            try
+            {
+                var order = Orders.FirstOrDefault(o => o.OrderID == orderId);
+                Orders.Remove(order);
+                return true;
+            }
+            catch (Exception)
+            {
+                return false;
+            }
+        }
+
+        /// <summary>
+        /// Gets the orders.
+        /// </summary>
+        /// <value>
+        /// The orders.
+        /// </value>
+        private static IList<Order> Orders
+        {
+            get
+            {
+                return new List<Order>
+                {
+                    new Order
+                    {
+                        OrderID = 10248
+                        , CustomerName = "Taser Judah"
+                        , ShipperCity = "Omen"
+                        , IsShipped = true
+                    },
+                    new Order
+                    {
+                        OrderID = 10249
+                        , CustomerName = "Ahmad Hassan"
+                        , ShipperCity = "Dubai"
+                        , IsShipped = false
+                    },
+                    new Order
+                    {
+                        OrderID = 10250
+                        , CustomerName = "Tamer Yasser"
+                        , ShipperCity = "Jeddah"
+                        , IsShipped = false
+                    },
+                    new Order
+                    {
+                        OrderID = 10251
+                        , CustomerName = "Lina Majid"
+                        , ShipperCity = "Abu Dhabi"
+                        , IsShipped = false
+                    },
+                    new Order
+                    {
+                        OrderID = 10252
+                        , CustomerName = "Yasmeen Rami"
+                        , ShipperCity = "Kuwait"
+                        , IsShipped = true
+                    }
+                };
+            }
         }
     }
 
