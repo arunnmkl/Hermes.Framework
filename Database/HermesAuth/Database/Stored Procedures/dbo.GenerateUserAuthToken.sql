@@ -27,7 +27,7 @@ BEGIN
 				,AccessToken = NULL
 				,IsLoggedIn = 0
 				,UpdatedDate = GETDATE()
-			WHERE UserId = @userId
+			WHERE UserId = @userId And IsExpired = 0
 
 			DELETE rt FROM [dbo].[RefreshToken] rt 
 			Inner Join [dbo].[UserAuthToken] uat on uat.UserAuthTokenId = rt.UserAuthTokenId 

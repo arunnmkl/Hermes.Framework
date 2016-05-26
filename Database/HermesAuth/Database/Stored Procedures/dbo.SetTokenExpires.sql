@@ -18,7 +18,7 @@ BEGIN
 		,ExpiresUtc = GETUTCDATE()
 		,IsLoggedIn = 0
 		,UpdatedDate = GETDATE()
-	WHERE [UserId] = @UserId
+	WHERE [UserId] = @UserId AND UserAuthTokenId = @UserAuthTokenId
 
 	SET @rowCount = (
 			SELECT @@ROWCOUNT
