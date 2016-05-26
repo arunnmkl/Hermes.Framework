@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Configuration;
 using System.Linq;
 using System.Security.Claims;
 using System.Text;
@@ -20,6 +21,20 @@ namespace Hermes.WebApi.Security
         /// </summary>
         [ThreadStatic]
         private static SqlSerializer authDal;
+
+        /// <summary>
+        /// Gets the security schema.
+        /// </summary>
+        /// <value>
+        /// The security schema.
+        /// </value>
+        public static string SecuritySchema
+        {
+            get
+            {
+                return ConfigurationManager.AppSettings["SecuritySchema"] ?? "[dbo]";
+            }
+        }
 
         /// <summary>
         /// Gets or sets the authentication dal.
@@ -111,6 +126,25 @@ namespace Hermes.WebApi.Security
                 }
 
                 return default(long);
+            }
+        }
+        /// <summary>
+        /// Gets the user authentication token identifier.
+        /// </summary>
+        /// <value>
+        /// The user authentication token identifier.
+        /// </value>
+        public static string UserAuthTokenId
+        {
+            get
+            {
+                var securityClaims = Principal.Claims.Where(a => (a.Type == "UserAuthToken"));
+                if (securityClaims.Any())
+                {
+                    return Convert.ToString(securityClaims.FirstOrDefault().Value);
+                }
+
+                return string.Empty;
             }
         }
 

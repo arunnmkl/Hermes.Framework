@@ -5,6 +5,7 @@ using System.Net;
 using System.Net.Http;
 using System.Web;
 using System.Web.Http;
+using Hermes.WebApi.Core.Filters;
 
 namespace Hermes.WebApi.Web.Controllers
 {
@@ -22,9 +23,9 @@ namespace Hermes.WebApi.Web.Controllers
         public IHttpActionResult GetAuth()
         {
             return Ok(Order.CreateOrders());
-        }
+        } 
 
-        [Authorize(Roles = "Manager")]
+        [HermesAuthorization("RefreshToken", "Create")]
         [Route("Manager")]
         public IHttpActionResult GetManagerAuth()
         {

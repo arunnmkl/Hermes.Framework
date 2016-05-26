@@ -81,7 +81,7 @@ namespace Hermes.WebApi.Extensions.Authentication.Result
         /// <value>
         /// The status code.
         /// </value>
-        public HttpStatusCode StatusCode { get; set; }
+        public HttpStatusCode StatusCode { get; private set; }
 
         /// <summary>
         /// Creates an <see cref="T:System.Net.Http.HttpResponseMessage" /> asynchronously.

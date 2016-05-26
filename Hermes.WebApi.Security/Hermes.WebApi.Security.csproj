@@ -34,10 +34,14 @@
     <Reference Include="Hermes.WebApi.Base">
       <HintPath>..\References\Assembly\Hermes.WebApi.Base.dll</HintPath>
     </Reference>
+    <Reference Include="Hermes.WebApi.Core.1.0.2">
+      <HintPath>..\References\Assembly\Hermes.WebApi.Core.1.0.2.dll</HintPath>
+    </Reference>
     <Reference Include="System" />
     <Reference Include="System.ComponentModel.DataAnnotations" />
     <Reference Include="System.Configuration" />
     <Reference Include="System.Core" />
+    <Reference Include="System.Transactions" />
     <Reference Include="System.Web" />
     <Reference Include="System.Xml.Linq" />
     <Reference Include="System.Data.DataSetExtensions" />
@@ -49,13 +53,16 @@
   <ItemGroup>
     <Compile Include="ApiException.cs" />
     <Compile Include="AuthContext.cs" />
+    <Compile Include="AuthorizationCommands.cs" />
     <Compile Include="AuthorizationScope.cs" />
     <Compile Include="AuthSqlRepository.cs" />
     <Compile Include="Helper.cs" />
     <Compile Include="Models\AuthClient.cs" />
     <Compile Include="Models\Enums.cs" />
     <Compile Include="Models\ExternalLoginModel.cs" />
+    <Compile Include="Models\Permission.cs" />
     <Compile Include="Models\RefreshToken.cs" />
+    <Compile Include="Models\Resource.cs" />
     <Compile Include="Models\ResourceAccessRule.cs" />
     <Compile Include="Models\UserAuthToken.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />

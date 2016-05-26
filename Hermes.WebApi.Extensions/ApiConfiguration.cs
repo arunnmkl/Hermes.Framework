@@ -56,6 +56,10 @@ namespace Hermes.WebApi.Extensions
                     config.Filters.Add(new HermesAuthorizationAttribute());
                 }
             }
+            else if (HermesSecurity.Configuration.Current.HermesAuthorizationEnabled)
+            {
+                config.Filters.Add(new HermesAuthorizationAttribute());
+            }
 
             if (HermesSecurity.Configuration.Current.CSRFAttackPrevented)
             {
@@ -97,6 +101,10 @@ namespace Hermes.WebApi.Extensions
                 {
                     DependencyResolverContainer.RegisterInstance<IAuthorization>(new AuthorizationController());
                 }
+            }
+            else if (HermesSecurity.Configuration.Current.HermesAuthorizationEnabled)
+            {
+                DependencyResolverContainer.RegisterInstance<IAuthorization>(new AuthorizationController());
             }
 
             if (HermesSecurity.Configuration.Current.CSRFAttackPrevented)

@@ -3,6 +3,8 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using Hermes.WebApi.Core.Exceptions;
+using Hermes.WebApi.Security.Models;
 
 namespace Hermes.WebApi.Security
 {
@@ -12,6 +14,52 @@ namespace Hermes.WebApi.Security
     /// <seealso cref="System.IDisposable" />
     public class AuthorizationScope : IDisposable
     {
+        /// <summary>
+        /// Initializes a new instance of the <see cref="AuthorizationScope"/> class.
+        /// </summary>
+        /// <param name="logicalResource">The logical resource.</param>
+        /// <param name="permission">The permission.</param>
+        private AuthorizationScope(Resource logicalResource, Permission permission)
+            : this(logicalResource.ResourceId, permission.PermissionId)
+        {
+        }
+
+        /// <summary>
+        /// Initializes a new instance of the <see cref="AuthorizationScope"/> class.
+        /// </summary>
+        /// <param name="logicalResourceName">Name of the logical resource.</param>
+        /// <param name="permissionName">Name of the permission.</param>
+        public AuthorizationScope(string logicalResourceName, string permissionName)
+            : this(AuthorizationCommands.GetResource(logicalResourceName), AuthorizationCommands.GetPermission(permissionName))
+        {
+        }
+
+        /// <summary>
+        /// Initializes a new instance of the <see cref="AuthorizationScope"/> class.
+        /// </summary>
+        /// <param name="resourceId">The resource identifier.</param>
+        /// <param name="permissionId">The permission identifier.</param>
+        public AuthorizationScope(Guid resourceId, int permissionId)
+        {
+            string securityName = "Anonymous";
+            IList<string> securityIds = new List<string>();
+            try
+            {
+                securityName = AuthContext.Username;
+                securityIds = AuthContext.SecurityIds;
+                var authorizationType = AuthorizationCommands.CheckAuthorization(resourceId, securityIds, permissionId);
+                if (!authorizationType.HasFlag((Enum)Models.Enums.AuthorizationType.Access))
+                {
+                    throw new AccessException(resourceId, securityName, permissionId);
+                }
+            }
+            finally
+            {
+
+            }
+        }
+
+        #region Interface members
         /// <summary>
         /// Performs application-defined tasks associated with freeing, releasing, or resetting unmanaged resources.
         /// </summary>
@@ -32,5 +80,6 @@ namespace Hermes.WebApi.Security
                 //// Dispose any managed objects
             }
         }
+        #endregion
     }
 }

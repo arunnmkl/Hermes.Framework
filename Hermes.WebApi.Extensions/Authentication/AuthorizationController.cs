@@ -21,6 +21,7 @@ using System.Threading;
 using System.Web.Http.Controllers;
 using System.Threading.Tasks;
 using System.Web.Http.Filters;
+using Hermes.WebApi.Security;
 
 namespace Hermes.WebApi.Extensions.Authentication
 {
@@ -94,7 +95,10 @@ namespace Hermes.WebApi.Extensions.Authentication
         /// <returns><c>true</c> if the specified logical resource name is authorized; otherwise, <c>false</c>.</returns>
         public bool IsAuthorized(string logicalResourceName, string permission)
         {
-            throw new NotImplementedException();
+            using (new AuthorizationScope(logicalResourceName, permission))
+            {
+                return true;
+            }
         }
 
         /// <summary>

@@ -1,8 +1,4 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using Hermes.WebApi.Base.SqlSerializer;
 
 namespace Hermes.WebApi.Security.Models
@@ -39,7 +35,7 @@ namespace Hermes.WebApi.Security.Models
         {
             get
             {
-                return ((Permission)this.Permission).ToString();
+                return ((Enums.Permission)this.Permission).ToString();
             }
         }
     }

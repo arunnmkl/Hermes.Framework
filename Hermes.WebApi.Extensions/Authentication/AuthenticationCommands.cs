@@ -186,7 +186,7 @@ namespace Hermes.WebApi.Extensions.Authentication
         {
             using (UserManager um = new UserManager())
             {
-                return um.SetTokenExpires(AuthContext.UserId);
+                return um.SetTokenExpires(AuthContext.UserId, AuthContext.UserAuthTokenId);
             }
         }
 

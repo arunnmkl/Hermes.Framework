@@ -182,10 +182,13 @@ namespace Hermes.WebApi.Security
         /// Sets the token expires.
         /// </summary>
         /// <param name="userId">The user identifier.</param>
-        /// <returns>row count</returns>
-        public int SetTokenExpires(long userId)
+        /// <param name="userAuthTokenId">The user authentication token identifier.</param>
+        /// <returns>
+        /// row count
+        /// </returns>
+        public int SetTokenExpires(long userId, string userAuthTokenId)
         {
-            return authRepo.SetTokenExpires(userId);
+            return authRepo.SetTokenExpires(userId, userAuthTokenId);
         }
 
         /// <summary>
