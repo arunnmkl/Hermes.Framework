@@ -59,7 +59,7 @@ namespace Hermes.WebApi.Security.Models
         /// <value>
         /// The issued UTC.
         /// </value>
-        public DateTime IssuedUtc { get; set; }
+        public DateTimeOffset IssuedUtc { get; set; }
 
         /// <summary>
         /// Gets or sets the expires UTC.
@@ -67,7 +67,7 @@ namespace Hermes.WebApi.Security.Models
         /// <value>
         /// The expires UTC.
         /// </value>
-        public DateTime ExpiresUtc { get; set; }
+        public DateTimeOffset ExpiresUtc { get; set; }
 
         /// <summary>
         /// Gets the access token.
@@ -130,5 +130,13 @@ namespace Hermes.WebApi.Security.Models
         /// The updated date.
         /// </value>
         public DateTime UpdatedDate { get; set; }
+
+        /// <summary>
+        /// Gets or sets a value indicating whether this instance is expired.
+        /// </summary>
+        /// <value>
+        /// <c>true</c> if this instance is expired; otherwise, <c>false</c>.
+        /// </value>
+        public bool IsExpired { get; set; }
     }
 }

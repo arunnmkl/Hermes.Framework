@@ -9,9 +9,9 @@ AS
 BEGIN
 	SELECT [RefreshTokenId]
 		,[Username]
-		,[AuthClientId]
-		,[IssuedUtc]
-		,[ExpiresUtc]
+		,[AuthClientId] 
+		,TODATETIMEOFFSET([IssuedUtc], '+00:00') AS [IssuedUtc] 
+		,TODATETIMEOFFSET([ExpiresUtc], '+00:00') AS [ExpiresUtc]
 		,[ProtectedTicket]
 		,[UserAuthTokenId]
 	FROM [dbo].[RefreshToken]

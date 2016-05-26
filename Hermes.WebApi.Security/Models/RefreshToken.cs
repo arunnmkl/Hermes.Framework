@@ -43,7 +43,7 @@ namespace Hermes.WebApi.Security.Models
         /// <value>
         /// The issued UTC.
         /// </value>
-        public DateTime IssuedUtc { get; set; }
+        public DateTimeOffset IssuedUtc { get; set; }
 
         /// <summary>
         /// Gets or sets the expires UTC.
@@ -51,7 +51,7 @@ namespace Hermes.WebApi.Security.Models
         /// <value>
         /// The expires UTC.
         /// </value>
-        public DateTime ExpiresUtc { get; set; }
+        public DateTimeOffset ExpiresUtc { get; set; }
 
         /// <summary>
         /// Gets or sets the protected ticket.

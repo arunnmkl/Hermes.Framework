@@ -84,6 +84,11 @@ namespace AngularJSAuthentication.API.Providers
                 {
                     //Get protectedTicket from refreshToken class
                     context.DeserializeTicket(refreshToken.ProtectedTicket);
+                    if (context.OwinContext.Get<string>("as:UserAuthToken") == null)
+                    {
+                        context.OwinContext.Set<string>("as:UserAuthToken", refreshToken.UserAuthTokenId);
+                    }
+
                     var result = await Task.Run(() => { return um.RemoveRefreshToken(hashedTokenId); });
                 }
             }

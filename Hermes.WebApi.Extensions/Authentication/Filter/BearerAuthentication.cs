@@ -114,7 +114,8 @@ namespace Hermes.WebApi.Extensions.Authentication.Filter
                 var userAuthTokenRes = AuthenticationCommands.GetUserAuthToken(userAuthTokenReq);
 
                 if (userAuthTokenRes == null
-                    || userAuthTokenRes.IsLoggedIn == false)
+                    || userAuthTokenRes.IsLoggedIn == false
+                    || userAuthTokenRes.IsExpired == true)
                 {
                     context.ErrorResult = new Result.AuthenticationFailureResult(request, AuthorizeResponseMessage.UserSessionExpired);
                     return;

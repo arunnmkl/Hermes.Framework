@@ -87,8 +87,8 @@ namespace Hermes.WebApi.Extensions.Common
             var userAuthToken = new UserAuthToken(accessToken)
             {
                 AuthClientId = Convert.ToString(string.Empty),
-                ExpiresUtc = Convert.ToDateTime(ticket.Properties.ExpiresUtc.ToString()),
-                IssuedUtc = Convert.ToDateTime(ticket.Properties.IssuedUtc.ToString()),
+                ExpiresUtc = ticket.Properties.ExpiresUtc.Value,
+                IssuedUtc = ticket.Properties.IssuedUtc.Value,
                 UserId = Convert.ToInt64(identity.FindFirst("Identity").Value),
                 UserAuthTokenId = Convert.ToString(identity.FindFirst("UserAuthToken").Value),
                 IsLoggedIn = true

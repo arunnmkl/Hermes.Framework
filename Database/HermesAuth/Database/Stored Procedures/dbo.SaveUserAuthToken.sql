@@ -1,3 +1,4 @@
+
 SET QUOTED_IDENTIFIER ON
 GO
 SET ANSI_NULLS ON
@@ -42,7 +43,7 @@ BEGIN
 			SELECT TOP 1 1
 			FROM dbo.UserAuthToken uat
 			WHERE uat.UserId = @UserId
-				AND uat.AccessToken IS NULL
+				AND (uat.AccessToken IS NULL or uat.IsExpired = 1)
 			)
 	BEGIN
 		UPDATE dbo.UserAuthToken

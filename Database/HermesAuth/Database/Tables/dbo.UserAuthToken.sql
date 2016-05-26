@@ -9,7 +9,7 @@ CREATE TABLE [dbo].[UserAuthToken]
 [IsLoggedIn] [bit] NOT NULL CONSTRAINT [DF_UserAuthToken_IsLoggedIn] DEFAULT ((0)),
 [CreatedDate] [datetime] NOT NULL CONSTRAINT [DF_UserAuthToken_CreatedDate] DEFAULT (getdate()),
 [UpdatedDate] [datetime] NOT NULL CONSTRAINT [DF_UserAuthToken_UpdatedDate] DEFAULT (getdate()),
-[IsExpired] AS (case when [ExpiresUtc]<getutcdate() OR [IsLoggedIn]=(0) then (1) else (0) end)
+[IsExpired] AS (CONVERT([bit],case when [ExpiresUtc]<getutcdate() OR [IsLoggedIn]=(0) then (1) else (0) end))
 ) ON [PRIMARY]
 GO
 ALTER TABLE [dbo].[UserAuthToken] ADD CONSTRAINT [PK_UserAuthToken] PRIMARY KEY CLUSTERED  ([UserAuthTokenId]) ON [PRIMARY]

@@ -244,8 +244,8 @@ namespace GlobalTranz.WebApi.Extensions.Owin
             var userAuthToken = new UserAuthToken(context.AccessToken)
             {
                 AuthClientId = Convert.ToString(context.AdditionalResponseParameters.GetValueByKey("as:client_id")),
-                ExpiresUtc = Convert.ToDateTime(context.AdditionalResponseParameters.GetValueByKey(".expires")),
-                IssuedUtc = Convert.ToDateTime(context.AdditionalResponseParameters.GetValueByKey(".issued")),
+                ExpiresUtc = DateTimeOffset.Parse(context.AdditionalResponseParameters.GetValueByKey(".expires").ToString()),
+                IssuedUtc = DateTimeOffset.Parse(context.AdditionalResponseParameters.GetValueByKey(".issued").ToString()),
                 UserId = Convert.ToInt64(context.Identity.FindFirst("Identity").Value),
                 UserAuthTokenId = Convert.ToString(context.Identity.FindFirst("UserAuthToken").Value),
                 IsLoggedIn = true
