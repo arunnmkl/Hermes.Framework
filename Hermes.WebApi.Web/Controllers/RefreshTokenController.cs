@@ -12,7 +12,7 @@ namespace Hermes.WebApi.Web.Controllers
     [RoutePrefix("api/RefreshTokens")]
     public class RefreshTokenController : ApiController
     {
-        [Authorize(Users = "Admin")]
+        [Authorize(Users = "child")]
         [Route("")]
         public IHttpActionResult Get()
         {

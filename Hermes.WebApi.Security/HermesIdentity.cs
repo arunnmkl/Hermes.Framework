@@ -2,11 +2,12 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Security.Claims;
+using System.Security.Principal;
 
 namespace Hermes.WebApi.Security
 {
     /// <summary>
-    /// 
+    /// Class to encapsulate the hermes identity.
     /// </summary>
     /// <seealso cref="System.Security.Claims.ClaimsIdentity" />
     public class HermesIdentity : ClaimsIdentity
@@ -46,7 +47,7 @@ namespace Hermes.WebApi.Security
         /// </summary>
         /// <param name="claims">The claims with which to populate the claims identity.</param>
         /// <param name="authenticationType">The type of authentication used.</param>
-        public HermesIdentity(IEnumerable<Claim> claims, string authenticationType) : base(claims, authenticationType: authenticationType)
+        public HermesIdentity(IEnumerable<Claim> claims, string authenticationType) : base(authenticationType: authenticationType)
         {
             // Username
             AddClaims(from name in claims where name.Type == UsernameClaimType select name);
@@ -64,8 +65,14 @@ namespace Hermes.WebApi.Security
             AddClaims(from authToken in claims where authToken.Type == AuthTokenClaimType select authToken);
 
             // Roles
-            AddClaims(from role in claims where role.Type == RoleClaimType select role);
+            AddClaims(from role in claims where role.Type == RolesClaimType select role);
         }
+
+        /// <summary>
+        /// Initializes a new instance of the <see cref="HermesIdentity"/> class.
+        /// </summary>
+        /// <param name="identity">The identity from which to base the new claims identity.</param>
+        public HermesIdentity(IIdentity identity) : base(identity) { }
 
         /// <summary>
         /// Gets the name of this claims identity.

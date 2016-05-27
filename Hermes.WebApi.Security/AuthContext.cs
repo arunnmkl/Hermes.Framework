@@ -75,7 +75,7 @@ namespace Hermes.WebApi.Security
         /// <value>
         /// The security ids.
         /// </value>
-        public static IList<string> SecurityIds
+        public static IList<Guid> SecurityIds
         {
             get
             {
@@ -94,7 +94,7 @@ namespace Hermes.WebApi.Security
         /// <value>
         /// The security identifier.
         /// </value>
-        public static string SecurityId
+        public static Guid SecurityId
         {
             get
             {
@@ -103,7 +103,7 @@ namespace Hermes.WebApi.Security
                     return HermesPrincipal.SecurityId;
                 }
 
-                return string.Empty;
+                return Guid.Empty;
             }
         }
 

@@ -1,8 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+using System.Security;
 using Hermes.WebApi.Core.Exceptions;
 using Hermes.WebApi.Security.Models;
 
@@ -42,11 +41,23 @@ namespace Hermes.WebApi.Security
         public AuthorizationScope(Guid resourceId, int permissionId)
         {
             string securityName = "Anonymous";
-            IList<string> securityIds = new List<string>();
+            IList<Guid> securityIds = new List<Guid>();
             try
             {
-                securityName = AuthContext.Username;
-                securityIds = AuthContext.SecurityIds;
+                try
+                {
+                    HermesPrincipal current = HermesPrincipal.Current;
+                    securityName = current.Username;
+                    securityIds = current.SecurityIds.ToList();
+                }
+                catch (SecurityException ex)
+                {
+                    if (ex.Message != "No current principal")
+                    {
+                        throw ex;
+                    }
+                }
+
                 var authorizationType = AuthorizationCommands.CheckAuthorization(resourceId, securityIds, permissionId);
                 if (!authorizationType.HasFlag((Enum)Models.Enums.AuthorizationType.Access))
                 {

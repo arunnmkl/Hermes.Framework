@@ -5,6 +5,7 @@ using System.Data.SqlClient;
 using System.Linq;
 using Hermes.WebApi.Base.SqlSerializer;
 using Hermes.WebApi.Security.Models;
+using Hermes.WebApi.Security.Models.Enums;
 
 namespace Hermes.WebApi.Security
 {
@@ -294,7 +295,7 @@ namespace Hermes.WebApi.Security
         /// </summary>
         /// <param name="securityIds">The security ids.</param>
         /// <returns>user resource permissions</returns>
-        internal IList<ResourceAccessRule> GetUserResourcePermission(IList<string> securityIds)
+        internal IList<ResourceAccessRule> GetUserResourcePermission(IList<Guid> securityIds)
         {
             string commandText = $"{AuthContext.SecuritySchema}.[spGetUserResourcePermission]";
 
@@ -356,7 +357,7 @@ namespace Hermes.WebApi.Security
                 new Parameter("@AccessToken", userAuthToken.AccessToken)
             };
 
-            return this.sqlSerializer.DeserializeSingleRecord<UserAuthToken>(commandText, parameters: parameters, storedProcedure: true);
+            return sqlSerializer.DeserializeSingleRecord<UserAuthToken>(commandText, parameters: parameters, storedProcedure: true);
         }
 
         /// <summary>
@@ -414,17 +415,17 @@ namespace Hermes.WebApi.Security
 
             var parameter = new Parameter("@UserAuthTokenId", userAuthTokenId);
 
-            return this.sqlSerializer.DeserializeSingleRecord<UserAuthToken>(commandText, parameter: parameter, storedProcedure: true);
+            return sqlSerializer.DeserializeSingleRecord<UserAuthToken>(commandText, parameter: parameter, storedProcedure: true);
         }
 
         /// <summary>
         /// Gets the permissions.
         /// </summary>
         /// <returns>the list of permissions</returns>
-        internal IList<Permission> GetPermissions()
+        internal IList<Models.Permission> GetPermissions()
         {
             string commandText = $"SELECT PermissionId, Name FROM {AuthContext.SecuritySchema}.[Permission]";
-            return this.sqlSerializer.DeserializeMultiRecords<Permission>(commandText, (Parameter)null, false, false);
+            return sqlSerializer.DeserializeMultiRecords<Models.Permission>(commandText, (Parameter)null, false, false);
         }
 
         /// <summary>
@@ -436,7 +437,7 @@ namespace Hermes.WebApi.Security
         internal IList<Resource> GetResources()
         {
             string commandText = $"SELECT ResourceId, Name FROM {AuthContext.SecuritySchema}.[Resource]";
-            return this.sqlSerializer.DeserializeMultiRecords<Resource>(commandText, (Parameter)null, false, false);
+            return sqlSerializer.DeserializeMultiRecords<Resource>(commandText, (Parameter)null, false, false);
         }
 
         /// <summary>
@@ -446,21 +447,21 @@ namespace Hermes.WebApi.Security
         /// <param name="securityIds">The security ids.</param>
         /// <param name="permissionId">The permission identifier.</param>
         /// <returns>authorization type</returns>
-        public Models.Enums.AuthorizationType CheckAuthorization(Guid resourceId, IList<string> securityIds, int permissionId)
+        internal AuthorizationType CheckAuthorization(Guid resourceId, IList<string> securityIds, int permissionId)
         {
-            string commandText = $"{AuthContext.SecuritySchema}.CheckAuthorization";
+            return CheckAuthorization(resourceId, GetSecurityIdsAsDatatable(securityIds), permissionId);
+        }
 
-            var parameters = new[]
-            {
-                new Parameter("@ResourceId", resourceId),
-                new Parameter("@SecurityIdList", GetSecurityIdsAsDatatable(securityIds), $"{AuthContext.SecuritySchema}.SecurityIdList"),
-                new Parameter("@PermissionId", permissionId)
-            };
-
-            using (SqlSerializerExtensions.CreateTransactionScope(sqlSerializer, System.Transactions.TransactionScopeOption.Suppress, System.Transactions.IsolationLevel.ReadCommitted, new int?()))
-            {
-                return sqlSerializer.ExecuteScalar<Models.Enums.AuthorizationType>(commandText, parameters, storedProcedure: true);
-            }
+        /// <summary>
+        /// Checks the authorization.
+        /// </summary>
+        /// <param name="resourceId">The resource identifier.</param>
+        /// <param name="securityIds">The security ids.</param>
+        /// <param name="permissionId">The permission identifier.</param>
+        /// <returns>authorization type</returns>
+        internal AuthorizationType CheckAuthorization(Guid resourceId, IList<Guid> securityIds, int permissionId)
+        {
+            return CheckAuthorization(resourceId, GetSecurityIdsAsDatatable(securityIds), permissionId);
         }
 
         /// <summary>
@@ -519,6 +520,30 @@ namespace Hermes.WebApi.Security
                 }
 
                 return dtSecurityIds;
+            }
+        }
+
+        /// <summary>
+        /// Checks the authorization.
+        /// </summary>
+        /// <param name="resourceId">The resource identifier.</param>
+        /// <param name="securityIds">The security ids.</param>
+        /// <param name="permissionId">The permission identifier.</param>
+        /// <returns>authorization type</returns>
+        private AuthorizationType CheckAuthorization(Guid resourceId, DataTable securityIds, int permissionId)
+        {
+            string commandText = $"{AuthContext.SecuritySchema}.CheckAuthorization";
+
+            var parameters = new[]
+            {
+                new Parameter("@ResourceId", resourceId),
+                new Parameter("@SecurityIdList", securityIds, $"{AuthContext.SecuritySchema}.SecurityIdList"),
+                new Parameter("@PermissionId", permissionId)
+            };
+
+            using (SqlSerializerExtensions.CreateTransactionScope(sqlSerializer, System.Transactions.TransactionScopeOption.Suppress, System.Transactions.IsolationLevel.ReadCommitted, new int?()))
+            {
+                return sqlSerializer.ExecuteScalar<Models.Enums.AuthorizationType>(commandText, parameters, storedProcedure: true);
             }
         }
     }

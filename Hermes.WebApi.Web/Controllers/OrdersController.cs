@@ -21,6 +21,7 @@ namespace Hermes.WebApi.Web.Controllers
         /// </summary>
         /// <returns></returns>
         [Route("All")]
+        [Authorize(Roles = "Admin")]
         public IHttpActionResult GetAll()
         {
             return Ok(Order.GetOrders());

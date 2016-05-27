@@ -49,16 +49,11 @@ namespace Hermes.WebApi.Web.Controllers
             {
                 string name = principal.Identity.Name;
                 string authenticationType = principal.Identity.AuthenticationType;
-                string username = string.Empty;
-                string securityId = string.Empty;
-                string userAuthTokenId = string.Empty;
+                string username = principal.Username;
+                Guid securityId = principal.SecurityId;
+                string userAuthTokenId = principal.UserAuthTokenId;
+                IEnumerable<string> roles = principal.Roles;
                 int timeInSeconds = 0;
-                IEnumerable<string> roles = null;
-
-                username = principal.Username;
-                securityId = principal.SecurityId;
-                roles = principal.Roles;
-                userAuthTokenId = principal.UserAuthTokenId;
 
                 var userAuthToken = AuthenticationCommands.GetUserAuthTokenById(userAuthTokenId);
 

@@ -151,7 +151,7 @@ namespace Hermes.WebApi.Security
         /// </summary>
         /// <param name="securityIds">The security ids.</param>
         /// <returns>user resource permissions</returns>
-        public IList<ResourceAccessRule> GetUserResourcePermission(IList<string> securityIds)
+        public IList<ResourceAccessRule> GetUserResourcePermission(IList<Guid> securityIds)
         {
             return authRepo.GetUserResourcePermission(securityIds);
         }
