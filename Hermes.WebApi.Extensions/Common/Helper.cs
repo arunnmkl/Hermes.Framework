@@ -4,6 +4,7 @@ using System.Linq;
 using System.Security.Claims;
 using System.Text;
 using System.Threading.Tasks;
+using Hermes.WebApi.Core.Security;
 using Hermes.WebApi.Extensions.Authentication;
 using Hermes.WebApi.Security.Models;
 using Microsoft.Owin.Security;
@@ -26,7 +27,7 @@ namespace Hermes.WebApi.Extensions.Common
         {
             TimeSpan tokenExpiration = TimeSpan.FromDays(1);
 
-            Security.HermesIdentity identity = ClaimsIdentityProvider.GetHermesClaimsIdentity(userIdentity, OAuthDefaults.AuthenticationType);
+            HermesIdentity identity = ClaimsIdentityProvider.GetHermesClaimsIdentity(userIdentity, OAuthDefaults.AuthenticationType);
 
             var props = new AuthenticationProperties()
             {
@@ -82,15 +83,15 @@ namespace Hermes.WebApi.Extensions.Common
         /// <param name="identity">The identity.</param>
         /// <param name="ticket">The ticket.</param>
         /// <param name="accessToken">The access token.</param>
-        private static void SaveAuthToken(Security.HermesIdentity identity, AuthenticationTicket ticket, string accessToken)
+        private static void SaveAuthToken(HermesIdentity identity, AuthenticationTicket ticket, string accessToken)
         {
             var userAuthToken = new UserAuthToken(accessToken)
             {
                 AuthClientId = Convert.ToString(string.Empty),
                 ExpiresUtc = ticket.Properties.ExpiresUtc.Value,
                 IssuedUtc = ticket.Properties.IssuedUtc.Value,
-                UserId = Convert.ToInt64(identity.FindFirst(Security.HermesIdentity.UserIdClaimType).Value),
-                UserAuthTokenId = Convert.ToString(identity.FindFirst(Security.HermesIdentity.AuthTokenClaimType).Value),
+                UserId = Convert.ToInt64(identity.FindFirst(HermesIdentity.UserIdClaimType).Value),
+                UserAuthTokenId = Convert.ToString(identity.FindFirst(HermesIdentity.AuthTokenClaimType).Value),
                 IsLoggedIn = true
             };
 

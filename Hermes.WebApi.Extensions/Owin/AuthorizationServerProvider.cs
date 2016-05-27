@@ -123,7 +123,7 @@ namespace GlobalTranz.WebApi.Extensions.Owin
 
             context.OwinContext.Response.Headers.Add("Access-Control-Allow-Origin", new[] { allowedOrigin });
 
-            var identity = await Task.Run<Security.HermesIdentity>(() =>
+            HermeSecurity.HermesIdentity identity = await Task.Run(() =>
             {
                 return AuthenticationCommands.AuthenticateUsernamePassword(context);
             });
@@ -147,13 +147,13 @@ namespace GlobalTranz.WebApi.Extensions.Owin
             }
             else
             {
-                var userAuthToken = identity.Claims.FirstOrDefault(c => c.Type == Security.HermesIdentity.AuthTokenClaimType);
+                var userAuthToken = identity.Claims.FirstOrDefault(c => c.Type == HermeSecurity.HermesIdentity.AuthTokenClaimType);
                 if (userAuthToken != null)
                 {
                     identity.RemoveClaim(userAuthToken);
                 }
 
-                identity.AddClaim(new Claim(Security.HermesIdentity.AuthTokenClaimType, authToken));
+                identity.AddClaim(new Claim(HermeSecurity.HermesIdentity.AuthTokenClaimType, authToken));
                 context.OwinContext.Set<string>("as:UserAuthToken", authToken);
             }
 
@@ -246,8 +246,8 @@ namespace GlobalTranz.WebApi.Extensions.Owin
                 AuthClientId = Convert.ToString(context.AdditionalResponseParameters.GetValueByKey("as:client_id")),
                 ExpiresUtc = DateTimeOffset.Parse(context.AdditionalResponseParameters.GetValueByKey(".expires").ToString()),
                 IssuedUtc = DateTimeOffset.Parse(context.AdditionalResponseParameters.GetValueByKey(".issued").ToString()),
-                UserId = Convert.ToInt64(context.Identity.FindFirst(Security.HermesIdentity.UserIdClaimType).Value),
-                UserAuthTokenId = Convert.ToString(context.Identity.FindFirst(Security.HermesIdentity.AuthTokenClaimType).Value),
+                UserId = Convert.ToInt64(context.Identity.FindFirst(HermeSecurity.HermesIdentity.UserIdClaimType).Value),
+                UserAuthTokenId = Convert.ToString(context.Identity.FindFirst(HermeSecurity.HermesIdentity.AuthTokenClaimType).Value),
                 IsLoggedIn = true
             };
 

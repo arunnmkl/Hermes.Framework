@@ -128,9 +128,6 @@
     <Compile Include="Authentication\CookieAuthenticationController.cs" />
     <Compile Include="Authentication\Filter\BearerAuthentication.cs" />
     <Compile Include="Authentication\MVCAuthenticationAttribute.cs" />
-    <Compile Include="Authentication\Result\AddChallengeOnUnauthorizedResult.cs" />
-    <Compile Include="Authentication\Result\AuthenticationFailureResult.cs" />
-    <Compile Include="Common\AuthorizeResponseMessage.cs" />
     <Compile Include="Common\ComponentPaths.cs" />
     <Compile Include="Common\ComponentPathsConfigurationSection.cs" />
     <Compile Include="ApiExceptionFilter.cs" />
@@ -172,6 +169,7 @@
       <Name>Hermes.WebApi.Security</Name>
     </ProjectReference>
   </ItemGroup>
+  <ItemGroup />
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
        Other similar extension points exist, see Microsoft.Common.targets.

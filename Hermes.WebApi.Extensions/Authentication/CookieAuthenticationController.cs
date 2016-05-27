@@ -52,7 +52,7 @@ namespace Hermes.WebApi.Extensions.Authentication
                     var claimsIdentity = AuthenticationCommands.ConvertTokenAsClaimsIdentity(ticket);
                     if (claimsIdentity != null)
                     {
-                        principal = new Security.HermesPrincipal(claimsIdentity);
+                        principal = new HermesSecurity.HermesPrincipal(claimsIdentity);
                     }
                 }
             }

@@ -57,8 +57,6 @@
     <Compile Include="AuthorizationScope.cs" />
     <Compile Include="AuthSqlRepository.cs" />
     <Compile Include="Helper.cs" />
-    <Compile Include="HermesIdentity.cs" />
-    <Compile Include="HermesPrincipal.cs" />
     <Compile Include="Models\AuthClient.cs" />
     <Compile Include="Models\Enums.cs" />
     <Compile Include="Models\ExternalLoginModel.cs" />

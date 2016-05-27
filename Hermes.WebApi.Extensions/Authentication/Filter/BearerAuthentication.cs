@@ -6,9 +6,10 @@ using System.Threading;
 using System.Threading.Tasks;
 using System.Web.Http.Filters;
 using Hermes.WebApi.Core;
+using Hermes.WebApi.Core.Common;
 using Hermes.WebApi.Core.Interfaces;
+using Hermes.WebApi.Core.Results;
 using Hermes.WebApi.Core.Security;
-using Hermes.WebApi.Extensions.Common;
 using Hermes.WebApi.Security.Models;
 using Microsoft.Owin.Security;
 using Microsoft.Owin.Security.OAuth;
@@ -56,7 +57,7 @@ namespace Hermes.WebApi.Extensions.Authentication.Filter
             //    authentication scheme, do nothing.
             if (authorization.Scheme != "Bearer")
             {
-                context.ErrorResult = new Result.AuthenticationFailureResult(context.Request, AuthorizeResponseMessage.RequireAuthorization);
+                context.ErrorResult = new AuthenticationFailureResult(context.Request, AuthorizeResponseMessage.RequireAuthorization);
                 return;
             }
 
@@ -64,7 +65,7 @@ namespace Hermes.WebApi.Extensions.Authentication.Filter
             // 5. If the authorization token are empty/bad, set the error result.
             if (String.IsNullOrEmpty(authorization.Parameter))
             {
-                context.ErrorResult = new Result.AuthenticationFailureResult(request, AuthorizeResponseMessage.MissingAccessToken);
+                context.ErrorResult = new AuthenticationFailureResult(request, AuthorizeResponseMessage.MissingAccessToken);
                 return;
             }
 
@@ -72,7 +73,7 @@ namespace Hermes.WebApi.Extensions.Authentication.Filter
             AuthenticationTicket authTicket = await AuthenticateAsync(authorization.Parameter, cancellationToken);
             if (authTicket == null)
             {
-                context.ErrorResult = new Result.AuthenticationFailureResult(request, AuthorizeResponseMessage.InvalidBearerToken);
+                context.ErrorResult = new AuthenticationFailureResult(request, AuthorizeResponseMessage.InvalidBearerToken);
                 return;
             }
 
@@ -81,7 +82,7 @@ namespace Hermes.WebApi.Extensions.Authentication.Filter
 
             if (authTicket.Properties.ExpiresUtc.HasValue && authTicket.Properties.ExpiresUtc.Value < currentUtc)
             {
-                context.ErrorResult = new Result.AuthenticationFailureResult(request, AuthorizeResponseMessage.TokenExpired);
+                context.ErrorResult = new AuthenticationFailureResult(request, AuthorizeResponseMessage.TokenExpired);
                 return;
             }
 
@@ -100,13 +101,13 @@ namespace Hermes.WebApi.Extensions.Authentication.Filter
 
             if (!authContext.IsValidated)
             {
-                context.ErrorResult = new Result.AuthenticationFailureResult(request, AuthorizeResponseMessage.InvalidBearerToken);
+                context.ErrorResult = new AuthenticationFailureResult(request, AuthorizeResponseMessage.InvalidBearerToken);
                 return;
             }
 
             var userAuthTokenReq = new UserAuthToken(authorization.Parameter)
             {
-                UserId = Convert.ToInt64(authTicket.Identity.FindFirst(Security.HermesIdentity.UserIdClaimType).Value)
+                UserId = Convert.ToInt64(authTicket.Identity.FindFirst(HermesIdentity.UserIdClaimType).Value)
             };
 
             if (Configuration.Current.DBTokenValidationEnabled)
@@ -117,7 +118,7 @@ namespace Hermes.WebApi.Extensions.Authentication.Filter
                     || userAuthTokenRes.IsLoggedIn == false
                     || userAuthTokenRes.IsExpired == true)
                 {
-                    context.ErrorResult = new Result.AuthenticationFailureResult(request, AuthorizeResponseMessage.UserSessionExpired);
+                    context.ErrorResult = new AuthenticationFailureResult(request, AuthorizeResponseMessage.UserSessionExpired);
                     return;
                 }
             }
@@ -126,12 +127,12 @@ namespace Hermes.WebApi.Extensions.Authentication.Filter
             var claimsPrincipal = context.Principal as ClaimsPrincipal;
             if (claimsPrincipal == null)
             {
-                context.ErrorResult = new Result.AuthenticationFailureResult(request, AuthorizeResponseMessage.NoPrincipal);
+                context.ErrorResult = new AuthenticationFailureResult(request, AuthorizeResponseMessage.NoPrincipal);
                 return;
             }
-            else if (!(claimsPrincipal is Security.HermesPrincipal))
+            else if (!(claimsPrincipal is HermesPrincipal))
             {
-                context.Principal = new Security.HermesPrincipal(claimsPrincipal);
+                context.Principal = new HermesPrincipal(claimsPrincipal);
             }
         }
 
@@ -159,7 +160,7 @@ namespace Hermes.WebApi.Extensions.Authentication.Filter
         public Task ChallengeAsync(HttpAuthenticationChallengeContext context, CancellationToken cancellationToken)
         {
             var challenge = new AuthenticationHeaderValue("Bearer");
-            context.Result = new Result.AddChallengeOnUnauthorizedResult(challenge, context.Result);
+            context.Result = new AddChallengeOnUnauthorizedResult(challenge, context.Result);
             return Task.FromResult(0);
         }
     }

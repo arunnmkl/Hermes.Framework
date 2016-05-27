@@ -8,6 +8,7 @@ using System.Threading;
 using System.Threading.Tasks;
 using System.Web;
 using Hermes.WebApi.Base.SqlSerializer;
+using Hermes.WebApi.Core.Security;
 
 namespace Hermes.WebApi.Security
 {

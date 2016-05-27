@@ -8,6 +8,7 @@ using System.Net;
 using System;
 using Hermes.WebApi.Extensions.Authentication;
 using Hermes.WebApi.Extensions;
+using Hermes.WebApi.Core.Security;
 
 namespace Hermes.WebApi.Web.Controllers
 {
@@ -43,7 +44,7 @@ namespace Hermes.WebApi.Web.Controllers
         [Route("details")]
         public HttpResponseMessage GetDetails()
         {
-            Security.HermesPrincipal principal = Request.GetRequestContext().Principal as Security.HermesPrincipal;
+            HermesPrincipal principal = Request.GetRequestContext().Principal as HermesPrincipal;
 
             if (principal != null && principal.Identity.IsAuthenticated)
             {

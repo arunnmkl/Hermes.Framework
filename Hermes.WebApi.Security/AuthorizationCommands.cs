@@ -8,7 +8,7 @@ using Hermes.WebApi.Security.Models;
 namespace Hermes.WebApi.Security
 {
     /// <summary>
-    /// 
+    /// Authorization commands
     /// </summary>
     internal class AuthorizationCommands
     {

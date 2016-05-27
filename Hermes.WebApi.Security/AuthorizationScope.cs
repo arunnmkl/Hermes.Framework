@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Security;
 using Hermes.WebApi.Core.Exceptions;
+using Hermes.WebApi.Core.Security;
 using Hermes.WebApi.Security.Models;
 
 namespace Hermes.WebApi.Security
