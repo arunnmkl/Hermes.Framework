@@ -1,6 +1,7 @@
 ﻿using System.Collections.Generic;
 using System.Security.Claims;
 using System.Threading.Tasks;
+using Hermes.WebApi.Core.Security;
 using Hermes.WebApi.Extensions.Common;
 using Hermes.WebApi.Security;
 using Hermes.WebApi.Security.Models;
@@ -222,6 +223,21 @@ namespace Hermes.WebApi.Extensions.Authentication
             }
         }
 
+        /// <summary>
+        /// Finds the authentication client.
+        /// </summary>
+        /// <param name="clientId">The client identifier.</param>
+        /// <returns>
+        /// authentication client information
+        /// </returns>
+        public static AuthClient FindAuthClient(string clientId)
+        {
+            using (UserManager um = new UserManager())
+            {
+                return um.FindAuthClient(clientId);
+            }
+        }
+
         #endregion Public Methods
 
         #region Internal Methods 
@@ -304,21 +320,6 @@ namespace Hermes.WebApi.Extensions.Authentication
         {
             var ticket = Common.Helper.UnprotectAccessToken(accessToken);
             return ticket as AuthenticationTicket;
-        }
-
-        /// <summary>
-        /// Finds the authentication client.
-        /// </summary>
-        /// <param name="clientId">The client identifier.</param>
-        /// <returns>
-        /// authentication client information
-        /// </returns>
-        internal static AuthClient FindAuthClient(string clientId)
-        {
-            using (UserManager um = new UserManager())
-            {
-                return um.FindAuthClient(clientId);
-            }
         }
 
         #endregion Internal Methods
