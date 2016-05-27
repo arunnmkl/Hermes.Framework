@@ -86,12 +86,26 @@ namespace Hermes.WebApi.Extensions.Common
         /// </summary>
         /// <value>
         /// The token expired.
-        /// </value>
+        /// </value>  
         public static ResponseError TokenExpired
         {
             get
             {
                 return new ResponseError(401, "The Token has expired");
+            }
+        }
+
+        /// <summary>
+        /// Gets the no principal.
+        /// </summary>
+        /// <value>
+        /// The no principal.
+        /// </value>
+        public static ResponseError NoPrincipal
+        {
+            get
+            {
+                return new ResponseError(401, "No current principal");
             }
         }
     }

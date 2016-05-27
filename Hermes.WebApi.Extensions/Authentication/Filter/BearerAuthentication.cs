@@ -106,7 +106,7 @@ namespace Hermes.WebApi.Extensions.Authentication.Filter
 
             var userAuthTokenReq = new UserAuthToken(authorization.Parameter)
             {
-                UserId = Convert.ToInt64(authTicket.Identity.FindFirst("Identity").Value)
+                UserId = Convert.ToInt64(authTicket.Identity.FindFirst(Security.HermesIdentity.UserIdClaimType).Value)
             };
 
             if (Configuration.Current.DBTokenValidationEnabled)
@@ -123,13 +123,15 @@ namespace Hermes.WebApi.Extensions.Authentication.Filter
             }
 
             // 6. If the token is valid, set principal.
-            else
+            var claimsPrincipal = context.Principal as ClaimsPrincipal;
+            if (claimsPrincipal == null)
             {
-                var claimsIdentity = authTicket.Identity as ClaimsIdentity; ;
-                if (claimsIdentity != null)
-                {
-                    context.Principal = new ClaimsPrincipal(claimsIdentity);
-                }
+                context.ErrorResult = new Result.AuthenticationFailureResult(request, AuthorizeResponseMessage.NoPrincipal);
+                return;
+            }
+            else if (!(claimsPrincipal is Security.HermesPrincipal))
+            {
+                context.Principal = new Security.HermesPrincipal(claimsPrincipal);
             }
         }
 

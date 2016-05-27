@@ -53,19 +53,19 @@ namespace Hermes.WebApi.Security
             {
                 authDal = value;
             }
-        }
+        }   
 
         /// <summary>
-        /// Gets the principal.
+        /// Gets the hermes principal.
         /// </summary>
         /// <value>
-        /// The principal.
+        /// The hermes principal.
         /// </value>
-        public static ClaimsPrincipal Principal
+        public static HermesPrincipal HermesPrincipal
         {
             get
             {
-                return Thread.CurrentPrincipal as ClaimsPrincipal;
+                return Thread.CurrentPrincipal as HermesPrincipal;
             }
         }
 
@@ -79,10 +79,9 @@ namespace Hermes.WebApi.Security
         {
             get
             {
-                var securityClaims = Principal.Claims.Where(a => (a.Type == ClaimTypes.Sid || a.Type == ClaimTypes.GroupSid));
-                if (securityClaims.Any())
+                if (HermesPrincipal != null)
                 {
-                    return securityClaims.Select(s => s.Value).ToList();
+                    return HermesPrincipal.SecurityIds.ToList();
                 }
 
                 return null;
@@ -99,10 +98,9 @@ namespace Hermes.WebApi.Security
         {
             get
             {
-                var securityClaims = Principal.Claims.Where(a => (a.Type == ClaimTypes.Sid));
-                if (securityClaims.Any())
+                if (HermesPrincipal != null)
                 {
-                    return securityClaims.FirstOrDefault().Value;
+                    return HermesPrincipal.SecurityId;
                 }
 
                 return string.Empty;
@@ -119,15 +117,15 @@ namespace Hermes.WebApi.Security
         {
             get
             {
-                var securityClaims = Principal.Claims.Where(a => (a.Type == "Identity"));
-                if (securityClaims.Any())
+                if (HermesPrincipal != null)
                 {
-                    return Convert.ToInt64(securityClaims.FirstOrDefault().Value);
+                    return HermesPrincipal.UserId;
                 }
 
                 return default(long);
             }
         }
+
         /// <summary>
         /// Gets the user authentication token identifier.
         /// </summary>
@@ -138,10 +136,9 @@ namespace Hermes.WebApi.Security
         {
             get
             {
-                var securityClaims = Principal.Claims.Where(a => (a.Type == "UserAuthToken"));
-                if (securityClaims.Any())
+                if (HermesPrincipal != null)
                 {
-                    return Convert.ToString(securityClaims.FirstOrDefault().Value);
+                    return HermesPrincipal.UserAuthTokenId;
                 }
 
                 return string.Empty;
@@ -158,10 +155,9 @@ namespace Hermes.WebApi.Security
         {
             get
             {
-                var securityClaims = Principal.Claims.Where(a => (a.Type == ClaimTypes.Name));
-                if (securityClaims.Any())
+                if (HermesPrincipal != null)
                 {
-                    return Convert.ToString(securityClaims.FirstOrDefault().Value);
+                    return HermesPrincipal.Username;
                 }
 
                 return string.Empty;

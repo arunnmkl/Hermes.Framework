@@ -13,10 +13,10 @@
 // ***********************************************************************
 using System;
 using System.Net.Http;
-using System.Security.Claims;
 using System.Security.Principal;
 using System.Threading;
 using System.Threading.Tasks;
+using System.Web;
 using System.Web.Http.Filters;
 using Hermes.WebApi.Core;
 using Hermes.WebApi.Core.Common;
@@ -52,7 +52,7 @@ namespace Hermes.WebApi.Extensions.Authentication
                     var claimsIdentity = AuthenticationCommands.ConvertTokenAsClaimsIdentity(ticket);
                     if (claimsIdentity != null)
                     {
-                        principal = new ClaimsPrincipal(claimsIdentity);
+                        principal = new Security.HermesPrincipal(claimsIdentity);
                     }
                 }
             }
@@ -102,7 +102,7 @@ namespace Hermes.WebApi.Extensions.Authentication
         /// </summary>
         /// <param name="httpRequestBase">The HTTP request base.</param>
         /// <returns>The implementation of the current principle</returns>
-        public IPrincipal Authenticate(System.Web.HttpRequestBase httpRequestBase)
+        public IPrincipal Authenticate(HttpRequestBase httpRequestBase)
         {
             var value = httpRequestBase.Cookies[HermesSecurity.Configuration.Current.AuthCookieName];
 

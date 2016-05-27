@@ -19,28 +19,54 @@ namespace Hermes.WebApi.Extensions.Common
         /// </summary>
         /// <param name="userIdentity">The user identity.</param>
         /// <param name="authenticationType">Type of the authentication.</param>
-        /// <returns>claims identity</returns>
-        public static ClaimsIdentity GetClaimsIdentity(UserIdentity userIdentity, string authenticationType)
+        /// <returns>
+        /// hermes identity
+        /// </returns>
+        public static HermesIdentity GetHermesClaimsIdentity(UserIdentity userIdentity, string authenticationType)
         {
-            ClaimsIdentity identity = new ClaimsIdentity(authenticationType);
-            identity.AddClaim(new Claim(ClaimTypes.Name, userIdentity.Username));
-            identity.AddClaim(new Claim(ClaimTypes.Sid, userIdentity.SecurityId.ToString()));
-            identity.AddClaim(new Claim("Identity", userIdentity.UserId.ToString()));
+            HermesIdentity identity = new HermesIdentity(ConvertToClaims(userIdentity), authenticationType);
+            return identity;
+        }
+
+        /// <summary>
+        /// Converts to claims.
+        /// </summary>
+        /// <param name="userIdentity">The user identity.</param>
+        /// <returns>claim collection</returns>
+        private static IEnumerable<Claim> ConvertToClaims(UserIdentity userIdentity)
+        {
+            IList<Claim> claims = new List<Claim>();
+            // Username
+            claims.Add(new Claim(HermesIdentity.UsernameClaimType, userIdentity.Username));
+
+            // UserId
+            claims.Add(new Claim(HermesIdentity.UserIdClaimType, userIdentity.UserId.ToString()));
+
+            // Security Id's
+            claims.Add(new Claim(HermesIdentity.SIDClaimType, userIdentity.SecurityId.ToString()));
+
+            // SID
+            claims.Add(new Claim(HermesIdentity.SecurityIdsClaimType, userIdentity.SecurityId.ToString()));
+
+            // Authentication Token
             if (string.IsNullOrEmpty(userIdentity.UserAuthTokenId) == false)
             {
-                identity.AddClaim(new Claim("UserAuthToken", userIdentity.UserAuthTokenId));
+                claims.Add(new Claim(HermesIdentity.AuthTokenClaimType, userIdentity.UserAuthTokenId));
             }
 
             if (userIdentity.Roles != null)
             {
                 foreach (var role in userIdentity.Roles)
                 {
-                    identity.AddClaim(new Claim(ClaimTypes.Role, role.Name));
-                    identity.AddClaim(new Claim(ClaimTypes.GroupSid, role.SecurityId.ToString()));
+                    // Roles
+                    claims.Add(new Claim(HermesIdentity.RolesClaimType, role.Name));
+
+                    // Security Id's
+                    claims.Add(new Claim(HermesIdentity.SecurityIdsClaimType, role.SecurityId.ToString()));
                 }
             }
 
-            return identity;
+            return claims;
         }
     }
 }

@@ -22,7 +22,7 @@ namespace Hermes.WebApi.Extensions.Authentication
         /// <param name="userName">Name of the user.</param>
         /// <param name="password">The password.</param>
         /// <returns></returns>
-        public static ClaimsPrincipal AuthenticateUsernamePassword(string userName, string password)
+        public static HermesPrincipal AuthenticateUsernamePassword(string userName, string password)
         {
             using (UserManager um = new UserManager())
             {
@@ -30,9 +30,9 @@ namespace Hermes.WebApi.Extensions.Authentication
 
                 if (userIdentity != null)
                 {
-                    var identity = ClaimsIdentityProvider.GetClaimsIdentity(userIdentity, "ClaimsIdentityAuth");
+                    var identity = ClaimsIdentityProvider.GetHermesClaimsIdentity(userIdentity, "ClaimsIdentityAuth");
 
-                    return new ClaimsPrincipal(identity);
+                    return new HermesPrincipal(identity);
                 }
             }
 
@@ -231,28 +231,28 @@ namespace Hermes.WebApi.Extensions.Authentication
         /// </summary>
         /// <param name="context">The context.</param>
         /// <returns></returns>
-        internal static Task<ClaimsIdentity> AuthenticateUsernamePassword(OAuthGrantResourceOwnerCredentialsContext context)
+        internal static Task<HermesIdentity> AuthenticateUsernamePassword(OAuthGrantResourceOwnerCredentialsContext context)
         {
             using (UserManager um = new UserManager())
             {
                 if (string.IsNullOrEmpty(context.UserName) || string.IsNullOrEmpty(context.UserName))
                 {
                     context.SetError("invalid_grant", "The user name or password is incorrect.");
-                    return Task.FromResult<ClaimsIdentity>(null);
+                    return Task.FromResult<HermesIdentity>(null);
                 }
 
                 var userIdentity = um.AuthenticateUsernamePassword(context.UserName, context.Password);
 
                 if (userIdentity != null)
                 {
-                    var identity = ClaimsIdentityProvider.GetClaimsIdentity(userIdentity, context.Options.AuthenticationType);
+                    var identity = ClaimsIdentityProvider.GetHermesClaimsIdentity(userIdentity, context.Options.AuthenticationType);
 
                     return Task.FromResult(identity);
                 }
             }
 
             context.SetError("invalid_grant", "The user name or password is incorrect.");
-            return Task.FromResult<ClaimsIdentity>(null);
+            return Task.FromResult<HermesIdentity>(null);
         }
 
         /// <summary>

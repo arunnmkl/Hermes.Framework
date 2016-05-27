@@ -26,7 +26,7 @@ namespace Hermes.WebApi.Extensions.Common
         {
             TimeSpan tokenExpiration = TimeSpan.FromDays(1);
 
-            ClaimsIdentity identity = ClaimsIdentityProvider.GetClaimsIdentity(userIdentity, OAuthDefaults.AuthenticationType);
+            Security.HermesIdentity identity = ClaimsIdentityProvider.GetHermesClaimsIdentity(userIdentity, OAuthDefaults.AuthenticationType);
 
             var props = new AuthenticationProperties()
             {
@@ -82,15 +82,15 @@ namespace Hermes.WebApi.Extensions.Common
         /// <param name="identity">The identity.</param>
         /// <param name="ticket">The ticket.</param>
         /// <param name="accessToken">The access token.</param>
-        private static void SaveAuthToken(ClaimsIdentity identity, AuthenticationTicket ticket, string accessToken)
+        private static void SaveAuthToken(Security.HermesIdentity identity, AuthenticationTicket ticket, string accessToken)
         {
             var userAuthToken = new UserAuthToken(accessToken)
             {
                 AuthClientId = Convert.ToString(string.Empty),
                 ExpiresUtc = ticket.Properties.ExpiresUtc.Value,
                 IssuedUtc = ticket.Properties.IssuedUtc.Value,
-                UserId = Convert.ToInt64(identity.FindFirst("Identity").Value),
-                UserAuthTokenId = Convert.ToString(identity.FindFirst("UserAuthToken").Value),
+                UserId = Convert.ToInt64(identity.FindFirst(Security.HermesIdentity.UserIdClaimType).Value),
+                UserAuthTokenId = Convert.ToString(identity.FindFirst(Security.HermesIdentity.AuthTokenClaimType).Value),
                 IsLoggedIn = true
             };
 

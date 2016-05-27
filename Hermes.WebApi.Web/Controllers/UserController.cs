@@ -43,7 +43,7 @@ namespace Hermes.WebApi.Web.Controllers
         [Route("details")]
         public HttpResponseMessage GetDetails()
         {
-            ClaimsPrincipal principal = Request.GetRequestContext().Principal as ClaimsPrincipal;
+            Security.HermesPrincipal principal = Request.GetRequestContext().Principal as Security.HermesPrincipal;
 
             if (principal != null && principal.Identity.IsAuthenticated)
             {
@@ -54,24 +54,21 @@ namespace Hermes.WebApi.Web.Controllers
                 string userAuthTokenId = string.Empty;
                 int timeInSeconds = 0;
                 IEnumerable<string> roles = null;
-                var cIdentity = principal.Identities.FirstOrDefault();
 
-                if (cIdentity != null)
+                username = principal.Username;
+                securityId = principal.SecurityId;
+                roles = principal.Roles;
+                userAuthTokenId = principal.UserAuthTokenId;
+
+                var userAuthToken = AuthenticationCommands.GetUserAuthTokenById(userAuthTokenId);
+
+                if (userAuthToken != null)
                 {
-                    username = cIdentity.FindFirst(ClaimTypes.Name).Value;
-                    securityId = cIdentity.FindFirst(ClaimTypes.Sid).Value;
-                    roles = cIdentity.FindAll(ClaimTypes.Role).Select(r => r.Value);
-                    userAuthTokenId = cIdentity.FindFirst("UserAuthToken").Value;
-
-                    var userAuthToken = AuthenticationCommands.GetUserAuthTokenById(userAuthTokenId);
-
-                    if (userAuthToken != null)
-                    {
-                        // Validate expiration time if present
-                        DateTimeOffset currentUtc = Startup.OAuthBearerOptions.SystemClock.UtcNow;
-                        timeInSeconds = (int)((userAuthToken.ExpiresUtc - currentUtc).TotalSeconds);
-                    }
+                    // Validate expiration time if present
+                    DateTimeOffset currentUtc = Startup.OAuthBearerOptions.SystemClock.UtcNow;
+                    timeInSeconds = (int)((userAuthToken.ExpiresUtc - currentUtc).TotalSeconds);
                 }
+
 
                 object responseMessage = new
                 {
