@@ -34,7 +34,7 @@ namespace Hermes.Authentication
 		{
 			try
 			{
-				return AuthenticationCommands.AuthenticateUsernamePassword(userName, password);
+				return AuthenticationCommands.Authenticate(userName, password);
 			}
 			catch (Exception ex)
 			{

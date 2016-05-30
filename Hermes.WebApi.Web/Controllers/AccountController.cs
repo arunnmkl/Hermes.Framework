@@ -171,31 +171,67 @@ namespace Hermes.WebApi.Web.Controllers
         /// Posts the specified login.
         /// </summary>
         /// <param name="login">The login.</param>
-        /// <returns></returns>
+        /// <returns></returns>  
+        [AllowAnonymous]
         public HttpResponseMessage Post(Login login)
         {
             string loginMessage = string.Empty;
             try
-            {
-                IPrincipal principal = null;
-                principal = AuthenticationCommands.AuthenticateUsernamePassword(login.Username, login.Password);
+            {                               
+                AuthClient client;
+                bool isValidClient = ValidateClient(login.ClientId, ref loginMessage, out client);
 
-                if (principal != null)
+                if (isValidClient)
                 {
-                    loginMessage = "Login was successful!";
-                    var response = Request.CreateResponse(HttpStatusCode.OK, true);
+                    var userIdentity = AuthenticationCommands.AuthenticateUsernamePassword(login.Username, login.Password);
 
-                    var properties = new AuthenticationProperties()
+                    if (userIdentity != null)
                     {
-                        IssuedUtc = DateTime.UtcNow,
-                        ExpiresUtc = DateTime.UtcNow.AddDays(1),
-                    };
+                        string authToken = AuthenticationCommands.GenerateAuthToken(userIdentity.Username, !HermesSecurity.Configuration.Current.MultipleInstanceEnabled);
 
-                    var ticket = new AuthenticationTicket(principal.Identity as ClaimsIdentity, properties);
-                    var accessToken = Helper.ProtectAccessToken(ticket);
-                    response.SetAuthentication(accessToken, login.RememberMe);
+                        if (string.IsNullOrEmpty(authToken))
+                        {
+                            loginMessage = ($"The user {userIdentity.Username}, is already logged in with other device/machine.");
+                        }
+                        else
+                        {
+                            userIdentity.UserAuthTokenId = authToken;
+                        }
 
-                    return response;
+                        var identity = ClaimsIdentityProvider.GetHermesClaimsIdentity(userIdentity, DefaultAuthenticationTypes.ApplicationCookie);
+
+                        if (identity != null)
+                        {
+                            loginMessage = "Login was successful!";
+                            var response = Request.CreateResponse(HttpStatusCode.OK, true);
+
+                            var properties = new AuthenticationProperties()
+                            {
+                                IssuedUtc = DateTime.UtcNow,
+                                ExpiresUtc = client.AccessTokenExpireTimeSpan.HasValue ? DateTime.UtcNow.AddMinutes(client.AccessTokenExpireTimeSpan.Value) : DateTime.UtcNow.AddDays(1),
+                            };
+
+                            var ticket = new AuthenticationTicket(identity, properties);
+                            var accessToken = Helper.ProtectAccessToken(ticket);
+                            var userAuthToken = new UserAuthToken(accessToken)
+                            {
+                                AuthClientId = Convert.ToString(string.Empty),
+                                ExpiresUtc = ticket.Properties.ExpiresUtc.Value,
+                                IssuedUtc = ticket.Properties.IssuedUtc.Value,
+                                UserId = Convert.ToInt64(identity.FindFirst(HermesSecurity.HermesIdentity.UserIdClaimType).Value),
+                                UserAuthTokenId = Convert.ToString(identity.FindFirst(HermesSecurity.HermesIdentity.AuthTokenClaimType).Value),
+                                IsLoggedIn = true
+                            };
+
+                            bool isSaved = AuthenticationCommands.SaveUserAuthToken(userAuthToken);
+                            response.SetAuthentication(accessToken, login.RememberMe);
+
+                            return response;
+                        }
+
+                    }
+
+                    loginMessage = "Invalid username or password";
                 }
             }
             catch (Exception ex)
@@ -333,7 +369,7 @@ namespace Hermes.WebApi.Web.Controllers
                 response.Content = new StringContent(responseString, Encoding.UTF8, "application/json");
                 return response;
             }
-        }  
+        }
 
         /// <summary>
         /// Generates the local access token response.
@@ -357,6 +393,44 @@ namespace Hermes.WebApi.Web.Controllers
             var accessToken = Helper.ProtectAccessToken(ticket);
 
             return accessToken;
+        }
+
+        /// <summary>
+        /// Validates the client.
+        /// </summary>
+        /// <param name="clientId">The client identifier.</param>
+        /// <param name="loginMessage">The login message.</param>
+        /// <param name="client">The client.</param>
+        /// <returns>is valid client</returns>
+        private static bool ValidateClient(string clientId, ref string loginMessage, out AuthClient client)
+        {
+            client = null;
+
+            if (string.IsNullOrEmpty(clientId))
+            {
+                loginMessage = "Client id should be sent.";
+                return false;
+            }
+            else
+            {
+                client = AuthenticationCommands.FindAuthClient(clientId);
+            }
+
+            if (client == null)
+            {
+                loginMessage = string.Format("Client '{0}' is not registered in the system.", clientId);
+                return false;
+            }
+            else
+            {
+                if (!client.IsActive)
+                {
+                    loginMessage = string.Format("Client {0} is inactive.", client.AuthClientId);
+                    return false;
+                }
+            }
+
+            return true;
         }
     }
 }

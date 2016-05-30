@@ -5,6 +5,7 @@ using Hermes.WebApi.Core.Security;
 using Hermes.WebApi.Extensions.Common;
 using Hermes.WebApi.Security;
 using Hermes.WebApi.Security.Models;
+using Microsoft.AspNet.Identity;
 using Microsoft.Owin.Security;
 using Microsoft.Owin.Security.OAuth;
 
@@ -18,26 +19,49 @@ namespace Hermes.WebApi.Extensions.Authentication
         #region Public Methods
 
         /// <summary>
-        /// Authenticates the username password.
+        /// Authenticates the specified user name and password.
         /// </summary>
-        /// <param name="userName">Name of the user.</param>
+        /// <param name="username">Name of the user.</param>
         /// <param name="password">The password.</param>
-        /// <returns></returns>
-        public static HermesPrincipal AuthenticateUsernamePassword(string userName, string password)
+        /// <returns>authenticated user as principal</returns>
+        public static HermesPrincipal Authenticate(string username, string password)
         {
-            using (UserManager um = new UserManager())
+            var userIdentity = AuthenticateUsernamePassword(username, password);
+
+            if (userIdentity != null)
             {
-                var userIdentity = um.AuthenticateUsernamePassword(userName, password);
-
-                if (userIdentity != null)
-                {
-                    var identity = ClaimsIdentityProvider.GetHermesClaimsIdentity(userIdentity, "ClaimsIdentityAuth");
-
-                    return new HermesPrincipal(identity);
-                }
+                var identity = ClaimsIdentityProvider.GetHermesClaimsIdentity(userIdentity, DefaultAuthenticationTypes.ApplicationCookie);
+                return new HermesPrincipal(identity);
             }
 
             return null;
+        }
+
+        /// <summary>
+        /// Authenticates the username password.
+        /// </summary>
+        /// <param name="username">Name of the user.</param>
+        /// <param name="password">The password.</param>
+        /// <returns>authenticated user information</returns>
+        public static UserIdentity AuthenticateUsernamePassword(string username, string password)
+        {
+            using (UserManager um = new UserManager())
+            {
+                return um.AuthenticateUsernamePassword(username, password);
+            }
+        }
+
+        /// <summary>
+        /// Gets the principal.
+        /// </summary>
+        /// <param name="userIdentity">The user identity.</param>
+        /// <returns>
+        /// authenticated user as principal
+        /// </returns>
+        public static HermesPrincipal GetPrincipal(UserIdentity userIdentity)
+        {
+            var identity = ClaimsIdentityProvider.GetHermesClaimsIdentity(userIdentity, DefaultAuthenticationTypes.ApplicationCookie);
+            return new HermesPrincipal(identity);
         }
 
         /// <summary>
