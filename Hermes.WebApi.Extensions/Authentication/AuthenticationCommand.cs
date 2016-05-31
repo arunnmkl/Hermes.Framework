@@ -79,6 +79,16 @@ namespace Hermes.WebApi.Extensions.Authentication
                 return true;
             }
 
+            return SkipAuthorization(actionContext);
+        }
+
+        /// <summary>
+        /// Skips the authorization base class method.
+        /// </summary>
+        /// <param name="actionContext">The action context.</param>
+        /// <returns></returns>
+        public bool SkipAuthorizationBaseClassMethod(HttpActionContext actionContext)
+        {
             return base.SkipAuthorization(actionContext);
         }
 

@@ -43,6 +43,7 @@
       <HintPath>..\References\Assembly\Hermes.WebApi.Base.dll</HintPath>
     </Reference>
     <Reference Include="Hermes.WebApi.Core.1.0.2, Version=1.0.0.4, Culture=neutral, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
       <HintPath>..\References\Assembly\Hermes.WebApi.Core.1.0.2.dll</HintPath>
     </Reference>
     <Reference Include="Microsoft.AspNet.Identity.Core, Version=2.0.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">

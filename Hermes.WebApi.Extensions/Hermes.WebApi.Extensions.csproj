@@ -35,7 +35,8 @@
     <Reference Include="Hermes.WebApi.Base">
       <HintPath>..\References\Assembly\Hermes.WebApi.Base.dll</HintPath>
     </Reference>
-    <Reference Include="Hermes.WebApi.Core.1.0.2">
+    <Reference Include="Hermes.WebApi.Core.1.0.2, Version=1.0.0.4, Culture=neutral, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
       <HintPath>..\References\Assembly\Hermes.WebApi.Core.1.0.2.dll</HintPath>
     </Reference>
     <Reference Include="Microsoft.AspNet.Identity.Core, Version=2.0.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
@@ -120,13 +121,14 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Authentication\ApiControllerBase.cs" />
+    <Compile Include="Authentication\BearerAuthenticationCommand.cs" />
     <Compile Include="Authentication\AuthenticationCommand.cs" />
     <Compile Include="Authentication\AuthenticationCommands.cs" />
     <Compile Include="Authentication\AuthenticationMiddleware.cs" />
     <Compile Include="Authentication\BasicAuthenticateController.cs" />
     <Compile Include="Authentication\AuthorizationController.cs" />
+    <Compile Include="Authentication\BearerAuthenticateController.cs" />
     <Compile Include="Authentication\CookieAuthenticationController.cs" />
-    <Compile Include="Authentication\Filter\BearerAuthentication.cs" />
     <Compile Include="Authentication\MVCAuthenticationAttribute.cs" />
     <Compile Include="Common\ComponentPaths.cs" />
     <Compile Include="Common\ComponentPathsConfigurationSection.cs" />
