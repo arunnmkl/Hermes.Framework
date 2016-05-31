@@ -56,10 +56,6 @@ namespace Hermes.WebApi.Extensions
                     config.Filters.Add(new HermesAuthorizationAttribute());
                 }
             }
-            else if (HermesSecurity.Configuration.Current.HermesAuthorizationEnabled)
-            {
-                config.Filters.Add(new HermesAuthorizationAttribute());
-            }
 
             if (HermesSecurity.Configuration.Current.CSRFAttackPrevented)
             {
@@ -69,7 +65,12 @@ namespace Hermes.WebApi.Extensions
             if (HermesSecurity.Configuration.Current.OAuthAuthenticationEnabled)
             {
                 config.Filters.Add(new HostAuthenticationAttribute("bearer"));
-                config.Filters.Add(new BearerAuthenticationFilter());
+                config.Filters.Add(new Authentication.Filter.BearerAuthenticationFilter());
+
+                if (HermesSecurity.Configuration.Current.HermesAuthorizationEnabled)
+                {
+                    config.Filters.Add(new HermesAuthorizationAttribute());
+                }
             }
 
             config.Services.Replace(typeof(IExceptionHandler), new GeneralExceptionHandler());
@@ -102,14 +103,18 @@ namespace Hermes.WebApi.Extensions
                     DependencyResolverContainer.RegisterInstance<IAuthorization>(new AuthorizationController());
                 }
             }
-            else if (HermesSecurity.Configuration.Current.HermesAuthorizationEnabled)
-            {
-                DependencyResolverContainer.RegisterInstance<IAuthorization>(new AuthorizationController());
-            }
 
             if (HermesSecurity.Configuration.Current.CSRFAttackPrevented)
             {
                 DependencyResolverContainer.RegisterInstance<ICSRFValidation>(new CSRFValidation());
+            }
+
+            if (HermesSecurity.Configuration.Current.OAuthAuthenticationEnabled)
+            {
+                if (HermesSecurity.Configuration.Current.HermesAuthorizationEnabled)
+                {
+                    DependencyResolverContainer.RegisterInstance<IAuthorization>(new AuthorizationController());
+                }
             }
 
             DependencyResolverContainer.RegisterInstance<ILog>(new Logging.Logging());
