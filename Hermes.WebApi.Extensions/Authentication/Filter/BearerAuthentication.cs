@@ -105,13 +105,13 @@ namespace Hermes.WebApi.Extensions.Authentication.Filter
                 return;
             }
 
-            var userAuthTokenReq = new UserAuthToken(authorization.Parameter)
-            {
-                UserId = Convert.ToInt64(authTicket.Identity.FindFirst(HermesIdentity.UserIdClaimType).Value)
-            };
-
             if (Configuration.Current.DBTokenValidationEnabled)
             {
+                var userAuthTokenReq = new UserAuthToken(authorization.Parameter)
+                {
+                    UserId = Convert.ToInt64(authTicket.Identity.FindFirst(HermesIdentity.UserIdClaimType).Value)
+                };
+
                 var userAuthTokenRes = AuthenticationCommands.GetUserAuthToken(userAuthTokenReq);
 
                 if (userAuthTokenRes == null
