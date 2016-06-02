@@ -1,9 +1,10 @@
 DECLARE @SecurityId UNIQUEIDENTIFIER = NEWID()
-	,@Username VARCHAR(50) = N'username'
+	,@Username VARCHAR(50) = N'oauth'
 	,@Password VARCHAR(50) = N'h7ctywWpXLW/oTqXNdYzrw==' -- Decrypted String --> password
 	,@EmailAddress VARCHAR(50) = N'email@dreamorbit.com'
 	,@Enabled BIT = 1
 	,@Created DATETIME = GETDATE()
+	,@userId BIGINT
 
 IF NOT EXISTS (
 		SELECT TOP 1 1
@@ -27,6 +28,9 @@ BEGIN
 		,@Enabled
 		,@Created
 		)
+
+    Set @userId = SCOPE_IDENTITY()
+    Select @userId UserId
 END
 GO
 
