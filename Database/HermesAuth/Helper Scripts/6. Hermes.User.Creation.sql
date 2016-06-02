@@ -7,11 +7,11 @@ DECLARE @SecurityId UNIQUEIDENTIFIER = NEWID()
 
 IF NOT EXISTS (
 		SELECT TOP 1 1
-		FROM [dbo].[User] u
+		FROM [Security].[User] u
 		WHERE u.[Username] = @Username
 		)
 BEGIN
-	INSERT INTO [dbo].[User] (
+	INSERT INTO [Security].[User] (
 		[SecurityId]
 		,[Username]
 		,[Password]

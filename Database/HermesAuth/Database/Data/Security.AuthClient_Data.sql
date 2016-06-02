@@ -1,0 +1,2 @@
+INSERT INTO [Security].[AuthClient] ([AuthClientId], [Secret], [Name], [ApplicationType], [IsActive], [RefreshTokenLifeTime], [AllowedOrigin], [AccessTokenExpireTimeSpan]) VALUES ('Default', 'B88A8C47-E046-48DD-8098-837D627D3D6E', 'Web Client', 0, 1, 1440, 'http://localhost:56379', 10)
+INSERT INTO [Security].[AuthClient] ([AuthClientId], [Secret], [Name], [ApplicationType], [IsActive], [RefreshTokenLifeTime], [AllowedOrigin], [AccessTokenExpireTimeSpan]) VALUES ('Mobile', '061D2582-5DEC-4318-8B5E-3ECB885E0DDD', 'Mobile Client', 0, 1, 1440, 'http://localhost:56379', 10)

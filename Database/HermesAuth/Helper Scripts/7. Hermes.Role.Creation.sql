@@ -8,19 +8,19 @@ DECLARE @roleId BIGINT
 	,@updatedBy BIGINT = 1;
 
 INSERT INTO @resourceIds (ResourceId)
-SELECT r.ResourceId FROM dbo.[Resource] r
+SELECT r.ResourceId FROM [Security].[Resource] r
 
 BEGIN
 	IF NOT EXISTS (
 			SELECT TOP 1 1
-			FROM dbo.[Role]
+			FROM [Security].[Role]
 			WHERE NAME = @name
 			)
 		AND ISNULL(@name, '') <> ''
 	BEGIN
 		SET @securityId = NEWID();
 
-		INSERT INTO dbo.[Role] (
+		INSERT INTO [Security].[Role] (
 			SecurityId
 			,NAME
 			,Description
@@ -39,12 +39,12 @@ BEGIN
 	BEGIN
 		SET @securityId = (
 				SELECT SecurityId
-				FROM dbo.[Role]
+				FROM [Security].[Role]
 				WHERE NAME = @name
 				)
 	END
 
-	INSERT INTO dbo.AccessControlList
+	INSERT INTO [Security].AccessControlList
 	(
 	    ResourceId,
 	    SecurityId,
@@ -52,8 +52,8 @@ BEGIN
 	)
     OUTPUT INSERTED.AccessControlListId INTO @aclOutput (AccessControlListId)
     SELECT Distinct rp.ResourceId, @securityId, 0 FROM @resourceIds  rid
-    INNER JOIN dbo.ResourcePermission rp ON rp.ResourceId = rid.ResourceId
-    LEFT JOIN dbo.AccessControlList acl ON  acl.ResourceId = rp.ResourceId	 AND acl.SecurityId	 = @securityId
+    INNER JOIN [Security].ResourcePermission rp ON rp.ResourceId = rid.ResourceId
+    LEFT JOIN [Security].AccessControlList acl ON  acl.ResourceId = rp.ResourceId	 AND acl.SecurityId	 = @securityId
     WHERE acl.AccessControlListId IS NULL
     --ORDER BY rpid.ResourcePermissionId ASC;
     
@@ -65,8 +65,8 @@ BEGIN
 	       ResourceId
 	   )
 	   SELECT acl.AccessControlListId, rid.ResourceId FROM @resourceIds  rid
-	   INNER JOIN dbo.ResourcePermission rp ON rp.ResourceId = rid.ResourceId
-	   INNER JOIN dbo.AccessControlList acl ON  acl.ResourceId = rp.ResourceId	 AND acl.SecurityId	 = @securityId
+	   INNER JOIN [Security].ResourcePermission rp ON rp.ResourceId = rid.ResourceId
+	   INNER JOIN [Security].AccessControlList acl ON  acl.ResourceId = rp.ResourceId	 AND acl.SecurityId	 = @securityId
 	   ORDER BY rp.ResourcePermissionId ASC;
     END 
 
@@ -75,14 +75,14 @@ BEGIN
     FROM @aclOutput AS M
     INNER JOIN CTE AS S ON S.ROW = M.ACLOutputId 
 
-    INSERT  dbo.AccessPermission
+    INSERT  [Security].AccessPermission
     (
         AccessControlListId,
         PermissionId,
         [Deny]
     ) 
     SELECT ao.AccessControlListId, rp.PermissionId, rp.[Deny] FROM @aclOutput ao
-    INNER JOIN dbo.ResourcePermission rp ON rp.ResourceId = ao.ResourceId
-    LEFT JOIN dbo.AccessPermission ap ON  ap.PermissionId = rp.PermissionId AND ap.AccessControlListId = ao.AccessControlListId
+    INNER JOIN [Security].ResourcePermission rp ON rp.ResourceId = ao.ResourceId
+    LEFT JOIN [Security].AccessPermission ap ON  ap.PermissionId = rp.PermissionId AND ap.AccessControlListId = ao.AccessControlListId
     WHERE ap.AccessControlListId IS NULL
 END

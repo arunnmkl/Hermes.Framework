@@ -164,6 +164,11 @@ namespace GlobalTranz.WebApi.Extensions.Owin
                 context.OwinContext.Set<string>("as:UserAuthToken", authToken);
             }
 
+            if (context.ClientId != null)
+            {
+                identity.AddClaim(new Claim(HermeSecurity.HermesIdentity.AuthClientClaimType, context.ClientId));
+            }
+
             var authDictonary = new Dictionary<string, string>
             {
                 {

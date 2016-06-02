@@ -19,12 +19,12 @@ VALUES (- 4, 1);-- PermissionId - Delete
 BEGIN
 	IF NOT EXISTS (
 			SELECT TOP 1 1
-			FROM dbo.[Resource]
+			FROM [Security].[Resource]
 			WHERE NAME = @resourceName
 			)
 		AND ISNULL(@resourceName, '') <> ''
 	BEGIN
-		INSERT INTO dbo.Resource (
+		INSERT INTO [Security].Resource (
 			ResourceId
 			,NAME
 			,Description
@@ -41,12 +41,12 @@ BEGIN
 	BEGIN
 		SET @resourceId = (
 				SELECT ResourceId
-				FROM dbo.[Resource]
+				FROM [Security].[Resource]
 				WHERE NAME = @resourceName
 				)
 	END
 
-	INSERT INTO dbo.ResourcePermission (
+	INSERT INTO [Security].ResourcePermission (
 		ResourceId
 		,PermissionId
 		,[Deny]
@@ -57,7 +57,7 @@ BEGIN
 		,pi.[Deny]
 		,GETDATE()
 	FROM @permissionIds pi
-	LEFT JOIN dbo.ResourcePermission rp ON pi.PermissionId = rp.PermissionId
+	LEFT JOIN [Security].ResourcePermission rp ON pi.PermissionId = rp.PermissionId
 		AND rp.ResourceId = @resourceId
 	WHERE rp.ResourceId IS NULL AND ISNULL(@resourceName, '') <> ''
 END

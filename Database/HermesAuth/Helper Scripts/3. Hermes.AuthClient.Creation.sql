@@ -8,11 +8,11 @@ DECLARE @AuthClientId VARCHAR(128) = N'ngAuthApp'
 
 IF NOT EXISTS (
 		SELECT TOP 1 1
-		FROM [dbo].[AuthClient] ac
+		FROM [Security].[AuthClient] ac
 		WHERE ac.[AuthClientId] = @AuthClientId
 		)
 BEGIN
-	INSERT INTO [dbo].[AuthClient] (
+	INSERT INTO [Security].[AuthClient] (
 		[AuthClientId]
 		,[Secret]
 		,[Name]

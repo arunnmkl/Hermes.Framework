@@ -53,6 +53,7 @@ namespace Hermes.WebApi.Web.Controllers
                 string username = principal.Username;
                 Guid securityId = principal.SecurityId;
                 string userAuthTokenId = principal.UserAuthTokenId;
+                string userAuthClient = principal.AuthClient;
                 IEnumerable<string> roles = principal.Roles;
                 int timeInSeconds = 0;
 
@@ -74,8 +75,8 @@ namespace Hermes.WebApi.Web.Controllers
                     SecurityId = securityId,
                     Roles = roles,
                     UserAuthToken = userAuthTokenId,
-                    TimeInSeconds = timeInSeconds
-
+                    TimeInSeconds = timeInSeconds,
+                    AuthClient = userAuthClient
                 };
 
                 MediaTypeFormatter jsonFormatter = new JsonMediaTypeFormatter();
