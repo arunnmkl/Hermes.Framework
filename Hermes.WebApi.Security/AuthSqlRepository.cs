@@ -38,7 +38,7 @@ namespace Hermes.WebApi.Security
         /// </returns>
         internal UserIdentity AuthenticateUsernamePassword(string username, string password)
         {
-            string commandText = $"{AuthContext.SecuritySchema}.[AuthenticateUsernamePassword]";
+            string commandText = string.Format("{0}.[AuthenticateUsernamePassword]", AuthContext.SecuritySchema);
 
             SetCollection sets = new SetCollection();
             sets.AddSet<UserIdentity>("UserIdentiry");
@@ -72,7 +72,7 @@ namespace Hermes.WebApi.Security
         /// <returns>success or failure</returns>
         internal bool AddRefreshToken(RefreshToken token)
         {
-            string commandText = $"{AuthContext.SecuritySchema}.[AddRefreshToken]";
+            string commandText = string.Format("{0}.[AddRefreshToken]", AuthContext.SecuritySchema);
 
             var parameters = new[]
             {
@@ -97,7 +97,7 @@ namespace Hermes.WebApi.Security
         /// <returns>refresh token</returns>
         internal RefreshToken FindRefreshToken(string hashedTokenId)
         {
-            string commandText = $"{AuthContext.SecuritySchema}.[FindRefreshToken]";
+            string commandText = string.Format("{0}.[FindRefreshToken]", AuthContext.SecuritySchema);
 
             var parameter = new Parameter("@RefreshTokenId", hashedTokenId);
 
@@ -113,7 +113,7 @@ namespace Hermes.WebApi.Security
         /// </returns>
         internal bool RemoveRefreshToken(string tokenId)
         {
-            string commandText = $"{AuthContext.SecuritySchema}.[RemoveRefreshToken]";
+            string commandText = string.Format("{0}.[RemoveRefreshToken]", AuthContext.SecuritySchema);
 
             var parameter = new Parameter("@RefreshTokenId", tokenId);
 
@@ -128,7 +128,7 @@ namespace Hermes.WebApi.Security
         /// <returns>all refresh tokens</returns>
         internal IList<RefreshToken> GetAllRefreshTokens()
         {
-            string commandText = $"{AuthContext.SecuritySchema}.[GetAllRefreshToken]";
+            string commandText = string.Format("{0}.[GetAllRefreshToken]", AuthContext.SecuritySchema);
 
             return this.sqlSerializer.DeserializeMultiRecords<RefreshToken>(commandText, storedProcedure: true);
         }
@@ -140,7 +140,7 @@ namespace Hermes.WebApi.Security
         /// <returns>authentication client information</returns>
         internal AuthClient FindAuthClient(string clientId)
         {
-            string commandText = $"{AuthContext.SecuritySchema}.[FindAuthClientById]";
+            string commandText = string.Format("{0}.[FindAuthClientById]", AuthContext.SecuritySchema);
 
             var param = new Parameter("@authClientId", clientId);
 
@@ -156,7 +156,7 @@ namespace Hermes.WebApi.Security
         /// </returns>
         internal UserIdentity FindLoginProvider(AuthProvider authProvider)
         {
-            string commandText = $"{AuthContext.SecuritySchema}.[FindLoginProvider]";
+            string commandText = string.Format("{0}.[FindLoginProvider]", AuthContext.SecuritySchema);
 
             SetCollection sets = new SetCollection();
             sets.AddSet<UserIdentity>("UserIdentiry");
@@ -193,7 +193,7 @@ namespace Hermes.WebApi.Security
         /// <returns>user id</returns>
         internal long AddUser(string username, string password, string emailAddress, bool enabled)
         {
-            string commandText = $"{AuthContext.SecuritySchema}.[AddNewUser]";
+            string commandText = string.Format("{0}.[AddNewUser]", AuthContext.SecuritySchema);
 
             var parameters = new[]
             {
@@ -227,7 +227,7 @@ namespace Hermes.WebApi.Security
         /// </returns>
         internal bool AddNewUserLoginProvider(AuthProvider authProvider)
         {
-            string commandText = $"{AuthContext.SecuritySchema}.[AddNewUserLoginProvider]";
+            string commandText = string.Format("{0}.[AddNewUserLoginProvider]", AuthContext.SecuritySchema);
 
             var parameters = new[]
             {
@@ -250,7 +250,7 @@ namespace Hermes.WebApi.Security
         /// </returns>
         internal UserIdentity GetAuthenticatedUserByUserId(long userId)
         {
-            string commandText = $"{AuthContext.SecuritySchema}.[GetAuthenticatedUser]";
+            string commandText = string.Format("{0}.[GetAuthenticatedUser]", AuthContext.SecuritySchema);
 
             SetCollection sets = new SetCollection();
             sets.AddSet<UserIdentity>("UserIdentiry");
@@ -283,7 +283,7 @@ namespace Hermes.WebApi.Security
         /// <returns>user permissions</returns>
         internal IList<ResourceAccessRule> GetUserPermissions(long userId)
         {
-            string commandText = $"{AuthContext.SecuritySchema}.[spGetUserPermissions]";
+            string commandText = string.Format("{0}.[spGetUserPermissions]", AuthContext.SecuritySchema);
 
             var param = new Parameter("@userID", userId);
 
@@ -297,9 +297,9 @@ namespace Hermes.WebApi.Security
         /// <returns>user resource permissions</returns>
         internal IList<ResourceAccessRule> GetUserResourcePermission(IList<Guid> securityIds)
         {
-            string commandText = $"{AuthContext.SecuritySchema}.[spGetUserResourcePermission]";
+            string commandText = string.Format("{0}.[spGetUserResourcePermission]", AuthContext.SecuritySchema);
 
-            var param = new Parameter("@SIDList", GetSecurityIdsAsDatatable(securityIds), $"{AuthContext.SecuritySchema}.SecurityIdList");
+            var param = new Parameter("@SIDList", GetSecurityIdsAsDatatable(securityIds), string.Format("{0}.SecurityIdList", AuthContext.SecuritySchema));
 
             return this.sqlSerializer.DeserializeMultiRecords<ResourceAccessRule>(commandText, param, storedProcedure: true);
         }
@@ -311,7 +311,7 @@ namespace Hermes.WebApi.Security
         /// <returns>saved state</returns>
         internal bool SaveUserAuthToken(UserAuthToken userAuthToken)
         {
-            string commandText = $"{AuthContext.SecuritySchema}.[SaveUserAuthToken]";
+            string commandText = string.Format("{0}.[SaveUserAuthToken]", AuthContext.SecuritySchema);
 
             var parameters = new[]
             {
@@ -349,7 +349,7 @@ namespace Hermes.WebApi.Security
         /// </returns>
         internal UserAuthToken GetUserAuthToken(UserAuthToken userAuthToken)
         {
-            string commandText = $"{AuthContext.SecuritySchema}.[GetUserAuthToken]";
+            string commandText = string.Format("{0}.[GetUserAuthToken]", AuthContext.SecuritySchema);
 
             var parameters = new[]
             {
@@ -370,7 +370,7 @@ namespace Hermes.WebApi.Security
         /// </returns>
         internal int SetTokenExpires(long userId, string userAuthTokenId)
         {
-            string commandText = $"{AuthContext.SecuritySchema}.[SetTokenExpires]";
+            string commandText = string.Format("{0}.[SetTokenExpires]", AuthContext.SecuritySchema);
 
             var parameters = new[]
             {
@@ -390,7 +390,7 @@ namespace Hermes.WebApi.Security
         /// <returns>the new authentication token</returns>
         internal string GenerateAuthToken(string username, bool checkExistence = false, bool killOldSession = false)
         {
-            string commandText = $"{AuthContext.SecuritySchema}.[GenerateUserAuthToken]";
+            string commandText = string.Format("{0}.[GenerateUserAuthToken]", AuthContext.SecuritySchema);
 
             var parameters = new[]
             {
@@ -411,7 +411,7 @@ namespace Hermes.WebApi.Security
         /// </returns>
         internal UserAuthToken GetUserAuthTokenById(string userAuthTokenId)
         {
-            string commandText = $"{AuthContext.SecuritySchema}.[GetUserAuthTokenById]";
+            string commandText = string.Format("{0}.[GetUserAuthTokenById]", AuthContext.SecuritySchema);
 
             var parameter = new Parameter("@UserAuthTokenId", userAuthTokenId);
 
@@ -424,7 +424,7 @@ namespace Hermes.WebApi.Security
         /// <returns>the list of permissions</returns>
         internal IList<Models.Permission> GetPermissions()
         {
-            string commandText = $"SELECT PermissionId, Name FROM {AuthContext.SecuritySchema}.[Permission]";
+            string commandText = string.Format("SELECT PermissionId, Name FROM {0}.[Permission]", AuthContext.SecuritySchema);
             return sqlSerializer.DeserializeMultiRecords<Models.Permission>(commandText, (Parameter)null, false, false);
         }
 
@@ -436,7 +436,7 @@ namespace Hermes.WebApi.Security
         /// </returns>
         internal IList<Resource> GetResources()
         {
-            string commandText = $"SELECT ResourceId, Name FROM {AuthContext.SecuritySchema}.[Resource]";
+            string commandText = string.Format("SELECT ResourceId, Name FROM {0}.[Resource]", AuthContext.SecuritySchema);
             return sqlSerializer.DeserializeMultiRecords<Resource>(commandText, (Parameter)null, false, false);
         }
 
@@ -532,18 +532,18 @@ namespace Hermes.WebApi.Security
         /// <returns>authorization type</returns>
         private AuthorizationType CheckAuthorization(Guid resourceId, DataTable securityIds, int permissionId)
         {
-            string commandText = $"{AuthContext.SecuritySchema}.CheckAuthorization";
+            string commandText = string.Format("{0}.CheckAuthorization", AuthContext.SecuritySchema);
 
             var parameters = new[]
             {
                 new Parameter("@ResourceId", resourceId),
-                new Parameter("@SecurityIdList", securityIds, $"{AuthContext.SecuritySchema}.SecurityIdList"),
+                new Parameter("@SecurityIdList", securityIds, string.Format("{0}.SecurityIdList",AuthContext.SecuritySchema)),
                 new Parameter("@PermissionId", permissionId)
             };
 
             using (SqlSerializerExtensions.CreateTransactionScope(sqlSerializer, System.Transactions.TransactionScopeOption.Suppress, System.Transactions.IsolationLevel.ReadCommitted, new int?()))
             {
-                return sqlSerializer.ExecuteScalar<Models.Enums.AuthorizationType>(commandText, parameters, storedProcedure: true);
+                return sqlSerializer.ExecuteScalar<AuthorizationType>(commandText, parameters, storedProcedure: true);
             }
         }
     }

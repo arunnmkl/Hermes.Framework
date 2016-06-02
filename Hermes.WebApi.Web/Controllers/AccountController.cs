@@ -153,7 +153,7 @@ namespace Hermes.WebApi.Web.Controllers
 
             if (string.IsNullOrEmpty(authToken))
             {
-                return BadRequest($"The user {userIdentity.Username}, is already logged in with other device/machine.");
+                return BadRequest(string.Format("The user {0}, is already logged in with other device/machine.", userIdentity.Username));
             }
             else
             {
@@ -177,7 +177,7 @@ namespace Hermes.WebApi.Web.Controllers
         {
             string loginMessage = string.Empty;
             try
-            {                               
+            {
                 AuthClient client;
                 bool isValidClient = ValidateClient(login.ClientId, ref loginMessage, out client);
 
@@ -191,7 +191,7 @@ namespace Hermes.WebApi.Web.Controllers
 
                         if (string.IsNullOrEmpty(authToken))
                         {
-                            loginMessage = ($"The user {userIdentity.Username}, is already logged in with other device/machine.");
+                            loginMessage = (string.Format("The user {0}, is already logged in with other device/machine.", userIdentity.Username));
                         }
                         else
                         {

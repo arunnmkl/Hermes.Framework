@@ -40,7 +40,14 @@ namespace GlobalTranz.WebApi.Extensions.Owin
             AuthClient client = null;
 
             var forceLogin = context.TryGetParamValues("forcelogin");
-            context.OwinContext.Set<bool>("as:ForceLogin", Convert.ToBoolean(forceLogin?.FirstOrDefault() ?? "false"));
+            if (forceLogin != null)
+            {
+                context.OwinContext.Set("as:ForceLogin", Convert.ToBoolean(forceLogin.FirstOrDefault()));
+            }
+            else
+            {
+                context.OwinContext.Set("as:ForceLogin", Convert.ToBoolean("false"));
+            }
 
             if (!context.TryGetBasicCredentials(out clientId, out clientSecret))
             {
@@ -81,7 +88,7 @@ namespace GlobalTranz.WebApi.Extensions.Owin
 
             if (!client.IsActive)
             {
-                SetValidateClientError(context, "invalid_clientId", $"Client {client.AuthClientId} is inactive.");
+                SetValidateClientError(context, "invalid_clientId", string.Format("Client {0} is inactive.", client.AuthClientId));
                 return Task.FromResult<object>(null);
             }
 
@@ -141,7 +148,7 @@ namespace GlobalTranz.WebApi.Extensions.Owin
             if (string.IsNullOrEmpty(authToken))
             {
                 context.Rejected();
-                context.SetError("session_rejected", $"The user {context.UserName}, is already logged in with other device/machine.");
+                context.SetError("session_rejected", string.Format("The user {0}, is already logged in with other device/machine.", context.UserName));
                 context.Response.Headers.Add(Constants.HermesChallengeFlag, new[] { ((int)HttpStatusCode.Forbidden).ToString() }); //Little trick to get this to throw 401, refer to AuthenticationMiddleware for more
                 return;
             }
