@@ -11,10 +11,11 @@
                     <th>Customer</th>
                     <th>City</th>
                     <th>Shipped</th>
+                    <th>Action</th>
                 </tr>
             </thead>
             <tbody>
-                <tr data-ng-repeat="order in orders">
+                <tr data-ng-repeat="(orderIndex, order) in orders">
                     <td>
                         {{ order.OrderID }}
                     </td>
@@ -26,6 +27,10 @@
                     </td>
                     <td>
                         <input type="checkbox" data-ng-model="order.IsShipped" disabled="disabled">
+                    </td>
+                    <td align="center">
+                        <span class="btn glyphicon glyphicon-pencil" aria-hidden="true"></span>
+                        <span class="btn glyphicon glyphicon-trash" aria-hidden="true" ng-click="removeRow(order)"></span>
                     </td>
                 </tr>
             </tbody>
