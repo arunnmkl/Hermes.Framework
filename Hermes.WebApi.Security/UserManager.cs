@@ -1,8 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+using Hermes.WebApi.Core;
 using Hermes.WebApi.Security.Models;
 
 namespace Hermes.WebApi.Security
@@ -10,6 +8,7 @@ namespace Hermes.WebApi.Security
     /// <summary>
     /// User manager
     /// </summary>
+    /// <seealso cref="System.IDisposable" />
     public class UserManager : IDisposable
     {
         /// <summary>
@@ -18,11 +17,17 @@ namespace Hermes.WebApi.Security
         private readonly AuthSqlRepository authRepo;
 
         /// <summary>
-        /// Initializes a new instance of the <see cref="UserManager"/> class.
+        /// The security command
+        /// </summary>
+        private ISecurityCommand securityCommand;
+
+        /// <summary>
+        /// Initializes a new instance of the <see cref="UserManager" /> class.
         /// </summary>
         public UserManager()
         {
             authRepo = new AuthSqlRepository(AuthContext.AuthDal);
+            securityCommand = DependencyResolverContainer.Resolve<ISecurityCommand>();
         }
 
         /// <summary>
@@ -30,10 +35,28 @@ namespace Hermes.WebApi.Security
         /// </summary>
         /// <param name="userName">Name of the user.</param>
         /// <param name="password">The password.</param>
-        /// <returns>user identity</returns>
-        public UserIdentity AuthenticateUsernamePassword(string userName, string password)
+        /// <param name="clientId">The client identifier.</param>
+        /// <returns>
+        /// user identity
+        /// </returns>
+        public UserIdentity AuthenticateUsernamePassword(string userName, string password, string clientId = null)
         {
-            password = SecureString.Encrypt(password);
+            if (securityCommand != null)
+            {
+                if (securityCommand.ValidateUsernameAndPassword(userName, password) == false)
+                {
+                    return null;
+                }
+
+                userName = securityCommand.GetDecryptedUsername(userName, clientId);
+                password = securityCommand.GetDecryptedPassword(password, clientId);
+                password = securityCommand.Encrypt(password);
+            }
+            else
+            {
+                password = SecureString.Encrypt(password);
+            }
+
             var result = authRepo.AuthenticateUsernamePassword(userName, password);
             return result;
         }
@@ -42,7 +65,9 @@ namespace Hermes.WebApi.Security
         /// Finds the authentication client.
         /// </summary>
         /// <param name="clientId">The client identifier.</param>
-        /// <returns>authentication client information</returns>
+        /// <returns>
+        /// authentication client information
+        /// </returns>
         public AuthClient FindAuthClient(string clientId)
         {
             return authRepo.FindAuthClient(clientId);
@@ -64,7 +89,9 @@ namespace Hermes.WebApi.Security
         /// Adds the refresh token.
         /// </summary>
         /// <param name="token">The token.</param>
-        /// <returns>success or failure</returns>
+        /// <returns>
+        /// success or failure
+        /// </returns>
         public bool AddRefreshToken(RefreshToken token)
         {
             return authRepo.AddRefreshToken(token);
@@ -74,7 +101,9 @@ namespace Hermes.WebApi.Security
         /// Removes the refresh token.
         /// </summary>
         /// <param name="tokenId">The token identifier.</param>
-        /// <returns>success or failure</returns>
+        /// <returns>
+        /// success or failure
+        /// </returns>
         public bool RemoveRefreshToken(string tokenId)
         {
             return authRepo.RemoveRefreshToken(tokenId);
@@ -84,7 +113,9 @@ namespace Hermes.WebApi.Security
         /// Finds the refresh token.
         /// </summary>
         /// <param name="hashedTokenId">The hashed token identifier.</param>
-        /// <returns>refresh token</returns>
+        /// <returns>
+        /// refresh token
+        /// </returns>
         public RefreshToken FindRefreshToken(string hashedTokenId)
         {
             return authRepo.FindRefreshToken(hashedTokenId);
@@ -93,7 +124,9 @@ namespace Hermes.WebApi.Security
         /// <summary>
         /// Gets all refresh tokens.
         /// </summary>
-        /// <returns>all refresh tokens</returns>
+        /// <returns>
+        /// all refresh tokens
+        /// </returns>
         public IList<RefreshToken> GetAllRefreshTokens()
         {
             return authRepo.GetAllRefreshTokens();
@@ -106,7 +139,9 @@ namespace Hermes.WebApi.Security
         /// <param name="password">The password.</param>
         /// <param name="emailAddress">The email address.</param>
         /// <param name="enabled">if set to <c>true</c> [enabled].</param>
-        /// <returns>user id</returns>
+        /// <returns>
+        /// user id
+        /// </returns>
         public long AddUser(string username, string password, string emailAddress = "", bool enabled = true)
         {
             password = SecureString.Encrypt(password);
@@ -137,10 +172,11 @@ namespace Hermes.WebApi.Security
             return authRepo.GetAuthenticatedUserByUserId(userId);
         }
 
+        /// <summary>
         /// Gets the user permissions.
         /// </summary>
         /// <param name="userId">The user identifier.</param>
-        /// <returns>user permissions</returns>
+        /// <returns></returns>
         public IList<ResourceAccessRule> GetUserPermissions(long userId)
         {
             return authRepo.GetUserPermissions(userId);
@@ -150,7 +186,9 @@ namespace Hermes.WebApi.Security
         /// Gets the user resource permission.
         /// </summary>
         /// <param name="securityIds">The security ids.</param>
-        /// <returns>user resource permissions</returns>
+        /// <returns>
+        /// user resource permissions
+        /// </returns>
         public IList<ResourceAccessRule> GetUserResourcePermission(IList<Guid> securityIds)
         {
             return authRepo.GetUserResourcePermission(securityIds);
@@ -160,7 +198,9 @@ namespace Hermes.WebApi.Security
         /// Saves the user authentication token.
         /// </summary>
         /// <param name="userAuthToken">The user authentication token.</param>
-        /// <returns>saved state</returns>
+        /// <returns>
+        /// saved state
+        /// </returns>
         public bool SaveUserAuthToken(UserAuthToken userAuthToken)
         {
             return authRepo.SaveUserAuthToken(userAuthToken);
@@ -197,7 +237,9 @@ namespace Hermes.WebApi.Security
         /// <param name="username">The username.</param>
         /// <param name="checkExistence">if set to <c>true</c> [check existence].</param>
         /// <param name="killOldSession">if set to <c>true</c> [kill old session].</param>
-        /// <returns>the new authentication token</returns>
+        /// <returns>
+        /// the new authentication token
+        /// </returns>
         public string GenerateAuthToken(string username, bool checkExistence = false, bool killOldSession = false)
         {
             return authRepo.GenerateAuthToken(username, checkExistence, killOldSession);

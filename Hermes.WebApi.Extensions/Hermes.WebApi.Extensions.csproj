@@ -130,6 +130,7 @@
     <Compile Include="Authentication\BearerAuthenticateController.cs" />
     <Compile Include="Authentication\CookieAuthenticationController.cs" />
     <Compile Include="Authentication\MVCAuthenticationAttribute.cs" />
+    <Compile Include="Authentication\SecurityCommand.cs" />
     <Compile Include="Common\ComponentPaths.cs" />
     <Compile Include="Common\ComponentPathsConfigurationSection.cs" />
     <Compile Include="ApiExceptionFilter.cs" />

@@ -42,12 +42,15 @@ namespace Hermes.WebApi.Extensions.Authentication
         /// </summary>
         /// <param name="username">Name of the user.</param>
         /// <param name="password">The password.</param>
-        /// <returns>authenticated user information</returns>
-        public static UserIdentity AuthenticateUsernamePassword(string username, string password)
+        /// <param name="clientId">The client identifier.</param>
+        /// <returns>
+        /// authenticated user information
+        /// </returns>
+        public static UserIdentity AuthenticateUsernamePassword(string username, string password, string clientId = null)
         {
             using (UserManager um = new UserManager())
             {
-                return um.AuthenticateUsernamePassword(username, password);
+                return um.AuthenticateUsernamePassword(username, password, clientId);
             }
         }
 
@@ -281,7 +284,7 @@ namespace Hermes.WebApi.Extensions.Authentication
                     return Task.FromResult<HermesIdentity>(null);
                 }
 
-                var userIdentity = um.AuthenticateUsernamePassword(context.UserName, context.Password);
+                var userIdentity = um.AuthenticateUsernamePassword(context.UserName, context.Password, context.ClientId);
 
                 if (userIdentity != null)
                 {

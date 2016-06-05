@@ -23,6 +23,7 @@ using System.Web.Http;
 using System.Web.Http.ExceptionHandling;
 using System.Web.Mvc;
 using HermesSecurity = Hermes.WebApi.Core.Security;
+using Hermes.WebApi.Security;
 
 namespace Hermes.WebApi.Extensions
 {
@@ -119,6 +120,8 @@ namespace Hermes.WebApi.Extensions
             }
 
             DependencyResolverContainer.RegisterInstance<ILog>(new Logging.Logging());
+
+            DependencyResolverContainer.RegisterInstance<ISecurityCommand>(new SecurityCommand());
         }
 
         /// <summary>

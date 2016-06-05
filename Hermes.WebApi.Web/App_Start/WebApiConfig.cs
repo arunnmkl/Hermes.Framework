@@ -14,21 +14,24 @@
 // ***********************************************************************
 using Hermes.WebApi.Extensions;
 using System.Web.Http;
+using Hermes.WebApi.Security;
 
 namespace Hermes.WebApi.Web
 {
-	/// <summary>
-	/// This class provides the configuration for the web api.
-	/// </summary>
-	public static class WebApiConfig
-	{
-		/// <summary>
-		/// Registers the specified configuration of web api.
-		/// </summary>
-		/// <param name="config">The configuration.</param>
-		public static void Register(HttpConfiguration config)
-		{
-			config.Configure(RoutingConfig.Default);
-		}
-	}
+    /// <summary>
+    /// This class provides the configuration for the web api.
+    /// </summary>
+    public static class WebApiConfig
+    {
+        /// <summary>
+        /// Registers the specified configuration of web api.
+        /// </summary>
+        /// <param name="config">The configuration.</param>
+        public static void Register(HttpConfiguration config)
+        {
+            //config.Configure(RoutingConfig.Default);
+
+            Core.DependencyResolverContainer.RegisterInstance<ISecurityCommand>(new Common.SecurityCommand());
+        }
+    }
 }
