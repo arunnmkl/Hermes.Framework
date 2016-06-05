@@ -51,7 +51,19 @@ namespace Hermes.WebApi.Security
                 new Parameter("@Password", password)
             };
 
-            this.sqlSerializer.DeserializeMultiSets(sets, commandText, parameters: parameters, storedProcedure: true);
+            try
+            {
+                this.sqlSerializer.DeserializeMultiSets(sets, commandText, parameters: parameters, storedProcedure: true);
+            }
+            catch (SqlException sqlEx)
+            {
+                if (sqlEx.Errors.Count > 0 && sqlEx.Errors[0].Number > 50000)
+                {
+                    throw new UnauthorizedException(sqlEx.Errors[0].Message);
+                }
+
+                throw;
+            }
 
             var userIdentity = sets.GetSet<UserIdentity>("UserIdentiry").FirstOrDefault();
 
@@ -169,7 +181,19 @@ namespace Hermes.WebApi.Security
                 new Parameter("@providerKey", authProvider.ProviderKey)
             };
 
-            this.sqlSerializer.DeserializeMultiSets(sets, commandText, parameters: parameters, storedProcedure: true);
+            try
+            {
+                this.sqlSerializer.DeserializeMultiSets(sets, commandText, parameters: parameters, storedProcedure: true);
+            }
+            catch (SqlException sqlEx)
+            {
+                if (sqlEx.Errors.Count > 0 && Math.Sign(sqlEx.Errors[0].Number) == -1)
+                {
+                    throw new Core.Exceptions.AuthorizationException(sqlEx.Errors[0].Message);
+                }
+
+                throw;
+            }
 
             var userIdentity = sets.GetSet<UserIdentity>("UserIdentiry").FirstOrDefault();
 

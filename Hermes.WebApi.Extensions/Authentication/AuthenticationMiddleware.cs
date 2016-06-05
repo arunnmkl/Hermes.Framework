@@ -1,10 +1,14 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Net;
 using System.Text;
 using System.Threading.Tasks;
+using Hermes.WebApi.Core.Common;
 using Hermes.WebApi.Extensions.Common;
+using Hermes.WebApi.Security;
 using Microsoft.Owin;
+using Newtonsoft.Json;
 
 namespace Hermes.WebApi.Extensions.Authentication
 {
@@ -27,13 +31,35 @@ namespace Hermes.WebApi.Extensions.Authentication
         /// <returns></returns>
         public override async Task Invoke(IOwinContext context)
         {
-            await Next.Invoke(context);
-
-            if (context.Response.StatusCode == 400 && context.Response.Headers.ContainsKey(Constants.HermesChallengeFlag))
+            try
             {
-                var headerValues = context.Response.Headers.GetValues(Constants.HermesChallengeFlag);
-                context.Response.StatusCode = Convert.ToInt16(headerValues.FirstOrDefault());
-                context.Response.Headers.Remove(Constants.HermesChallengeFlag);
+                await Next.Invoke(context);
+
+                if (context.Response.StatusCode == 400 && context.Response.Headers.ContainsKey(Constants.HermesChallengeFlag))
+                {
+                    var headerValues = context.Response.Headers.GetValues(Constants.HermesChallengeFlag);
+                    context.Response.StatusCode = Convert.ToInt16(headerValues.FirstOrDefault());
+                    context.Response.Headers.Remove(Constants.HermesChallengeFlag);
+                }
+            }
+            catch (Exception ex)
+            {
+                if (ex is ApiException)
+                {
+                    var exception = ex as ApiException;
+                    context.Response.StatusCode = (int)exception.StatusCode;
+                    context.Response.ReasonPhrase = exception.StatusCode.ToString();
+                    context.Response.ContentType = "application/json";
+                    context.Response.Write(JsonConvert.SerializeObject(new
+                    {
+                        error = "invalid_request",
+                        error_description = exception.Message
+                    }));
+                }
+                else
+                {
+                    throw;
+                }
             }
 
         }
