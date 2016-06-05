@@ -35,11 +35,10 @@ namespace Hermes.WebApi.Security
         /// </summary>
         /// <param name="userName">Name of the user.</param>
         /// <param name="password">The password.</param>
-        /// <param name="clientId">The client identifier.</param>
         /// <returns>
         /// user identity
         /// </returns>
-        public UserIdentity AuthenticateUsernamePassword(string userName, string password, string clientId = null)
+        public UserIdentity AuthenticateUsernamePassword(string userName, string password)
         {
             if (securityCommand != null)
             {
@@ -48,8 +47,6 @@ namespace Hermes.WebApi.Security
                     return null;
                 }
 
-                userName = securityCommand.GetDecryptedUsername(userName, clientId);
-                password = securityCommand.GetDecryptedPassword(password, clientId);
                 password = securityCommand.Encrypt(password);
             }
             else
@@ -241,7 +238,7 @@ namespace Hermes.WebApi.Security
         /// the new authentication token
         /// </returns>
         public string GenerateAuthToken(string username, bool checkExistence = false, bool killOldSession = false)
-        {
+        { 
             return authRepo.GenerateAuthToken(username, checkExistence, killOldSession);
         }
 
