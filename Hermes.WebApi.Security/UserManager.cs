@@ -141,7 +141,15 @@ namespace Hermes.WebApi.Security
         /// </returns>
         public long AddUser(string username, string password, string emailAddress = "", bool enabled = true)
         {
-            password = SecureString.Encrypt(password);
+            if (securityCommand != null)
+            {
+                password = securityCommand.Encrypt(password);
+            }
+            else
+            {
+                password = SecureString.Encrypt(password);
+            }
+
             return authRepo.AddUser(username, password, emailAddress, enabled);
         }
 

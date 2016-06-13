@@ -1,15 +1,12 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.Configuration;
-using System.Linq;
 using System.Security.Cryptography;
 using System.Text;
-using System.Threading.Tasks;
 
-namespace Hermes.WebApi.Security
+namespace Hermes.WebApi.Web.Common
 {
     /// <summary>
-    ///     A class for encrypting and decrypting password.
+    /// A class for encrypting and decrypting password.
     /// </summary>
     internal class SecureString
     {

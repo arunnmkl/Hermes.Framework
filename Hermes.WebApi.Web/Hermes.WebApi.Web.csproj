@@ -24,7 +24,7 @@
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
     <DebugSymbols>true</DebugSymbols>
     <DebugType>full</DebugType>
-    <Optimize>false</Optimize>
+    <Optimize>true</Optimize>
     <OutputPath>bin\</OutputPath>
     <DefineConstants>DEBUG;TRACE</DefineConstants>
     <ErrorReport>prompt</ErrorReport>
@@ -177,8 +177,10 @@
     </Content>
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="ApiContext.cs" />
     <Compile Include="App_Start\SwaggerConfig.cs" />
     <Compile Include="App_Start\WebApiConfig.cs" />
+    <Compile Include="Common\SecureString.cs" />
     <Compile Include="Common\SecurityCommand.cs" />
     <Compile Include="Controllers\AccountController.cs" />
     <Compile Include="Controllers\LogoutController.cs" />

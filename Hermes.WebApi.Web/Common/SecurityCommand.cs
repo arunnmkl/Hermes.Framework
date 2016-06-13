@@ -20,7 +20,7 @@ namespace Hermes.WebApi.Web.Common
         /// </returns>
         public override string Encrypt(string text)
         {
-            text = Security.SecureString.Encrypt(text);
+            text = SecureString.Encrypt(text);
             return base.Encrypt(text);
         }
 

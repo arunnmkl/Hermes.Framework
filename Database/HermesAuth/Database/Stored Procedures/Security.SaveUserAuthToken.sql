@@ -11,8 +11,8 @@ CREATE PROCEDURE [Security].[SaveUserAuthToken] (
 	,@IssuedUtc DATETIME
 	,@ExpiresUtc DATETIME
 	,@AccessToken VARCHAR(8000)
-	,@IpAddress VARCHAR(15)
-	,@UserAgent VARCHAR(500)
+	,@IpAddress VARCHAR(15) = N''
+	,@UserAgent VARCHAR(500) = NULL
 	)
 AS
 BEGIN
