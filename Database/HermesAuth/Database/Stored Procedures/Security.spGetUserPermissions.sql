@@ -1,3 +1,4 @@
+
 SET QUOTED_IDENTIFIER ON
 GO
 SET ANSI_NULLS ON
@@ -14,10 +15,11 @@ BEGIN
 		
 		UNION
 		
-		SELECT [Role].[SecurityId]
-		FROM [Security].[UserRole]
-		INNER JOIN [Security].[Role] ON UserRole.RoleID = [Role].RoleID
-		WHERE UserRole.UserID = @userID
+		SELECT r.[SecurityId]
+		FROM [Security].[UserRole] ur
+		INNER JOIN [Security].[Role] r ON ur.RoleId = r.RoleId
+		WHERE ur.UserID = @userID
+		  AND r.IsActive = 1
 		)
 		,AllRResourceId
 	AS (

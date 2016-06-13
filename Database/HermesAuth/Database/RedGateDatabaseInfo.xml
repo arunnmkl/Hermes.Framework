@@ -55,7 +55,7 @@
     <DataWriteAllFilesInOneDirectory>True</DataWriteAllFilesInOneDirectory>
   </WriteToFileOptions>
   <DataFileSet>
-    <Count>4</Count>
+    <Count>2</Count>
     <DataFile>Security.AuthClient_Data.sql</DataFile>
     <DataFile>Security.Permission_Data.sql</DataFile>
   </DataFileSet>

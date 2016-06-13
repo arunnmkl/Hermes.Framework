@@ -1,3 +1,4 @@
+
 SET QUOTED_IDENTIFIER ON
 GO
 SET ANSI_NULLS ON
@@ -36,7 +37,7 @@ BEGIN TRY
     INSERT INTO @securityIdList VALUES (@securityId)
 
 	-- Check to see if the user already has the permission before trying to revoke it
-	IF Config.fnCheckAuthorization(@resourceId, @securityIdList, @permissionId) = 1
+	IF [Security].fnCheckAuthorization(@resourceId, @securityIdList, @permissionId) = 1
 	BEGIN
 		SET @AccessControlListId = (SELECT A.AccessControlListId FROM [Security].AccessControlList A INNER JOIN [Security].AccessPermission B ON B.AccessControlListId = A.AccessControlListId WHERE A.ResourceId = @resourceId AND A.SecurityId = @securityId AND B.PermissionId = @permissionId)
 
@@ -48,7 +49,7 @@ BEGIN TRY
 
 	-- Check for logical business errors here
 	IF @rowsAffected <> 2
-		RAISERROR (50017, 11, 1, 'Config.spRevokePermission')
+		RAISERROR (50017, 11, 1, '[Security].[spRevokePermission]')
 END TRY
 
 BEGIN CATCH

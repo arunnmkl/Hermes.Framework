@@ -344,7 +344,9 @@ namespace Hermes.WebApi.Security
                 new Parameter("@AuthClientId", userAuthToken.AuthClientId),
                 new Parameter("@IssuedUtc", userAuthToken.IssuedUtc),
                 new Parameter("@ExpiresUtc", userAuthToken.ExpiresUtc),
-                new Parameter("@AccessToken", userAuthToken.AccessToken)
+                new Parameter("@AccessToken", userAuthToken.AccessToken),
+                new Parameter("@IpAddress", userAuthToken.IPAddress ?? string.Empty),
+                new Parameter("@UserAgent", userAuthToken.UserAgent)
             };
 
             try

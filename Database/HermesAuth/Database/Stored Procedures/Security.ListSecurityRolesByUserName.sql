@@ -1,3 +1,4 @@
+
 SET QUOTED_IDENTIFIER ON
 GO
 SET ANSI_NULLS ON
@@ -10,7 +11,8 @@ AS
      FROM [Security].[Role] R
           INNER JOIN [Security].[UserRole] UR ON R.RoleId = UR.RoleId
           INNER JOIN [Security].[User] U ON UR.UserId = U.UserId
-     WHERE U.Username = @UserName;
+     WHERE U.Username = @UserName
+	   AND R.IsActive = 1;
 
 
 

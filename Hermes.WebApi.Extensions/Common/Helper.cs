@@ -92,7 +92,9 @@ namespace Hermes.WebApi.Extensions.Common
                 IssuedUtc = ticket.Properties.IssuedUtc.Value,
                 UserId = Convert.ToInt64(identity.FindFirst(HermesIdentity.UserIdClaimType).Value),
                 UserAuthTokenId = Convert.ToString(identity.FindFirst(HermesIdentity.AuthTokenClaimType).Value),
-                IsLoggedIn = true
+                IsLoggedIn = true,
+                IPAddress = System.Web.HttpContext.Current.Request.UserHostAddress,
+                UserAgent = System.Web.HttpContext.Current.Request.UserAgent
             };
 
             bool isSaved = AuthenticationCommands.SaveUserAuthToken(userAuthToken);

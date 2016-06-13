@@ -1,3 +1,4 @@
+
 SET QUOTED_IDENTIFIER ON
 GO
 SET ANSI_NULLS ON
@@ -42,6 +43,7 @@ BEGIN
 			,IsLoggedIn
 			,CreatedDate
 			,UpdatedDate
+			,IPAddress
 			)
 		VALUES (
 			@authTokenReturn
@@ -51,6 +53,7 @@ BEGIN
 			,0
 			,GETDATE()
 			,GETDATE()
+			,N''
 			);
 	END
 

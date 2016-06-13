@@ -14,7 +14,7 @@ namespace Hermes.WebApi.Security.Models
         private string accessToken = string.Empty;
 
         /// <summary>
-        /// Initializes a new instance of the <see cref="UserAuthToken"/> class.
+        /// Initializes a new instance of the <see cref="UserAuthToken" /> class.
         /// </summary>
         /// <param name="accessToken">The access token.</param>
         public UserAuthToken(string accessToken)
@@ -23,7 +23,7 @@ namespace Hermes.WebApi.Security.Models
         }
 
         /// <summary>
-        /// Initializes a new instance of the <see cref="UserAuthToken"/> class.
+        /// Initializes a new instance of the <see cref="UserAuthToken" /> class.
         /// </summary>
         public UserAuthToken()
         {
@@ -138,5 +138,21 @@ namespace Hermes.WebApi.Security.Models
         /// <c>true</c> if this instance is expired; otherwise, <c>false</c>.
         /// </value>
         public bool IsExpired { get; set; }
+
+        /// <summary>
+        /// Gets or sets the ip address.
+        /// </summary>
+        /// <value>
+        /// The ip address.
+        /// </value>
+        public string IPAddress { get; set; }
+
+        /// <summary>
+        /// Gets or sets the user agent.
+        /// </summary>
+        /// <value>
+        /// The user agent.
+        /// </value>
+        public string UserAgent { get; set; }
     }
 }

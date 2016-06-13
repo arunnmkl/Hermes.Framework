@@ -1,3 +1,4 @@
+
 SET QUOTED_IDENTIFIER ON
 GO
 SET ANSI_NULLS ON
@@ -10,6 +11,8 @@ CREATE PROCEDURE [Security].[SaveUserAuthToken] (
 	,@IssuedUtc DATETIME
 	,@ExpiresUtc DATETIME
 	,@AccessToken VARCHAR(8000)
+	,@IpAddress VARCHAR(15)
+	,@UserAgent VARCHAR(500)
 	)
 AS
 BEGIN
@@ -27,6 +30,8 @@ BEGIN
 			,AccessToken
 			,CreatedDate
 			,UpdatedDate
+			,IPAddress
+			,UserAgent
 			)
 		VALUES (
 			@UserId
@@ -36,6 +41,8 @@ BEGIN
 			,@AccessToken
 			,GETDATE()
 			,GETDATE()
+			,@IpAddress
+			,@UserAgent
 			);
 	END
 	ELSE IF EXISTS (
@@ -52,6 +59,8 @@ BEGIN
 			,AccessToken = @AccessToken
 			,UpdatedDate = GETDATE()
 			,IsLoggedIn = 1
+			,IPAddress = @IpAddress
+			,UserAgent = @UserAgent
 		WHERE UserAuthTokenId = @UserAuthTokenId
 	END
 	ELSE

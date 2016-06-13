@@ -253,7 +253,9 @@ namespace GlobalTranz.WebApi.Extensions.Owin
                 IssuedUtc = DateTimeOffset.Parse(context.AdditionalResponseParameters.GetValueByKey(".issued").ToString()),
                 UserId = Convert.ToInt64(context.Identity.FindFirst(HermeSecurity.HermesIdentity.UserIdClaimType).Value),
                 UserAuthTokenId = Convert.ToString(context.Identity.FindFirst(HermeSecurity.HermesIdentity.AuthTokenClaimType).Value),
-                IsLoggedIn = true
+                IsLoggedIn = true,
+                IPAddress = context.OwinContext.Request.RemoteIpAddress,
+                UserAgent = context.Request.Headers.Get("User-Agent")
             };
 
             bool isSaved = AuthenticationCommands.SaveUserAuthToken(userAuthToken);

@@ -7,6 +7,8 @@ CREATE TABLE [Security].[Role]
 [IsActive] [bit] NOT NULL CONSTRAINT [DF_Role_IsActive] DEFAULT ((1)),
 [UpdatedBy] [bigint] NOT NULL
 ) ON [PRIMARY]
+CREATE UNIQUE NONCLUSTERED INDEX [IX_Role] ON [Security].[Role] ([Name]) ON [PRIMARY]
+
 GO
 ALTER TABLE [Security].[Role] ADD CONSTRAINT [PK_Role] PRIMARY KEY CLUSTERED  ([RoleId]) ON [PRIMARY]
 GO

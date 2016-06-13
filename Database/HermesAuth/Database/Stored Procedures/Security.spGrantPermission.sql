@@ -1,3 +1,4 @@
+
 SET QUOTED_IDENTIFIER ON
 GO
 SET ANSI_NULLS ON
@@ -8,7 +9,7 @@ GO
 * Created Date: 04/27/2016
 * Notes/Description: This will grant permission to the specified resource
 *
-* Example Usage: EXEC Config.spGrantPermission '<RID GUID>', '<SID GUID>', -3
+* Example Usage: EXEC [Security].[spGrantPermission] '<RID GUID>', '<SID GUID>', -3
 *
 * Updated By:
 * Updated Date:
@@ -35,7 +36,7 @@ BEGIN TRY
     INSERT INTO @SIDList VALUES (@securityId)
 
 	-- Check to see if the user already has the permission before trying to add it again
-	IF Config.fnCheckAuthorization(@resourceId, @SIDList, @permissionId) = 0
+	IF [Security].fnCheckAuthorization(@resourceId, @SIDList, @permissionId) = 0
 	BEGIN
 		INSERT INTO [Security].AccessControlList (ResourceId, SecurityId, IsOwner) VALUES (@resourceId, @securityId, @isOwner)
 		SET @rowsAffected = @@ROWCOUNT
@@ -45,7 +46,7 @@ BEGIN TRY
 
 	-- Check for logical business errors here
 	IF @rowsAffected <> 2
-		RAISERROR (50017, 11, 1, 'Config.spGrantPermission')
+		RAISERROR (50017, 11, 1, '[Security].[spGrantPermission]')
 END TRY
 
 BEGIN CATCH
