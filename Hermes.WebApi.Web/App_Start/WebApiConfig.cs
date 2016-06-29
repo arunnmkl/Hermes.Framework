@@ -1,5 +1,4 @@
-﻿using Hermes.WebApi.Core.Enums;
-// ***********************************************************************
+﻿// ***********************************************************************
 // Assembly         : Hermes.WebApi.Web
 // Author           : avinash.dubey
 // Created          : 01-19-2016
@@ -12,7 +11,6 @@
 // </copyright>
 // <summary>This file is responsible for the API configuration.</summary>
 // ***********************************************************************
-using Hermes.WebApi.Extensions;
 using System.Web.Http;
 using Hermes.WebApi.Security;
 

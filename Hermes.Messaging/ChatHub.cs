@@ -1,0 +1,144 @@
+﻿using System;
+using System.Diagnostics;
+using System.Threading.Tasks;
+using System.Web.Http;
+using Hermes.Messaging.Models;
+using Microsoft.AspNet.SignalR;
+
+namespace Hermes.Messaging
+{
+    public class ChatHub : Hub
+    {
+        /// <summary>
+        /// Called when the connection connects to this hub instance.
+        /// </summary>
+        /// <returns>
+        /// A <see cref="T:System.Threading.Tasks.Task" />
+        /// </returns>
+        public override Task OnConnected()
+        {
+            Debug.WriteLine("Hub OnConnected {0}\n", Context.ConnectionId);
+            var pClient = PingClient.Instance;
+
+            var user = PingClient.ComposeUser(Context.ConnectionId, ChatContext.UserId, ChatContext.Username, ChatContext.Roles);
+            pClient.Connect(Context.ConnectionId, user);
+
+            Clients.All.onlineUserCount(pClient.GetOnlineUserCount());
+
+            return (base.OnConnected());
+        }
+
+        /// <summary>
+        /// Called when a connection disconnects from this hub gracefully or due to a timeout.
+        /// </summary>
+        /// <param name="stopCalled">true, if stop was called on the client closing the connection gracefully;
+        /// false, if the connection has been lost for longer than the
+        /// <see cref="P:Microsoft.AspNet.SignalR.Configuration.IConfigurationManager.DisconnectTimeout" />.
+        /// Timeouts can be caused by clients reconnecting to another SignalR server in scaleout.</param>
+        /// <returns>
+        /// A <see cref="T:System.Threading.Tasks.Task" />
+        /// </returns>
+        public override Task OnDisconnected(bool stopCalled)
+        {
+            Debug.WriteLine("Hub OnDisconnected {0}\n", Context.ConnectionId);
+            var pClient = PingClient.Instance;
+            User result = UserInfo(pClient);
+
+            pClient.Disconnect(Context.ConnectionId);
+            Clients.AllExcept(Context.ConnectionId).onlineUserCount(pClient.GetOnlineUserCount());
+            Clients.All.offline(result);
+            return (base.OnDisconnected(stopCalled));
+        }
+
+        /// <summary>
+        /// Called when the connection reconnects to this hub instance.
+        /// </summary>
+        /// <returns>
+        /// A <see cref="T:System.Threading.Tasks.Task" />
+        /// </returns>
+        public override Task OnReconnected()
+        {
+            Debug.WriteLine("Hub OnReconnected {0}\n", Context.ConnectionId);
+            Clients.AllExcept(Context.ConnectionId).onlineUserCount(PingClient.Instance.GetOnlineUserCount());
+            return (base.OnDisconnected(true));
+        }
+
+        /// <summary>
+        /// Adds the message.
+        /// </summary>
+        /// <param name="name">The name.</param>
+        /// <param name="message">The message.</param>
+        public void AddMessage(string name, string message)
+        {
+            Debug.WriteLine("Hub AddMessage {0} {1}\n", name, message);
+            Clients.All.addMessage(name, message);
+        }
+
+        /// <summary>
+        /// Heartbeats this instance.
+        /// </summary>
+        public void Heartbeat()
+        {
+            Debug.WriteLine("Hub Heartbeat\n");
+            Clients.All.heartbeat();
+        }
+
+        /// <summary>
+        /// Sends the hello object.
+        /// </summary>
+        /// <param name="hello">The hello.</param>
+        public void SendHelloObject(HelloModel hello)
+        {
+            Debug.WriteLine("Hub hello {0} {1}\n", hello.Molly, hello.Age);
+            Clients.All.sendHelloObject(hello);
+        }
+
+        /// <summary>
+        /// Registers this instance.
+        /// </summary>
+        /// <returns></returns>  
+        [AllowAnonymous]
+        public User Register()
+        {
+            var user = PingClient.ComposeUser(Context.ConnectionId, ChatContext.UserId, ChatContext.Username, ChatContext.Roles);
+            var pClient = PingClient.Instance;
+            pClient.Connect(Context.ConnectionId, user);
+            foreach (var groupname in ChatContext.Roles)
+            {
+                Groups.Add(Context.ConnectionId, groupname);
+            }
+
+            User result = UserInfo(pClient);
+            Clients.AllExcept(Context.ConnectionId).online(result);
+            return result;
+        }
+
+        /// <summary>
+        /// Groups the hand shake.
+        /// </summary>
+        public void GroupHandShake()
+        {
+            var user = PingClient.Instance.GetUser(Context.ConnectionId);
+            Clients.Groups(user.Groups).groupHandShake(user.UserName);
+        }
+
+        /// <summary>
+        /// Closes this instance.
+        /// </summary>
+        [AllowAnonymous]
+        public void Close()
+        {
+            OnDisconnected(true);
+        }
+
+        /// <summary>
+        /// Users the information.
+        /// </summary>
+        /// <param name="pClient">The p client.</param>
+        /// <returns>user information</returns>
+        private User UserInfo(PingClient pClient)
+        {
+            return pClient.GetUser(Context.ConnectionId);
+        }
+    }
+}

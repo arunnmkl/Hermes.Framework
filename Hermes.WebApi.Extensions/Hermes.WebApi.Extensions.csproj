@@ -138,6 +138,7 @@
     <Compile Include="Common\Extensions.cs" />
     <Compile Include="Common\Helper.cs" />
     <Compile Include="Common\ClaimsIdentityProvider.cs" />
+    <Compile Include="Common\Token.cs" />
     <Compile Include="GlobalSuppressions.cs" />
     <Compile Include="Logging\Logging.cs" />
     <Compile Include="Owin\AuthorizationServerProvider.cs">

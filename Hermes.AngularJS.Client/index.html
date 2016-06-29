@@ -64,6 +64,14 @@
     <script src="scripts/loading-bar.js"></script>
     <script src="scripts/angular-acl.js"></script>
     <script src="scripts/ui-bootstrap-tpls.js"></script>
+
+    <script src="scripts/signalR/jquery-2.2.1.js"></script>
+    <script src="scripts/signalR/jquery.signalR-2.2.0.js"></script>
+
+    <!--Reference the auto generated SignalR hub script. -->
+    <script src="http://localhost:50534/signalr/hubs"></script>
+    <!--<script src="http://localhost/OAuth.Messaging/signalr/hubs"></script>-->
+
     <!-- Load app main script -->
     <script src="app/app.js?v=2"></script>
     <!-- Load services -->
@@ -72,6 +80,7 @@
     <script src="app/services/ordersService.js?v=2"></script>
     <script src="app/services/tokensManagerService.js?v=2"></script>
     <script src="app/services/userService.js?v=2"></script>
+    <script src="app/services/chatService.js?v=2"></script>
     <!-- Load controllers -->
     <script src="app/controllers/indexController.js?v=2"></script>
     <script src="app/controllers/homeController.js?v=2"></script>
