@@ -151,11 +151,11 @@ namespace Hermes.Messaging.Http
 
                 if (formatter == null)
                 {
-                    await client.PostAsJsonAsync(requestUri, requestValue);
+                    response = await client.PostAsJsonAsync(requestUri, requestValue);
                 }
                 else
                 {
-                    await client.PostAsync(requestUri, requestValue, formatter);
+                    response = await client.PostAsync(requestUri, requestValue, formatter);
                 }
 
                 if (response.IsSuccessStatusCode)
@@ -207,11 +207,11 @@ namespace Hermes.Messaging.Http
 
                 if (formatter == null)
                 {
-                    await client.PutAsJsonAsync(requestUri, requestValue);
+                    response = await client.PutAsJsonAsync(requestUri, requestValue);
                 }
                 else
                 {
-                    await client.PutAsync(requestUri, requestValue, formatter);
+                    response = await client.PutAsync(requestUri, requestValue, formatter);
                 }
 
                 if (response.IsSuccessStatusCode)
