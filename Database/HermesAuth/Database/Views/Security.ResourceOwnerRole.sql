@@ -1,4 +1,3 @@
-
 SET QUOTED_IDENTIFIER ON
 GO
 SET ANSI_NULLS ON
@@ -16,6 +15,5 @@ INNER JOIN [Security].[Role] R ON ACL.SecurityId = R.SecurityId
 WHERE ACL.IsOwner = 1
 	AND R.IsActive = 1
 GO
-
 CREATE UNIQUE CLUSTERED INDEX [PK_ResourceOwnerRole] ON [Security].[ResourceOwnerRole] ([ResourceId]) ON [PRIMARY]
 GO

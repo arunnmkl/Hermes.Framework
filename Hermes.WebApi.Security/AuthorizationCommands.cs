@@ -1,7 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
-using Hermes.WebApi.Base.SqlSerializer;
 using Hermes.WebApi.Core.Exceptions;
 using Hermes.WebApi.Security.Models;
 

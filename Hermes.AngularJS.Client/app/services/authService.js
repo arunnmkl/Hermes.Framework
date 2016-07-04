@@ -48,8 +48,6 @@ app.factory('authService', ['$http', '$q', 'localStorageService', 'ngAuthSetting
             _authentication.userName = loginData.userName;
             _authentication.useRefreshTokens = loginData.useRefreshTokens;
 
-            chatService.init();
-
             deferred.resolve(response);
 
         }).error(function (err, status) {

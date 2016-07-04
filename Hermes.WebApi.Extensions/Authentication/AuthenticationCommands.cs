@@ -348,6 +348,19 @@ namespace Hermes.WebApi.Extensions.Authentication
             return ticket as AuthenticationTicket;
         }
 
+        /// <summary>
+        /// Gets the password timestamp.
+        /// </summary>
+        /// <param name="userId">The user identifier.</param>
+        /// <returns>the password timestamp</returns>
+        internal static long GetPasswordTimestamp(long userId)
+        {
+            using (UserManager um = new UserManager())
+            {
+                return um.GetPasswordTimestamp(userId);
+            }
+        }
+
         #endregion Internal Methods
     }
 }

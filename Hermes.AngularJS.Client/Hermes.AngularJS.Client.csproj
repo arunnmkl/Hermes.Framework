@@ -62,6 +62,7 @@
   <ItemGroup>
     <Content Include="app\app.js" />
     <Content Include="app\controllers\associateController.js" />
+    <Content Include="app\controllers\chatController.js" />
     <Content Include="app\controllers\userController.js" />
     <Content Include="app\controllers\homeController.js" />
     <Content Include="app\controllers\indexController.js" />
@@ -77,6 +78,7 @@
     <Content Include="app\services\ordersService.js" />
     <Content Include="app\services\tokensManagerService.js" />
     <Content Include="app\views\associate.html" />
+    <Content Include="app\views\chat.html" />
     <Content Include="app\views\errormodal.html" />
     <Content Include="app\views\home.html" />
     <Content Include="app\views\login.html" />

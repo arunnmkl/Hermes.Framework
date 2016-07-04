@@ -4,7 +4,8 @@ CREATE TABLE [Security].[ResourcePermission]
 [ResourceId] [uniqueidentifier] NOT NULL,
 [PermissionId] [int] NOT NULL,
 [Deny] [bit] NOT NULL CONSTRAINT [DF_ResourcePermission_Deny] DEFAULT ((0)),
-[Created] [datetime] NOT NULL
+[Created] [datetime] NOT NULL,
+[DisplayName] [varchar] (50) COLLATE SQL_Latin1_General_CP1_CI_AS NULL
 ) ON [PRIMARY]
 GO
 ALTER TABLE [Security].[ResourcePermission] ADD CONSTRAINT [PK_ResourcePermission] PRIMARY KEY CLUSTERED  ([ResourceId], [PermissionId]) ON [PRIMARY]

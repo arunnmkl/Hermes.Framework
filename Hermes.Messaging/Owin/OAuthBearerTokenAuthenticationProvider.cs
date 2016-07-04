@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Net.Http.Headers;
 using System.Threading.Tasks;
 using Microsoft.Owin.Security.OAuth;
 
@@ -45,7 +46,7 @@ namespace Hermes.Messaging.Owin
                 if (!string.IsNullOrEmpty(auth))
                 {
 
-                    System.Net.Http.Headers.AuthenticationHeaderValue authorization = System.Net.Http.Headers.AuthenticationHeaderValue.Parse(auth);
+                    AuthenticationHeaderValue authorization = AuthenticationHeaderValue.Parse(auth);
                     // check if there is any authorization token in header.
                     if (authorization != null)
                     {

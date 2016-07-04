@@ -58,6 +58,11 @@ app.config(function ($routeProvider) {
         templateUrl: "app/views/unauthorized.html"
     });
 
+    $routeProvider.when("/chat", {
+        controller: "chatController",
+        templateUrl: "app/views/chat.html"
+    });
+
     $routeProvider.otherwise({ redirectTo: "/home" });
 
 });

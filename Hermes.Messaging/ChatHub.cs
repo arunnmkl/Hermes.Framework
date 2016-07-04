@@ -3,11 +3,12 @@ using System.Diagnostics;
 using System.Threading.Tasks;
 using System.Web.Http;
 using Hermes.Messaging.Models;
+using Hermes.Messaging.SignalR;
 using Microsoft.AspNet.SignalR;
 
 namespace Hermes.Messaging
 {
-    public class ChatHub : Hub
+    public class ChatHub : BaseHub
     {
         /// <summary>
         /// Called when the connection connects to this hub instance.
@@ -20,8 +21,11 @@ namespace Hermes.Messaging
             Debug.WriteLine("Hub OnConnected {0}\n", Context.ConnectionId);
             var pClient = PingClient.Instance;
 
-            var user = PingClient.ComposeUser(Context.ConnectionId, ChatContext.UserId, ChatContext.Username, ChatContext.Roles);
+            var user = PingClient.ComposeUser(Context.ConnectionId, ChatContext.UserId, ChatContext.Username, ChatContext.SecurityId, ChatContext.Roles);
             pClient.Connect(Context.ConnectionId, user);
+            Clients.Caller.UserId = ChatContext.UserId;
+            Clients.Caller.UserName = ChatContext.Username;
+            Clients.Caller.Group = ChatContext.Roles;
 
             Clients.All.onlineUserCount(pClient.GetOnlineUserCount());
 
@@ -68,10 +72,30 @@ namespace Hermes.Messaging
         /// </summary>
         /// <param name="name">The name.</param>
         /// <param name="message">The message.</param>
-        public void AddMessage(string name, string message)
+        public async Task AddMessage(string name, string message, Guid? userSecurityId = null)
         {
-            Debug.WriteLine("Hub AddMessage {0} {1}\n", name, message);
-            Clients.All.addMessage(name, message);
+            Debug.WriteLine("Hub AddMessage {0} {1} {2}\n", name, message, userSecurityId);
+            if (userSecurityId.HasValue)
+            {
+                var pongUser = PingClient.Instance.GetUser(userSecurityId.Value);
+                if (pongUser != null)
+                {
+                    Clients.Client(pongUser.ConnectionId).addMessage(name, message);
+
+                    var history = new History
+                    {
+                        From = ChatContext.SecurityId.ToString(),
+                        To = userSecurityId.Value.ToString(),
+                        Message = message
+                    };
+
+                    var result = await Http.Client.PostAsync<History, bool>("chat/history", history, AccessToken);
+                }
+            }
+            else
+            {
+                Clients.All.addMessage(name, message);
+            }
         }
 
         /// <summary>
@@ -100,7 +124,7 @@ namespace Hermes.Messaging
         [AllowAnonymous]
         public User Register()
         {
-            var user = PingClient.ComposeUser(Context.ConnectionId, ChatContext.UserId, ChatContext.Username, ChatContext.Roles);
+            var user = PingClient.ComposeUser(Context.ConnectionId, ChatContext.UserId, ChatContext.Username, ChatContext.SecurityId, ChatContext.Roles);
             var pClient = PingClient.Instance;
             pClient.Connect(Context.ConnectionId, user);
             foreach (var groupname in ChatContext.Roles)
@@ -110,6 +134,7 @@ namespace Hermes.Messaging
 
             User result = UserInfo(pClient);
             Clients.AllExcept(Context.ConnectionId).online(result);
+
             return result;
         }
 
@@ -129,6 +154,15 @@ namespace Hermes.Messaging
         public void Close()
         {
             OnDisconnected(true);
+        }
+
+        /// <summary>
+        /// Sets the timer.
+        /// </summary>
+        /// <param name="timeInSeconds">The time in seconds.</param>
+        public void SetTimer(int timeInSeconds)
+        {
+            PingClient.Instance.SetTimer(timeInSeconds);
         }
 
         /// <summary>

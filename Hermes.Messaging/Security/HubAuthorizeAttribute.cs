@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Linq;
+using System.Net.Http.Headers;
 using System.Security.Claims;
 using System.Security.Principal;
 using Hermes.WebApi.Core.Security;
@@ -12,8 +13,7 @@ namespace Hermes.Messaging.Security
     /// <summary>
     /// Hub authorization attribute.
     /// </summary>
-    /// <seealso cref="AuthorizeAttribute" />
-    /// <seealso cref="AuthorizeAttribute" />
+    /// <seealso cref="Microsoft.AspNet.SignalR.AuthorizeAttribute" />
     [AttributeUsage(AttributeTargets.Class, Inherited = false, AllowMultiple = false)]
     public class HubAuthorizeAttribute : AuthorizeAttribute
     {
@@ -36,7 +36,7 @@ namespace Hermes.Messaging.Security
 
             try
             {
-                cookieToken = context.Request.Cookies[Security.Configuration.Current.AuthCookieName].Value;
+                cookieToken = context.Request.Cookies[Configuration.Current.AuthCookieName].Value;
             }
             catch (NullReferenceException)
             {
@@ -45,7 +45,7 @@ namespace Hermes.Messaging.Security
 
             try
             {
-                queryStringToken = context.Request.QueryString[Security.Configuration.Current.AuthQueryStringName].ToString();
+                queryStringToken = context.Request.QueryString[Configuration.Current.AuthQueryStringName].ToString();
             }
             catch (NullReferenceException)
             {
@@ -58,13 +58,13 @@ namespace Hermes.Messaging.Security
                 if (!string.IsNullOrEmpty(auth))
                 {
 
-                    System.Net.Http.Headers.AuthenticationHeaderValue authorization = System.Net.Http.Headers.AuthenticationHeaderValue.Parse(auth);
+                    AuthenticationHeaderValue authorization = AuthenticationHeaderValue.Parse(auth);
                     // If there are no authorization token in header, do nothing.
                     if (authorization != null)
                     {
                         // If there are authorization token but the filter does not recognize the 
                         // authentication scheme, do nothing.
-                        if (authorization.Scheme.ToUpperInvariant() == Security.Configuration.Current.AuthHeaderSchemaName.ToUpperInvariant())
+                        if (authorization.Scheme.ToUpperInvariant() == Configuration.Current.AuthHeaderSchemaName.ToUpperInvariant())
                         {
                             headerToken = authorization.Parameter;
                         }

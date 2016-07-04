@@ -60,6 +60,8 @@
     <Compile Include="Helper.cs" />
     <Compile Include="ISecurityCommand.cs" />
     <Compile Include="Models\AuthClient.cs" />
+    <Compile Include="Models\Chat\History.cs" />
+    <Compile Include="Models\Chat\User.cs" />
     <Compile Include="Models\Enums.cs" />
     <Compile Include="Models\ExternalLoginModel.cs" />
     <Compile Include="Models\Permission.cs" />

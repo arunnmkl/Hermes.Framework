@@ -38,6 +38,11 @@ namespace Hermes.Messaging.Security
         private const string PathMatch = "pathMatchValue";
 
         /// <summary>
+        /// The API URL
+        /// </summary>
+        private const string ApiUrl = "apiUrl";
+
+        /// <summary>
         /// The current
         /// </summary>
         private static Configuration current;
@@ -134,6 +139,25 @@ namespace Hermes.Messaging.Security
             set
             {
                 this[PathMatch] = value;
+            }
+        }
+
+        /// <summary>
+        /// Gets or sets the API URI.
+        /// </summary>
+        /// <value>
+        /// The API URI.
+        /// </value>
+        [ConfigurationProperty(ApiUrl, IsRequired = false, DefaultValue = @"", IsKey = false)]
+        public string ApiUri
+        {
+            get
+            {
+                return (string)this[ApiUrl];
+            }
+            set
+            {
+                this[ApiUrl] = value;
             }
         }
     }

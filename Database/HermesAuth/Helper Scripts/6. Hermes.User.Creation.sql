@@ -15,7 +15,6 @@ BEGIN
 	INSERT INTO [Security].[User] (
 		[SecurityId]
 		,[Username]
-		,[Password]
 		,[EmailAddress]
 		,[Enabled]
 		,[Created]
@@ -23,13 +22,23 @@ BEGIN
 	VALUES (
 		@SecurityId
 		,@Username
-		,@Password
 		,@EmailAddress
 		,@Enabled
 		,@Created
 		)
 
     Set @userId = SCOPE_IDENTITY()
+
+    INSERT INTO [Security].[UserPassword]
+    (UserId,
+	[Password],
+	UpdatedBy
+    )
+		 SELECT @userId,
+			   @Password,
+			   @userId
+		 FROM [Security].[User] U;
+
     Select @userId UserId
 END
 GO

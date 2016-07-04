@@ -5,6 +5,7 @@ using System.Data.SqlClient;
 using System.Linq;
 using Hermes.WebApi.Base.SqlSerializer;
 using Hermes.WebApi.Security.Models;
+using Hermes.WebApi.Security.Models.Chat;
 using Hermes.WebApi.Security.Models.Enums;
 
 namespace Hermes.WebApi.Security
@@ -488,6 +489,103 @@ namespace Hermes.WebApi.Security
         internal AuthorizationType CheckAuthorization(Guid resourceId, IList<Guid> securityIds, int permissionId)
         {
             return CheckAuthorization(resourceId, GetSecurityIdsAsDatatable(securityIds), permissionId);
+        }
+
+        /// <summary>
+        /// Gets the password timestamp.
+        /// </summary>
+        /// <param name="userId">The user identifier.</param>
+        /// <returns>the password timestamp</returns>
+        internal long GetPasswordTimestamp(long userId)
+        {
+            string commandText = string.Format("Select Cast([UpdatedTimestamp] AS BIGINT) AS [PasswordTimestamp] FROM {0}.[UserPassword] WHERE UserId = @userId", AuthContext.SecuritySchema);
+            var parameter = new Parameter("@userId", userId);
+            return sqlSerializer.ExecuteScalar<long>(commandText, parameter, false, false);
+        }
+
+        /// <summary>
+        /// Saves the chat history.
+        /// </summary>
+        /// <param name="history">The history.</param>
+        /// <returns>true if chat history successfully updated, otherwise false.</returns>
+        /// <exception cref="ApiException">
+        /// historyItem is required.
+        /// or
+        /// To shouldn't be empty in historyItem.
+        /// or
+        /// From shouldn't be empty in historyItem.
+        /// or
+        /// Message shouldn't be empty in historyItem.
+        /// </exception>
+        internal bool SaveChatHistory(History history)
+        {
+            if (history == null)
+            {
+                throw new ApiException(System.Net.HttpStatusCode.BadRequest, "history is required.");
+            }
+
+            if (String.IsNullOrWhiteSpace(history.To))
+            {
+                throw new ApiException(System.Net.HttpStatusCode.BadRequest, "To shouldn't be empty in historyItem.");
+            }
+
+            if (String.IsNullOrWhiteSpace(history.From))
+            {
+                throw new ApiException(System.Net.HttpStatusCode.BadRequest, "From shouldn't be empty in historyItem.");
+            }
+
+            if (String.IsNullOrWhiteSpace(history.Message))
+            {
+                throw new ApiException(System.Net.HttpStatusCode.BadRequest, "Message shouldn't be empty in historyItem.");
+            }
+
+            var insertSQL = "[chat].[spInsertChatHistory]";
+            var parameters = new[]
+            {
+                new Parameter("@From", history.From),
+                new Parameter("@To", history.To),
+                new Parameter("@Message", history.Message)
+            };
+
+            sqlSerializer.Execute(insertSQL, parameters, storedProcedure: true);
+            return true;
+        }
+
+        /// <summary>
+        /// Gets the chat history.
+        /// </summary>
+        /// <param name="user1">The user1.</param>
+        /// <param name="user2">The user2.</param>
+        /// <param name="searchText">The search text.</param>
+        /// <returns>the chat history.</returns>
+        internal IList<History> GetChatHistory(string user1, string user2, string searchText = null)
+        {
+            var commandText = "[chat].[spGetChatHistory]";
+            var parameters = new[]
+            {
+                new Parameter("@User1", user1),
+                new Parameter("@User2", user2),
+                new Parameter("@FromDate", DateTimeOffset.UtcNow.AddMonths(-1)),
+                new Parameter("@ToDate", DateTimeOffset.UtcNow),
+                new Parameter("@SearchString", searchText)
+            };
+
+            return sqlSerializer.DeserializeMultiRecords<History>(commandText, parameters, storedProcedure: true);
+        }
+
+        /// <summary>
+        /// Gets the associated chat users.
+        /// </summary>
+        /// <param name="securityId">The security identifier.</param>
+        /// <returns>
+        /// the associated chat users
+        /// </returns>
+        internal IList<User> GetAssociatedChatUsers(Guid securityId)
+        {
+            var commandText = "[chat].[spGetAssociatedUsers]";
+            var param = new Parameter("@userSecurityId ", securityId);
+
+            return sqlSerializer.DeserializeMultiRecords<User>(commandText, param, storedProcedure: true);
         }
 
         /// <summary>

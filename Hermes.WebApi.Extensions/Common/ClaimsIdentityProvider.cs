@@ -64,6 +64,9 @@ namespace Hermes.WebApi.Extensions.Common
                 }
             }
 
+            // PasswordTimestamp
+            claims.Add(new Claim(HermesIdentity.PasswordTimestampClaimType, userIdentity.PasswordTimestamp.ToString()));
+
             return claims;
         }
     }

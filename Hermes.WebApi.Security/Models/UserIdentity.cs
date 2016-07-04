@@ -34,6 +34,14 @@ namespace Hermes.WebApi.Security.Models
         /// The username.
         /// </value>
         string Username { get; set; }
+
+        /// <summary>
+        /// Gets or sets the password timestamp.
+        /// </summary>
+        /// <value>
+        /// The password timestamp.
+        /// </value>
+        long PasswordTimestamp { get; set; }
     }
 
     /// <summary>
@@ -118,7 +126,7 @@ namespace Hermes.WebApi.Security.Models
     /// <summary>
     /// User Identity
     /// </summary>
-    /// <seealso cref="Hermes.WebApi.Extensions.Security.IUser" />
+    /// <seealso cref="Extensions.Security.IUser" />
     public class UserIdentity : IUser
     {
         /// <summary>
@@ -177,5 +185,13 @@ namespace Hermes.WebApi.Security.Models
         /// The user authentication token identifier.
         /// </value>
         public string UserAuthTokenId { get; set; }
+
+        /// <summary>
+        /// Gets or sets the password timestamp.
+        /// </summary>
+        /// <value>
+        /// The password timestamp.
+        /// </value>
+        public long PasswordTimestamp { get; set; }
     }
 }

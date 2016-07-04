@@ -1,3 +1,4 @@
+
 SET QUOTED_IDENTIFIER ON
 GO
 SET ANSI_NULLS ON
@@ -18,12 +19,12 @@ BEGIN
 				OR u.[EmailAddress] = @UserName
 			)
 	BEGIN
-		DECLARE @SecurityId UNIQUEIDENTIFIER = NEWID();
+		DECLARE @SecurityId UNIQUEIDENTIFIER = NEWID()
+			,@UserId BIGINT;
 
 		INSERT INTO [Security].[User] (
 			[SecurityId]
 			,[Username]
-			,[Password]
 			,[EmailAddress]
 			,[Enabled]
 			,[Created]
@@ -31,25 +32,43 @@ BEGIN
 		VALUES (
 			@SecurityId
 			,@UserName
-			,@Password
 			,@EmailAddress
 			,@Enabled
 			,GETDATE()
 			);
 
-		SELECT CAST(SCOPE_IDENTITY() AS BigINT) AS UserId;
+		SET @UserId = (
+				SELECT CAST(SCOPE_IDENTITY() AS BIGINT) AS UserId
+				)
+
+		INSERT INTO [Security].[UserPassword] (
+			UserId
+			,[Password]
+			,UpdatedBy
+			)
+		VALUES (
+			@UserId
+			,@Password
+			,@UserId
+			)
+
+		SELECT @UserId UserId;
 	END;
 	ELSE
 	BEGIN
 		DECLARE @name VARCHAR(150) = @UserName;
-		IF (ISNULL(@EmailAddress, '') <> '') 
-           BEGIN 
-		  Set @name = (@name + ' / ' + @EmailAddress);
-           END
 
-		RAISERROR (45120, 16, 1, @name)
+		IF (ISNULL(@EmailAddress, '') <> '')
+		BEGIN
+			SET @name = (@name + ' / ' + @EmailAddress);
+		END
+
+		RAISERROR (
+				45120
+				,16
+				,1
+				,@name
+				)
 	END
 END;
-
-
 GO

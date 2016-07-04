@@ -1,3 +1,4 @@
+
 SET QUOTED_IDENTIFIER ON
 GO
 SET ANSI_NULLS ON
@@ -15,7 +16,7 @@ AS
     UNION ALL
     -- Users's Roles
     SELECT RoleSecurityId,
-           'User Role'
+           'User Role' AS SecurityIdType
     FROM [Security].UserRoleSecurityId
     WHERE UserSecurityId = @userSecurityId
 );

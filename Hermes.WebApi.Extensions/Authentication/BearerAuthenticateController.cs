@@ -65,6 +65,19 @@ namespace Hermes.WebApi.Extensions.Authentication
                 return false;
             }
 
+            if (Configuration.Current.ValidatePasswordChange)
+            {
+                long userId = Convert.ToInt64(authTicket.Identity.FindFirst(HermesIdentity.UserIdClaimType).Value);
+                long claimsTimeStamp = Convert.ToInt64(authTicket.Identity.FindFirst(HermesIdentity.PasswordTimestampClaimType).Value);
+                long timeStamp = AuthenticationCommands.GetPasswordTimestamp(userId);
+
+                if (claimsTimeStamp != timeStamp)
+                {
+                    ErrorMessage = AuthorizeResponseMessage.AlteredCredential;
+                    return false;
+                }
+            }
+
             if (Configuration.Current.DBTokenValidationEnabled)
             {
                 var userAuthTokenReq =

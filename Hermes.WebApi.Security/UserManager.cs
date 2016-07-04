@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using Hermes.WebApi.Core;
 using Hermes.WebApi.Security.Models;
+using Hermes.WebApi.Security.Models.Chat;
 
 namespace Hermes.WebApi.Security
 {
@@ -246,7 +247,7 @@ namespace Hermes.WebApi.Security
         /// the new authentication token
         /// </returns>
         public string GenerateAuthToken(string username, bool checkExistence = false, bool killOldSession = false)
-        { 
+        {
             return authRepo.GenerateAuthToken(username, checkExistence, killOldSession);
         }
 
@@ -256,10 +257,52 @@ namespace Hermes.WebApi.Security
         /// <param name="userAuthTokenId">The user authentication token identifier.</param>
         /// <returns>
         /// the user authentication token details
-        /// </returns>
+        /// </returns> 
         public UserAuthToken GetUserAuthTokenById(string userAuthTokenId)
         {
             return authRepo.GetUserAuthTokenById(userAuthTokenId);
+        }
+
+        /// <summary>
+        /// Gets the password timestamp.
+        /// </summary>
+        /// <param name="userId">The user identifier.</param>
+        /// <returns>the password timestamp</returns>                                     
+        public long GetPasswordTimestamp(long userId)
+        {
+            return authRepo.GetPasswordTimestamp(userId);
+        }
+
+        /// <summary>
+        /// Saves the chat history.
+        /// </summary>
+        /// <param name="history">The history.</param>
+        /// <returns>true if chat history successfully updated, otherwise false.</returns>
+        public bool SaveChatHistory(History history)
+        {
+            return authRepo.SaveChatHistory(history);
+        }
+
+        /// <summary>
+        /// Gets the chat history.
+        /// </summary>
+        /// <param name="user1">The user1.</param>
+        /// <param name="user2">The user2.</param>
+        /// <param name="searchText">The search text.</param>
+        /// <returns>the chat history</returns>
+        public IList<History> GetChatHistory(string user1, string user2, string searchText = null)
+        {
+            return authRepo.GetChatHistory(user1, user2, searchText);
+        }
+
+        /// <summary>
+        /// Gets the associated chat users.
+        /// </summary>
+        /// <param name="securityId">The security identifier.</param>
+        /// <returns>the associated chat users</returns>
+        public IList<User> GetAssociatedChatUsers(Guid securityId)
+        {
+            return authRepo.GetAssociatedChatUsers(securityId);
         }
 
         /// <summary>

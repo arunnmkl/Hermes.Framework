@@ -25,6 +25,11 @@ namespace Hermes.Messaging
         private readonly Dictionary<string, User> chatConnections;
 
         /// <summary>
+        /// The timer minute
+        /// </summary>
+        private int timerMinute;
+
+        /// <summary>
         /// Gets the instance.
         /// </summary>
         /// <value>
@@ -121,6 +126,23 @@ namespace Hermes.Messaging
         }
 
         /// <summary>
+        /// Gets the user.
+        /// </summary>
+        /// <param name="connectionId">The connection identifier.</param>
+        /// <returns>
+        /// user info
+        /// </returns>
+        internal User GetUser(Guid securityId)
+        {
+            if (chatConnections.Count > 0)
+            {
+                return chatConnections.Values.FirstOrDefault(cc => cc.SecurityId == securityId);
+            }
+
+            return null;
+        }
+
+        /// <summary>
         /// Gets the online user count.
         /// </summary>
         /// <returns>
@@ -137,18 +159,20 @@ namespace Hermes.Messaging
         /// <param name="connectionId">The connection identifier.</param>
         /// <param name="userId">The user identifier.</param>
         /// <param name="username">The username.</param>
+        /// <param name="securityId">The security identifier.</param>
         /// <param name="groups">The groups.</param>
         /// <returns>
         /// composed user object.
         /// </returns>
-        internal static User ComposeUser(string connectionId, long userId, string username, IList<string> groups = null)
+        internal static User ComposeUser(string connectionId, long userId, string username, Guid securityId, IList<string> groups = null)
         {
             var user = new User
             {
                 ConnectionId = connectionId,
                 SessionId = DateTime.Now.Ticks,
                 UserId = userId,
-                UserName = username
+                UserName = username,
+                SecurityId = securityId
             };
 
             if (groups != null)
@@ -166,6 +190,29 @@ namespace Hermes.Messaging
         }
 
         /// <summary>
+        /// Sets the timer.
+        /// </summary>
+        /// <param name="timer">The timer.</param>
+        internal void SetTimer(int timer)
+        {
+            if (timer > 0)
+            {
+                timerMinute = timer;
+
+                pingTimer = pingTimer ?? new Timer();
+                pingTimer.Interval = (1000 * timerMinute);
+                pingTimer.Elapsed += OnTimerElapsed;
+                pingTimer.AutoReset = true;
+            }
+            else
+            {
+                timerMinute = 0;
+                pingTimer = pingTimer ?? new Timer();
+                pingTimer.Close();
+            }
+        }
+
+        /// <summary>
         /// Prevents a default instance of the <see cref="PingClient" /> class from being created.
         /// </summary>
         /// <param name="useTimer">if set to <c>true</c> [use timer].</param>
@@ -173,9 +220,9 @@ namespace Hermes.Messaging
         {
             chatConnections = new Dictionary<string, User>();
             pingTimer = new Timer();
-            if (useTimer)
+            if (useTimer && timerMinute > 0)
             {
-                pingTimer.Interval = (1000 * 5);
+                pingTimer.Interval = (1000 * timerMinute);
                 pingTimer.Elapsed += OnTimerElapsed;
                 pingTimer.AutoReset = true;
             }
@@ -190,7 +237,7 @@ namespace Hermes.Messaging
         /// </summary>
         /// <param name="sender">The sender.</param>
         /// <param name="e">The <see cref="ElapsedEventArgs" /> instance containing the event data.</param>
-        void OnTimerElapsed(object sender, ElapsedEventArgs e)
+        private void OnTimerElapsed(object sender, ElapsedEventArgs e)
         {
             PingClients();
         }

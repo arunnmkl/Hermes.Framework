@@ -1,0 +1,68 @@
+﻿using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Net;
+using System.Net.Http;
+using System.Web.Http;
+using Hermes.WebApi.Security;
+using Hermes.WebApi.Security.Models.Chat;
+
+namespace Hermes.WebApi.Web.Controllers
+{
+    [RoutePrefix("api/chat")]
+    public class ChatController : ApiController
+    {
+        [Route("history")]
+        public IHttpActionResult Post(History history)
+        {
+            if (history == null)
+            {
+                return BadRequest("history item is empty");
+            }
+
+            using (UserManager um = new UserManager())
+            {
+                um.SaveChatHistory(history);
+
+                return Ok(true);
+            }
+        }
+
+        [Route("history/{toUser}")]
+        public IHttpActionResult Get(Guid toUser, string searchText = null)
+        {
+            if (toUser == null)
+            {
+                return BadRequest("toUser is empty");
+            }
+
+            using (UserManager um = new UserManager())
+            {
+                var history = um.GetChatHistory(AuthContext.SecurityId.ToString(), toUser.ToString(), searchText);
+                if (history != null)
+                {
+                    history.ToList().ForEach(h =>
+                    {
+                        if (h.From == AuthContext.SecurityId.ToString())
+                        {
+                            h.Username = "You";
+                        }
+                    });
+                }
+
+                return Ok(history);
+            }
+        }
+
+        [Route("associatedusers")]
+        public IHttpActionResult Get()
+        {
+            using (UserManager um = new UserManager())
+            {
+                var users = um.GetAssociatedChatUsers(AuthContext.SecurityId);
+
+                return Ok(users);
+            }
+        }
+    }
+}

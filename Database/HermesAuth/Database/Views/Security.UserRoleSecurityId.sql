@@ -1,4 +1,3 @@
-
 SET QUOTED_IDENTIFIER ON
 GO
 SET ANSI_NULLS ON
@@ -23,6 +22,5 @@ AS
 
 
 GO
-
 CREATE UNIQUE CLUSTERED INDEX [IX_UserRoleSecurityId] ON [Security].[UserRoleSecurityId] ([UserId], [UserSecurityId], [RoleSecurityId]) ON [PRIMARY]
 GO
