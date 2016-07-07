@@ -120,8 +120,7 @@ namespace Hermes.Messaging
         /// <summary>
         /// Registers this instance.
         /// </summary>
-        /// <returns></returns>  
-        [AllowAnonymous]
+        /// <returns></returns>
         public User Register()
         {
             var user = PingClient.ComposeUser(Context.ConnectionId, ChatContext.UserId, ChatContext.Username, ChatContext.SecurityId, ChatContext.Roles);

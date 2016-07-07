@@ -25,7 +25,17 @@ namespace Hermes.WebApi.Security.Models.Enums
         /// <summary>
         /// The delete
         /// </summary>
-        Delete = -4
+        Delete = -4,
+
+        /// <summary>
+        /// The Allow
+        /// </summary>
+        Allow = -5,
+
+        /// <summary>
+        /// The Deny
+        /// </summary>
+        Deny = -6
     }
 
     /// <summary>

@@ -62,13 +62,12 @@ namespace Hermes.WebApi.Security
                 var authorizationType = AuthorizationCommands.CheckAuthorization(resourceId, securityIds, permissionId);
                 if (!authorizationType.HasFlag((Enum)Models.Enums.AuthorizationType.Access))
                 {
-                    throw new AccessException(resourceId, securityName, permissionId);
+                    var resource = AuthorizationCommands.GetResource(resourceId);
+                    var permission = AuthorizationCommands.GetPermission(permissionId);
+                    throw new AccessException(resource.Name, securityName, permission.Name);
                 }
             }
-            finally
-            {
-
-            }
+            finally { }
         }
 
         #region Interface members

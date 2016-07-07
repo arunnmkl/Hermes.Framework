@@ -23,6 +23,11 @@ namespace Hermes.WebApi.Extensions
     public class Startup
     {
         /// <summary>
+        /// The configuration
+        /// </summary>
+        private static HttpConfiguration config;
+
+        /// <summary>
         /// Gets the o authentication bearer options.
         /// </summary>
         /// <value>
@@ -55,18 +60,35 @@ namespace Hermes.WebApi.Extensions
         public static FacebookAuthenticationOptions FacebookAuthOptions { get; private set; }
 
         /// <summary>
+        /// Gets the configuration.
+        /// </summary>
+        /// <value>
+        /// The configuration.
+        /// </value>
+        public static HttpConfiguration Config
+        {
+            get
+            {
+                if (config == null)
+                {
+                    config = new HttpConfiguration();
+                }
+
+                return config;
+            }
+        }
+
+        /// <summary>
         /// Configurations the specified application.
         /// </summary>
         /// <param name="app">The application.</param>
         public void Configuration(IAppBuilder app)
         {
-            HttpConfiguration config = new HttpConfiguration();
-
             ConfigureOAuth(app);
 
-            ApiConfiguration.Register(config);
+            ApiConfiguration.Register(Config);
             app.UseCors(CorsOptions.AllowAll);
-            app.UseWebApi(config);
+            app.UseWebApi(Config);
         }
 
         /// <summary>
@@ -119,5 +141,5 @@ namespace Hermes.WebApi.Extensions
             };
             app.UseFacebookAuthentication(FacebookAuthOptions);
         }
-    } 
+    }
 }

@@ -28,7 +28,7 @@ namespace Hermes.WebApi.Web
         public static void Register(HttpConfiguration config)
         {
             //config.Configure(RoutingConfig.Default);
-
+            config.MapHttpAttributeRoutes();
             Core.DependencyResolverContainer.RegisterInstance<ISecurityCommand>(new Common.SecurityCommand());
         }
     }

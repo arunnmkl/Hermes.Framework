@@ -1,6 +1,6 @@
 ﻿using System;
 using System.Web;
-using System.Web.Http;
+using Hermes.WebApi.Extensions;
 
 namespace Hermes.WebApi.Web
 {
@@ -17,7 +17,7 @@ namespace Hermes.WebApi.Web
         /// <param name="e">The <see cref="EventArgs"/> instance containing the event data.</param>
         protected void Application_Start(object sender, EventArgs e)
         {
-            WebApiConfig.Register(GlobalConfiguration.Configuration);
+            WebApiConfig.Register(Startup.Config);
         }
     }
 }

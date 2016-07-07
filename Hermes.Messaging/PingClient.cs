@@ -119,7 +119,10 @@ namespace Hermes.Messaging
         {
             if (chatConnections.Count > 0)
             {
-                return chatConnections[connectionId];
+                if (chatConnections.ContainsKey(connectionId))
+                {
+                    return chatConnections[connectionId];
+                }
             }
 
             return null;

@@ -42,9 +42,6 @@ namespace Hermes.WebApi.Extensions
             // Web API configuration and services
             RegisterDefaultValues();
 
-            // Web API routes
-            config.MapHttpAttributeRoutes();
-
             Config.Configure(config, routingConfig);
 
             if (HermesSecurity.Configuration.Current.AuthenticationEnabled)

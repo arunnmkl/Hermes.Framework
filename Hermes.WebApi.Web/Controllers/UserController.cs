@@ -1,6 +1,4 @@
 ﻿using System.Net.Http;
-using System.Linq;
-using System.Security.Claims;
 using System.Web.Http;
 using System.Net.Http.Formatting;
 using System.Collections.Generic;
